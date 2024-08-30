@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-08-2024 a las 00:12:12
+-- Tiempo de generación: 30-08-2024 a las 03:03:45
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -63,10 +63,12 @@ CREATE TABLE `persona` (
   `nombres` varchar(50) NOT NULL,
   `apellidos` varchar(50) NOT NULL,
   `edad` int(3) NOT NULL,
+  `apodo` varchar(50) DEFAULT NULL,
   `sexo` enum('Masculino','Femenino','No binario','Otro') DEFAULT NULL,
   `nacionalidad` varchar(50) NOT NULL,
   `estado_civil` enum('Soltero/a','Casado/a','Divorciado/a','Viudo/a') DEFAULT NULL,
-  `direccion` varchar(255) DEFAULT NULL
+  `domicilio` varchar(255) DEFAULT NULL,
+  `trabaja` enum('SI','NO') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -78,7 +80,6 @@ CREATE TABLE `persona` (
 CREATE TABLE `ppl` (
   `id_ppl` int(11) NOT NULL,
   `dni` bigint(20) DEFAULT NULL,
-  `profesion_oficio` varchar(100) DEFAULT NULL,
   `fecha_ingreso` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -142,7 +143,7 @@ CREATE TABLE `situacionlegal` (
   `fecha_vencimiento` date DEFAULT NULL,
   `reincidencia` enum('Primario','Reiterante') DEFAULT NULL,
   `histcondena` enum('Primario','Registra Condena') DEFAULT NULL,
-  `cantcondenas` int(60) DEFAULT NULL,  
+  `cantcondenas` int(60) DEFAULT NULL,
   `ultima_condena_fecha` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
