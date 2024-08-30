@@ -137,9 +137,12 @@ CREATE TABLE `situacionlegal` (
   `situacion_legal` enum('Procesado','Penado') DEFAULT NULL,
   `causa` varchar(255) DEFAULT NULL,
   `juzgado` varchar(100) DEFAULT NULL,
+  `nroportuario` int(11) DEFAULT NULL,
   `condena` varchar(255) DEFAULT NULL,
   `fecha_vencimiento` date DEFAULT NULL,
   `reincidencia` enum('Primario','Reiterante') DEFAULT NULL,
+  `histcondena` enum('Primario','Registra Condena') DEFAULT NULL,
+  `cantcondenas` int(60) DEFAULT NULL,  
   `ultima_condena_fecha` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
