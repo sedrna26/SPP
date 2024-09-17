@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-09-2024 a las 01:30:19
+-- Tiempo de generación: 17-09-2024 a las 23:29:53
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -38,6 +38,20 @@ CREATE TABLE `caracteristicas` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `clasificacion`
+--
+
+CREATE TABLE `clasificacion` (
+  `id` int(11) NOT NULL,
+  `id_ppl` int(11) NOT NULL,
+  `sugerencia` varchar(50) DEFAULT NULL,
+  `sector_nro` int(4) NOT NULL,
+  `pabellon_nro` int(4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `datosantropometri`
 --
 
@@ -58,10 +72,13 @@ CREATE TABLE `datosantropometri` (
 
 CREATE TABLE `educacion` (
   `id` int(11) NOT NULL,
+  `id_ppl` int(11) NOT NULL,
+  `id_familiar` int(11) DEFAULT NULL,
   `establecimiento` varchar(50) NOT NULL,
   `grado` varchar(10) DEFAULT NULL,
   `año` int(4) DEFAULT NULL,
-  `motivo` text DEFAULT NULL
+  `motivo_abandono` text DEFAULT NULL,
+  `oferta_educ` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -98,12 +115,12 @@ CREATE TABLE `entrevista` (
 CREATE TABLE `familia` (
   `id` int(11) NOT NULL,
   `ppl` int(11) NOT NULL,
+  `relacion` text NOT NULL,
   `datos` int(11) NOT NULL,
   `ffaa` tinyint(1) DEFAULT NULL,
   `fam_detenida` tinyint(1) DEFAULT NULL,
   `fecha_fall` date DEFAULT NULL,
-  `causa_fall` text DEFAULT NULL,
-  `educacion` int(11) NOT NULL
+  `causa_fall` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -161,11 +178,11 @@ CREATE TABLE `informe_sanitario` (
   `id` int(11) NOT NULL,
   `id_ppl` int(11) NOT NULL,
   `estado_gral` varchar(200) DEFAULT NULL,
-  `fecha` date NOT NULL,
+  `fecha` date DEFAULT NULL,
   `id_medicamento` int(11) NOT NULL,
   `id_enfermedades` int(11) NOT NULL,
   `id_datos_antrop` int(11) NOT NULL,
-  `observaciones` text DEFAULT NULL
+  `marcas_partic` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -216,15 +233,14 @@ CREATE TABLE `otros` (
 
 CREATE TABLE `persona` (
   `id` int(11) NOT NULL,
-  `dni` varchar(9) NOT NULL,
+  `dni` varchar(9) DEFAULT NULL,
   `apellidos` varchar(50) NOT NULL,
   `nombres` varchar(50) NOT NULL,
   `fechanac` date NOT NULL,
   `edad` int(3) NOT NULL,
   `direccion` int(11) NOT NULL,
   `genero` varchar(50) NOT NULL,
-  `estadocivil` varchar(50) NOT NULL,
-  `educacion` int(11) NOT NULL
+  `estadocivil` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -239,7 +255,8 @@ CREATE TABLE `ppl` (
   `apodo` varchar(20) DEFAULT NULL,
   `trabaja` tinyint(1) NOT NULL,
   `profesion` varchar(50) DEFAULT NULL,
-  `foto` varchar(30) DEFAULT NULL
+  `foto` varchar(30) DEFAULT NULL,
+  `huella` blob DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -253,12 +270,15 @@ CREATE TABLE `situacionlegal` (
   `ppl` int(11) NOT NULL,
   `motivo_t` varchar(100) DEFAULT NULL,
   `situacionlegal` varchar(15) NOT NULL,
-  `prontuario` int(6) NOT NULL,
+  `prontuario` int(6) DEFAULT NULL,
   `reincidencia` tinyint(1) NOT NULL,
+  `salida_transitoria` tinyint(1) NOT NULL,
+  `libertad_asistida` tinyint(1) NOT NULL,
+  `libertad_condicional` tinyint(1) NOT NULL,
   `delito` int(11) NOT NULL,
   `fecha` int(11) NOT NULL,
   `juzgado` int(11) NOT NULL,
-  `caracteristicas` int(11) NOT NULL
+  `señas_partic` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -311,6 +331,13 @@ ALTER TABLE `caracteristicas`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `clasificacion`
+--
+ALTER TABLE `clasificacion`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_ppl` (`id_ppl`);
+
+--
 -- Indices de la tabla `datosantropometri`
 --
 ALTER TABLE `datosantropometri`
@@ -320,7 +347,9 @@ ALTER TABLE `datosantropometri`
 -- Indices de la tabla `educacion`
 --
 ALTER TABLE `educacion`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_ppl` (`id_ppl`),
+  ADD KEY `id_familiar` (`id_familiar`);
 
 --
 -- Indices de la tabla `enfermedades`
@@ -341,8 +370,7 @@ ALTER TABLE `entrevista`
 ALTER TABLE `familia`
   ADD PRIMARY KEY (`id`),
   ADD KEY `ppl` (`ppl`),
-  ADD KEY `datos` (`datos`),
-  ADD KEY `educacion` (`educacion`);
+  ADD KEY `datos` (`datos`);
 
 --
 -- Indices de la tabla `fechappl`
@@ -372,7 +400,8 @@ ALTER TABLE `informe_sanitario`
   ADD KEY `id_ppl` (`id_ppl`),
   ADD KEY `id_medicamento` (`id_medicamento`),
   ADD KEY `id_enfermedades` (`id_enfermedades`),
-  ADD KEY `id_datos_antrop` (`id_datos_antrop`);
+  ADD KEY `id_datos_antrop` (`id_datos_antrop`),
+  ADD KEY `marcas_partic` (`marcas_partic`);
 
 --
 -- Indices de la tabla `juzgado`
@@ -418,7 +447,7 @@ ALTER TABLE `situacionlegal`
   ADD KEY `delito` (`delito`),
   ADD KEY `fecha` (`fecha`),
   ADD KEY `juzgado` (`juzgado`),
-  ADD KEY `caracteristicas` (`caracteristicas`);
+  ADD KEY `caracteristicas` (`señas_partic`);
 
 --
 -- Indices de la tabla `tipodelito`
@@ -449,6 +478,12 @@ ALTER TABLE `visitas`
 -- AUTO_INCREMENT de la tabla `caracteristicas`
 --
 ALTER TABLE `caracteristicas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `clasificacion`
+--
+ALTER TABLE `clasificacion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -564,6 +599,19 @@ ALTER TABLE `visitas`
 --
 
 --
+-- Filtros para la tabla `clasificacion`
+--
+ALTER TABLE `clasificacion`
+  ADD CONSTRAINT `clasificacion_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `educacion`
+--
+ALTER TABLE `educacion`
+  ADD CONSTRAINT `educacion_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `educacion_ibfk_2` FOREIGN KEY (`id_familiar`) REFERENCES `familia` (`id`) ON UPDATE CASCADE;
+
+--
 -- Filtros para la tabla `entrevista`
 --
 ALTER TABLE `entrevista`
@@ -574,8 +622,7 @@ ALTER TABLE `entrevista`
 --
 ALTER TABLE `familia`
   ADD CONSTRAINT `familia_ibfk_1` FOREIGN KEY (`ppl`) REFERENCES `ppl` (`id`),
-  ADD CONSTRAINT `familia_ibfk_2` FOREIGN KEY (`datos`) REFERENCES `persona` (`id`),
-  ADD CONSTRAINT `familia_ibfk_3` FOREIGN KEY (`educacion`) REFERENCES `educacion` (`id`);
+  ADD CONSTRAINT `familia_ibfk_2` FOREIGN KEY (`datos`) REFERENCES `persona` (`id`);
 
 --
 -- Filtros para la tabla `informe_psicologico`
@@ -596,7 +643,8 @@ ALTER TABLE `informe_sanitario`
   ADD CONSTRAINT `informe_sanitario_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`),
   ADD CONSTRAINT `informe_sanitario_ibfk_2` FOREIGN KEY (`id_medicamento`) REFERENCES `medicamentos` (`id`),
   ADD CONSTRAINT `informe_sanitario_ibfk_3` FOREIGN KEY (`id_enfermedades`) REFERENCES `enfermedades` (`id`),
-  ADD CONSTRAINT `informe_sanitario_ibfk_4` FOREIGN KEY (`id_datos_antrop`) REFERENCES `datosantropometri` (`id`);
+  ADD CONSTRAINT `informe_sanitario_ibfk_4` FOREIGN KEY (`id_datos_antrop`) REFERENCES `datosantropometri` (`id`),
+  ADD CONSTRAINT `informe_sanitario_ibfk_5` FOREIGN KEY (`marcas_partic`) REFERENCES `caracteristicas` (`id`);
 
 --
 -- Filtros para la tabla `otros`
@@ -626,7 +674,7 @@ ALTER TABLE `situacionlegal`
   ADD CONSTRAINT `situacionlegal_ibfk_2` FOREIGN KEY (`delito`) REFERENCES `tipodelito` (`id`),
   ADD CONSTRAINT `situacionlegal_ibfk_3` FOREIGN KEY (`fecha`) REFERENCES `fechappl` (`id`),
   ADD CONSTRAINT `situacionlegal_ibfk_4` FOREIGN KEY (`juzgado`) REFERENCES `juzgado` (`id`),
-  ADD CONSTRAINT `situacionlegal_ibfk_5` FOREIGN KEY (`caracteristicas`) REFERENCES `caracteristicas` (`id`);
+  ADD CONSTRAINT `situacionlegal_ibfk_5` FOREIGN KEY (`señas_partic`) REFERENCES `caracteristicas` (`id`);
 
 --
 -- Filtros para la tabla `visitas`
