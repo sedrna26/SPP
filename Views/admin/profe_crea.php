@@ -10,7 +10,7 @@ if (!isset($_SESSION['id_rol']) || $_SESSION['id_rol'] != 1) {
     exit();
 }
 
-// -----------------------------------------
+// ------------------------------------------
 if ($_SERVER["REQUEST_METHOD"] == "POST") {   
     $nombre = $_POST['nombre'];
     $apellido = $_POST['apellido'];
