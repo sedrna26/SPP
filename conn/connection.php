@@ -1,7 +1,7 @@
 <?php
 // Variables de conexión a la base de datos
 $db_host = 'localhost'; // Host de la base de datos
-$db_name = 'abm_escuela'; // Nombre de la base de datos
+$db_name = 'spp'; // Nombre de la base de datos
 $db_user = 'root'; // Usuario de la base de datos
 $db_password = ''; // Contraseña de la base de datos
 

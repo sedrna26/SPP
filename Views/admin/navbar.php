@@ -1,7 +1,16 @@
-<?php session_start();
-if(!isset($_SESSION['nombre'])){
-  header("Location:../home.php");
+<?
+session_start();
+
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION['id_usuario'])) {
+    header('Location: home.php');
+    exit;
 }
+
+// Desactivar la caché
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -63,7 +72,12 @@ if(!isset($_SESSION['nombre'])){
     background: linear-gradient(135deg,#fecb37,#f7e41e);
   }
 </style>
-<body>
+<body><script>
+    window.history.pushState(null, "", window.location.href); 
+    window.onpopstate = function() {
+        window.history.pushState(null, "", window.location.href);
+    };
+</script>
 <!-- ---------------MENSAJE REGISTROS-------------- -->
 <?php
   $mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : '';
@@ -136,7 +150,7 @@ if(!isset($_SESSION['nombre'])){
             </li>
              <!-- --------------------------- -->            
              <li class="nav-item  pr-3">
-              <a class="nav-link " href="">***</a>
+              <a class="nav-link " href="informe_sanitario.php">Sanitario</a>
             </li>
             <!-- ------------------------------------------------------- -->
             <li class="nav-item  pr-3">
@@ -164,8 +178,8 @@ if(!isset($_SESSION['nombre'])){
                     <!-- iconos sacados de "fontawesome" -->
                     <i class="fas fa-user pr-2"></i>
                     Administrador:
-                    <?php if (isset($_SESSION['nombre']) ) : ?>                    
-                    <?php echo $_SESSION['nombre'] ; ?>
+                    <?php if (isset($_SESSION['nombres']) ) : ?>                    
+                    <?php echo $_SESSION['nombres'] ; ?>
                     <?php endif; ?>
                     </a>
               <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -182,3 +196,4 @@ if(!isset($_SESSION['nombre'])){
       </div>
     </nav>
   </div>
+  </body>
