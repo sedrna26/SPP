@@ -1,0 +1,17 @@
+graph TD
+    A[Inicio] --> B[Módulo de Recepción]
+    B --> C[Módulo de Datos Personales]
+    C --> D[Módulo de Situación Legal]
+    D --> E[Módulo Social y Familiar]
+    E --> F[Módulo de Salud]
+    F --> G[Módulo Educacional]
+    G --> H[Módulo de Clasificación]
+    H --> I[Generación de Informe IEII]
+    I --> J[Archivo Digital]
+    J --> K[Fin]
+
+    subgraph "Módulos Auxiliares"
+        L[Gestión de Usuarios]
+        M[Reportes y Estadísticas]
+        N[Gestión de Cupos]
+    end

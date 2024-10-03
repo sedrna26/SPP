@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 17-09-2024 a las 23:29:53
+-- Servidor: localhost
+-- Tiempo de generación: 26-09-2024 a las 23:43:21
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -234,14 +234,23 @@ CREATE TABLE `otros` (
 CREATE TABLE `persona` (
   `id` int(11) NOT NULL,
   `dni` varchar(9) DEFAULT NULL,
+  `clave` varchar(255) NOT NULL,
   `apellidos` varchar(50) NOT NULL,
   `nombres` varchar(50) NOT NULL,
   `fechanac` date NOT NULL,
   `edad` int(3) NOT NULL,
-  `direccion` int(11) NOT NULL,
+  `direccion` varchar(11) NOT NULL,
   `genero` varchar(50) NOT NULL,
-  `estadocivil` varchar(50) NOT NULL
+  `estadocivil` varchar(50) NOT NULL,
+  `id_rol` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `persona`
+--
+
+INSERT INTO `persona` (`id`, `dni`, `clave`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `id_rol`) VALUES
+(1, '44123890', '123sj', 'Castro', 'Lucas Martin', '2000-09-01', 23, '9 de julio', 'Masculino', 'soltero', 1);
 
 -- --------------------------------------------------------
 
@@ -258,6 +267,26 @@ CREATE TABLE `ppl` (
   `foto` varchar(30) DEFAULT NULL,
   `huella` blob DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `rol`
+--
+
+CREATE TABLE `rol` (
+  `id_rol` int(11) NOT NULL,
+  `nombre_rol` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `rol`
+--
+
+INSERT INTO `rol` (`id_rol`, `nombre_rol`) VALUES
+(1, 'admin'),
+(2, 'usuario'),
+(3, 'otro_rol');
 
 -- --------------------------------------------------------
 
@@ -428,8 +457,7 @@ ALTER TABLE `otros`
 --
 ALTER TABLE `persona`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `direccion` (`direccion`),
-  ADD KEY `educacion` (`educacion`);
+  ADD KEY `fk_persona_rol` (`id_rol`);
 
 --
 -- Indices de la tabla `ppl`
@@ -437,6 +465,12 @@ ALTER TABLE `persona`
 ALTER TABLE `ppl`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idpersona` (`idpersona`);
+
+--
+-- Indices de la tabla `rol`
+--
+ALTER TABLE `rol`
+  ADD PRIMARY KEY (`id_rol`);
 
 --
 -- Indices de la tabla `situacionlegal`
@@ -499,190 +533,26 @@ ALTER TABLE `educacion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `enfermedades`
---
-ALTER TABLE `enfermedades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `entrevista`
---
-ALTER TABLE `entrevista`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `familia`
---
-ALTER TABLE `familia`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `fechappl`
---
-ALTER TABLE `fechappl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `informe_psicologico`
---
-ALTER TABLE `informe_psicologico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `informe_psiquiatrico`
---
-ALTER TABLE `informe_psiquiatrico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `informe_sanitario`
---
-ALTER TABLE `informe_sanitario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `juzgado`
---
-ALTER TABLE `juzgado`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `medicamentos`
---
-ALTER TABLE `medicamentos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `otros`
---
-ALTER TABLE `otros`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT de la tabla `ppl`
+-- AUTO_INCREMENT de la tabla `rol`
 --
-ALTER TABLE `ppl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `situacionlegal`
---
-ALTER TABLE `situacionlegal`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `tipodelito`
---
-ALTER TABLE `tipodelito`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `ubicacion`
---
-ALTER TABLE `ubicacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `visitas`
---
-ALTER TABLE `visitas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `rol`
+  MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas
 --
 
 --
--- Filtros para la tabla `clasificacion`
---
-ALTER TABLE `clasificacion`
-  ADD CONSTRAINT `clasificacion_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
-
---
--- Filtros para la tabla `educacion`
---
-ALTER TABLE `educacion`
-  ADD CONSTRAINT `educacion_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `educacion_ibfk_2` FOREIGN KEY (`id_familiar`) REFERENCES `familia` (`id`) ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `entrevista`
---
-ALTER TABLE `entrevista`
-  ADD CONSTRAINT `entrevista_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
-
---
--- Filtros para la tabla `familia`
---
-ALTER TABLE `familia`
-  ADD CONSTRAINT `familia_ibfk_1` FOREIGN KEY (`ppl`) REFERENCES `ppl` (`id`),
-  ADD CONSTRAINT `familia_ibfk_2` FOREIGN KEY (`datos`) REFERENCES `persona` (`id`);
-
---
--- Filtros para la tabla `informe_psicologico`
---
-ALTER TABLE `informe_psicologico`
-  ADD CONSTRAINT `informe_psicologico_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
-
---
--- Filtros para la tabla `informe_psiquiatrico`
---
-ALTER TABLE `informe_psiquiatrico`
-  ADD CONSTRAINT `informe_psiquiatrico_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
-
---
--- Filtros para la tabla `informe_sanitario`
---
-ALTER TABLE `informe_sanitario`
-  ADD CONSTRAINT `informe_sanitario_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`),
-  ADD CONSTRAINT `informe_sanitario_ibfk_2` FOREIGN KEY (`id_medicamento`) REFERENCES `medicamentos` (`id`),
-  ADD CONSTRAINT `informe_sanitario_ibfk_3` FOREIGN KEY (`id_enfermedades`) REFERENCES `enfermedades` (`id`),
-  ADD CONSTRAINT `informe_sanitario_ibfk_4` FOREIGN KEY (`id_datos_antrop`) REFERENCES `datosantropometri` (`id`),
-  ADD CONSTRAINT `informe_sanitario_ibfk_5` FOREIGN KEY (`marcas_partic`) REFERENCES `caracteristicas` (`id`);
-
---
--- Filtros para la tabla `otros`
---
-ALTER TABLE `otros`
-  ADD CONSTRAINT `otros_ibfk_1` FOREIGN KEY (`datos`) REFERENCES `persona` (`id`),
-  ADD CONSTRAINT `otros_ibfk_2` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
-
---
 -- Filtros para la tabla `persona`
 --
 ALTER TABLE `persona`
-  ADD CONSTRAINT `persona_ibfk_1` FOREIGN KEY (`direccion`) REFERENCES `ubicacion` (`id`),
-  ADD CONSTRAINT `persona_ibfk_2` FOREIGN KEY (`educacion`) REFERENCES `educacion` (`id`);
-
---
--- Filtros para la tabla `ppl`
---
-ALTER TABLE `ppl`
-  ADD CONSTRAINT `ppl_ibfk_1` FOREIGN KEY (`idpersona`) REFERENCES `persona` (`id`);
-
---
--- Filtros para la tabla `situacionlegal`
---
-ALTER TABLE `situacionlegal`
-  ADD CONSTRAINT `situacionlegal_ibfk_1` FOREIGN KEY (`ppl`) REFERENCES `ppl` (`id`),
-  ADD CONSTRAINT `situacionlegal_ibfk_2` FOREIGN KEY (`delito`) REFERENCES `tipodelito` (`id`),
-  ADD CONSTRAINT `situacionlegal_ibfk_3` FOREIGN KEY (`fecha`) REFERENCES `fechappl` (`id`),
-  ADD CONSTRAINT `situacionlegal_ibfk_4` FOREIGN KEY (`juzgado`) REFERENCES `juzgado` (`id`),
-  ADD CONSTRAINT `situacionlegal_ibfk_5` FOREIGN KEY (`señas_partic`) REFERENCES `caracteristicas` (`id`);
-
---
--- Filtros para la tabla `visitas`
---
-ALTER TABLE `visitas`
-  ADD CONSTRAINT `visitas_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`),
-  ADD CONSTRAINT `visitas_ibfk_2` FOREIGN KEY (`id_familia`) REFERENCES `familia` (`id`),
-  ADD CONSTRAINT `visitas_ibfk_3` FOREIGN KEY (`id_otros`) REFERENCES `otros` (`id`);
+  ADD CONSTRAINT `fk_persona_rol` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
