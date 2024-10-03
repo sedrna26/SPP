@@ -77,11 +77,11 @@ if ($_POST) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <meta name="description" content="Inicio de Sesión" />
     <title>Login</title>
-    <link rel="shortcut icon" href="../img/LOGO3.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="../img/LOGO.ico" type="image/x-icon" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Roboto&display=swap');
         body {
-            background: linear-gradient(135deg,#fecb37,#f7e41e);
+            background: #f2d022;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -90,11 +90,18 @@ if ($_POST) {
     </style>
 </head>
 <body class="container d-flex justify-content-center">
-    <div class="p-4 rounded-5 text-secondary shadow my-2" style="width: 25rem; background-color: #fecb37;">
+    <div class="p-4 rounded-5 text-secondary shadow my-2" style="width: 25rem; background-color: #b4b2b8;">
         <div class="d-flex justify-content-center">
             <img src="../img/LOGO.ico" alt="login-icon" style="height: 15rem" class="w-75" />
         </div>
-        <div class="text-center fs-1 fw-bold">Bienvenid@</div>
+        <div class="text-center fs-1 fw-bold" style="color: #000;">Bienvenid@</div>
+        <div style="color: #000;">
+
+        
+        <b>44123890</b>
+        <p><b>123sj</b></p>
+        </div>
+        
         <form method="post" class="form" action="">
             <div class="input-group mt-4">
                 <div class="input-group-text bg-info">

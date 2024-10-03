@@ -17,8 +17,8 @@ header("Pragma: no-cache");
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instituto Superior de Formación Técnica Angaco</title>
-  <link rel="shortcut icon" href="../../img/LOGO3.ico" type="image/x-icon" />
+  <title>Servicio Penitenciario Proviancial San Juan</title>
+  <link rel="shortcut icon" href="../../img/LOGO.ico" type="image/x-icon" />
   <!--font awesome con CDN para iconos-->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
   <!-- -----------ARCHIVO CSS----------- -->
@@ -56,6 +56,7 @@ header("Pragma: no-cache");
   <!-- Bootstrap-->
   <script defer src="../../js/tabla.js"></script>
   <!-- ------------FIN-DATATABLES----- -->
+   
   <!-- -------------sweetalert2(alertas emergentes)------------------   -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../../js/alertas.js"></script>
@@ -67,17 +68,19 @@ header("Pragma: no-cache");
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <!-- ------------------------------- -->
 </head>
-<style>
-  body {
-    background: linear-gradient(135deg,#fecb37,#f7e41e);
-  }
-</style>
-<body><script>
-    window.history.pushState(null, "", window.location.href); 
-    window.onpopstate = function() {
-        window.history.pushState(null, "", window.location.href);
-    };
-</script>
+<body>
+  <style>
+    body {
+      background: linear-gradient(135deg,#f2d022,#f2d022);
+    }
+  </style>
+
+  <script>
+      window.history.pushState(null, "", window.location.href); 
+      window.onpopstate = function() {
+          window.history.pushState(null, "", window.location.href);
+      };
+  </script>
 <!-- ---------------MENSAJE REGISTROS-------------- -->
 <?php
   $mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : '';
@@ -123,51 +126,27 @@ header("Pragma: no-cache");
   <?php } ?>
   <!-- ------------------------------------- -->
   <div style="height:60px">
-    <nav class="navbar navbar-expand-lg fixed-top  navbar-light  " style="background-color: #f7e41e;">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark  ">
       <div class="container-fluid ml-2 ">
-        <a href="index.php" class="navbar-brand mb-0 pr-3 ">
-          <img class="d-line-block align-top " src="../../img/LOGO2.ico" width="100px" style="margin-right:0px">
+        <a href="index.php" class="navbar-brand mb-0 pr-4 ">
+          <img class="d-line-block align-top " src="../../img/LOGO3.ico" width="100px" style="margin-right:0px">
         </a>
         <!-- Toggle Btn-->
-        <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" class="navbar-toggler shadow-none border-0 bg-dark" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" class="navbar-toggler shadow-none border-0 bg-dark mr-3" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <!-- ------------------------------------------------------- -->
-        <div class="collapse navbar-collapse d-flex" id="navbarNav">
-          <ul class="navbar-nav mr-auto flex-grow-1 bd-highlight">
+        
 
             <div class="collapse navbar-collapse " id="navbarNav">
               <ul class="navbar-nav mr-auto ">
-            <!-- -------------------------------- -->
-            <li class="nav-item dropdown pr-3">
-              <a class="nav-link dropdown-toggle  " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Registrar
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="profe_index.php">Profesores</a></li>
-                <li><a class="dropdown-item" href="admin_index.php">Admininstrador</a></li>
-              </ul>
-            </li>
-             <!-- --------------------------- -->            
+             <!-- --------------------------- -->    
              <li class="nav-item  pr-3">
-              <a class="nav-link " href="informe_sanitario.php">Sanitario</a>
-            </li>
-            <!-- ------------------------------------------------------- -->
+             <a class="nav-link " href="ppl_index.php">PPL</a>
+            </li>  
             <li class="nav-item  pr-3">
-              <a class="nav-link" href="">***</a>
+             <a class="nav-link " href="admin_index.php">Admininstrador</a>
             </li>
-             <!-- ------------------------------------------------------- -->
-            <li class="nav-item dropdown pr-3">
-              <a class="nav-link dropdown-toggle  " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              ***
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="">***</a></li>
-                <li><a class="dropdown-item" href="">***</a></li>
-              </ul>
-            </li>
-            <!-- ------------------------------------------------------- -->
-            
           </ul>     
           <!-- ------------------------------------------------------- -->
           <form class="form-inline d-flex justify-content-end">
@@ -196,4 +175,3 @@ header("Pragma: no-cache");
       </div>
     </nav>
   </div>
-  </body>

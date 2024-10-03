@@ -40,9 +40,20 @@ function eliminar3 (id_persona){
            }          
     });
 }
-
-
-
+function eliminar4 (id_persona){
+  Swal.fire({
+      icon: "error",
+      title: "¿Borrar?",        
+      showCancelButton: true,
+      confirmButtonText: "Si",   
+      confirmButtonColor: "#007bff",
+      cancelButtonColor: '#dc3545',     
+    }).then((result) => {  
+          if (result.isConfirmed) { 
+            window.location = "../admin/admin_index.php?txtID="+id_persona;
+           }          
+    });
+}
 
 
 

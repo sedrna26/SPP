@@ -3,7 +3,7 @@ require '../../conn/connection.php';
 //-------------BORRADO------------------ 
 if(isset($_GET['txtID'])){
   $txtID=(isset($_GET['txtID']))?$_GET['txtID']:"";
-  $sentencia=$db->prepare("UPDATE usuarios SET etapa = 'Inactivo' WHERE id_usuario = :id" );
+  $sentencia=$db->prepare("UPDATE persona SET estado = 'Inactivo' WHERE id = :id" );
   $sentencia->bindParam(':id',$txtID);
   $sentencia->execute();
   $mensaje="Registro Eliminado con Exito";
@@ -14,15 +14,15 @@ if(isset($_GET['txtID'])){
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recolecta datos del formulario
-    $nombre = $_POST["nombre"];
+    $nombres = $_POST["nombres"];
     $correo = $_POST["correo"];
     $password = $_POST["password"];    
-    $etapa = "Activo";
+    $estado = "Activo";
     $id_rol = $_POST["permiso"]; // Valor predeterminado para alumno es 1.
     $error = "";
     try {
         // Verificar si el correo electrónico ya existe
-        $sql_check_correo = "SELECT COUNT(*) FROM usuarios WHERE correo = :correo";
+        $sql_check_correo = "SELECT COUNT(*) FROM persona WHERE correo = :correo";
         $stmt_check_correo = $db->prepare($sql_check_correo);
         $stmt_check_correo->bindParam(':correo', $correo);
         $stmt_check_correo->execute();
@@ -32,21 +32,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // El correo ya está registrado, redirige a alumno_crea.php con mensaje de error y datos del formulario
             $error = "El correo electrónico ya está registrado. Por favor, use uno diferente.";
             $redirect_url = "admin_index.php?error=" . urlencode($error)
-                . "&nombre=" . urlencode($nombre)
+                . "&nombres=" . urlencode($nombres)
                 . "&correo=" . urlencode($correo);
             header("Location: " . $redirect_url);
             exit();
         } else {
             // Inserta datos en la base de datos
-            $sql = "INSERT INTO usuarios (nombre, correo, password, id_rol, etapa) 
-                    VALUES (:nombre, :correo, :password, :id_rol, :etapa)";
+            $sql = "INSERT INTO persona (nombres, correo, password, id_rol, estado) 
+                    VALUES (:nombres, :correo, :password, :id_rol, :estado)";
 
             $stmt = $db->prepare($sql);
-            $stmt->bindParam(':nombre', $nombre); 
+            $stmt->bindParam(':nombres', $nombres); 
             $stmt->bindParam(':correo', $correo);
             $stmt->bindParam(':password', $password);
             $stmt->bindParam(':id_rol', $id_rol);
-            $stmt->bindParam(':etapa', $etapa);
+            $stmt->bindParam(':estado', $estado);
             if ($stmt->execute()) {
                 // Redirige a alumno_index.php con mensaje de éxito
                 header("Location: admin_index.php?mensaje=" . urlencode("Administrador ingresado con éxito."));
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Error en la base de datos: " . $e->getMessage();
         // Redirige a alumno_crea.php con el error y datos del formulario
         $redirect_url = "admin_index.php?error=" . urlencode($error)
-            . "&nombre=" . urlencode($nombre)
+            . "&nombres=" . urlencode($nombres)
             . "&apellido=" . urlencode($apellido)
             . "&correo=" . urlencode($correo);
         header("Location: " . $redirect_url);
@@ -92,26 +92,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     try {
                                         $db = new PDO("mysql:host=$db_host;dbname=$db_name", $db_user, $db_password);
                                         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                                        $query = "SELECT * FROM usuarios WHERE id_rol = 1 AND etapa = 'Activo' OR id_rol = 3 AND etapa = 'Activo' ";
+                                        $query = "SELECT * FROM persona WHERE id_rol = 1 AND estado = 'Activo' OR id_rol = 3 AND estado = 'Activo' ";
                                         $stmt = $db->prepare($query);
                                         $stmt->execute();
-                                        $usuarioss = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                        foreach ($usuarioss as $usuarios) {
-                                            if($usuarios['id_rol']===1){
+                                        $personas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($personas as $persona) {
+                                            if($persona['id_rol']===1){
                                                 $rol='Administrador';
-                                            }elseif($usuarios['id_rol']===3){
+                                            }elseif($persona['id_rol']===3){
                                                 $rol='Preceptor';
                                             }
                                     ?>
                                             <tr>
-                                                    <th scope="row"><?php echo $usuarios['id_usuario'] ?></th>
-                                                    <td><?php echo $usuarios['nombre'] ?></td>
-                                                    <td><?php echo $usuarios['correo'] ?></td>
+                                                    <th scope="row"><?php echo $persona['id'] ?></th>
+                                                    <td><?php echo $persona['nombres'] ?></td>
+                                                    <td><?php echo $persona['dni'] ?></td>
                                                     <td><?php echo $rol ?></td>
                                                     <td class="text-center">
                                                         <div class="btn-group">
 
-                                                            <a href="javascript:eliminar4(<?php echo $usuarios['id_usuario'];?>)" class="btn btn-danger btn-sm" type="button" title="Borrar">                                                            
+                                                            <a href="javascript:eliminar4(<?php echo $persona['id'];?>)" class="btn btn-danger btn-sm" type="button" title="Borrar">                                                            
                                                                 <i class="fas fa-trash"></i>
                                                             </a> 
                                                         </div>  
@@ -138,17 +138,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <?php
                             // Recupera el mensaje de error y los datos del formulario desde la URL
                             $error = isset($_GET["error"]) ? $_GET["error"] : "";
-                            $nombre = isset($_GET["nombre"]) ? $_GET["nombre"] : "";
+                            $nombres = isset($_GET["nombres"]) ? $_GET["nombres"] : "";
                             $correo = isset($_GET["correo"]) ? $_GET["correo"] : "";
                             ?>
                             <form id="formulario" action="" method="post" enctype="multipart/form-data">
                                 <!-- --------------------------------- -->                
                                 <div class="form-group">
-                                    <label for="nombre">Nombre:</label>
-                                    <input type="text" class="form-control" name="nombre" value="<?php echo htmlspecialchars($nombre); ?>" autocomplete="off" placeholder="Ingrese Nombre" required>
+                                    <label for="nombres">Nombres:</label>
+                                    <input type="text" class="form-control" name="nombres" value="<?php echo htmlspecialchars($nombres); ?>" autocomplete="off" placeholder="Ingrese nombres" required>
                                 </div>                                            
                                 <!-- --------------------------------- -->                
-                                <div class="form-group">
+                                <div class=" form-group">
                                     <label for="correo">Correo:</label>
                                     <input id="correo" type="email" class="form-control" name="correo" placeholder="Ingrese Correo" value=" " required>
                                 </div>
