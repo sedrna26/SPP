@@ -1,0 +1,32 @@
+body {
+  /* background: linear-gradient(135deg, #98c343, #10801c); */
+  position: relative;
+  padding-bottom: 10px;
+  min-height: 100vh;
+}
+input {
+  border-style:  solid  !important;
+  border-color:  #6c757d  !important;
+  border-width: 1.5px !important;
+}
+select {
+  border-style:  solid  !important;
+  border-color:  #6c757d  !important;
+  border-width: 1px !important;
+}
+input[type=checkbox]{
+  border-color:  #6c757d  !important;
+  border-style:  solid  !important;
+  border-width: 2px !important;
+  width: 20px;
+  height: 20px;
+}
+.paginate_button a {
+  border-style:  solid  !important;
+  border-color:  #6c757d  !important;
+  border-width: 1px !important;
+}
+th, td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
