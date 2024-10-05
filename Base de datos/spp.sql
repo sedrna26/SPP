@@ -125712,20 +125712,29 @@ INSERT INTO `paises` (`id`, `nombre`) VALUES
 CREATE TABLE `persona` (
   `id` int(11) NOT NULL,
   `dni` varchar(9) DEFAULT NULL,
+  `clave` varchar(255) NOT NULL,
   `apellidos` varchar(50) NOT NULL,
   `nombres` varchar(50) NOT NULL,
   `fechanac` date NOT NULL,
   `edad` int(3) NOT NULL,
-  `direccion` int(11) NOT NULL,
+  `direccion` varchar(11) NOT NULL,
   `genero` varchar(50) NOT NULL,
   `estadocivil` varchar(50) NOT NULL,
+<<<<<<< HEAD:Base de datos/spp.sql
+  `id_rol` int(11) DEFAULT NULL
+=======
   `educacion` int(11) NOT NULL
+>>>>>>> main:Base de datos/SPP_V2.sql
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `persona`
 --
 
+<<<<<<< HEAD:Base de datos/spp.sql
+INSERT INTO `persona` (`id`, `dni`, `clave`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `id_rol`) VALUES
+(1, '44123890', '123sj', 'Castro', 'Lucas Martin', '2000-09-01', 23, '9 de julio', 'Masculino', 'soltero', 1);
+=======
 INSERT INTO `persona` (`id`, `dni`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `educacion`) VALUES
 (7, '12345678', 'García', 'Juan', '1990-05-15', 34, 1, 'Masculino', 'Soltero', 1),
 (8, '23456789', 'López', 'María', '1985-08-20', 39, 2, 'Femenino', 'Casada', 2),
@@ -125733,6 +125742,7 @@ INSERT INTO `persona` (`id`, `dni`, `apellidos`, `nombres`, `fechanac`, `edad`, 
 (10, '45678901', 'Rodríguez', 'Ana', '1988-11-25', 36, 4, 'Femenino', 'Soltera', 4),
 (11, '56789012', 'Fernández', 'Diego', '1995-07-30', 29, 5, 'Masculino', 'Soltero', 5),
 (12, '67890123', 'Gómez', 'Laura', '1991-01-05', 33, 6, 'Femenino', 'Casada', 6);
+>>>>>>> main:Base de datos/SPP_V2.sql
 
 -- --------------------------------------------------------
 
@@ -127778,6 +127788,26 @@ INSERT INTO `rol` (`id_rol`, `nombre_rol`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `rol`
+--
+
+CREATE TABLE `rol` (
+  `id_rol` int(11) NOT NULL,
+  `nombre_rol` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `rol`
+--
+
+INSERT INTO `rol` (`id_rol`, `nombre_rol`) VALUES
+(1, 'admin'),
+(2, 'usuario'),
+(3, 'otro_rol');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `situacionlegal`
 --
 
@@ -127976,8 +128006,7 @@ ALTER TABLE `paises`
 --
 ALTER TABLE `persona`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `direccion` (`direccion`),
-  ADD KEY `educacion` (`educacion`);
+  ADD KEY `fk_persona_rol` (`id_rol`);
 
 --
 -- Indices de la tabla `ppl`
@@ -128132,15 +128161,15 @@ ALTER TABLE `persona`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT de la tabla `ppl`
+-- AUTO_INCREMENT de la tabla `rol`
 --
+<<<<<<< HEAD:Base de datos/spp.sql
+ALTER TABLE `rol`
+  MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+=======
 ALTER TABLE `ppl`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
---
--- AUTO_INCREMENT de la tabla `provincias`
---
-ALTER TABLE `provincias`
   MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2204;
 
 --
@@ -128160,13 +128189,13 @@ ALTER TABLE `tipodelito`
 --
 ALTER TABLE `visitas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+>>>>>>> main:Base de datos/SPP_V2.sql
 
 --
 -- Restricciones para tablas volcadas
 --
 
 --
--- Filtros para la tabla `ciudades`
 --
 ALTER TABLE `ciudades`
   ADD CONSTRAINT `ciudades_ibfk_1` FOREIGN KEY (`id_prov`) REFERENCES `provincias` (`id`);
