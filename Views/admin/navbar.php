@@ -1,10 +1,32 @@
-<?
+<?php
+require '../../conn/connection.php';
+
 session_start();
 
 // Verificar si el usuario está autenticado
 if (!isset($_SESSION['id_usuario'])) {
-    header('Location: home.php');
-    exit;
+  header('Location: home.php');
+  exit;
+}
+$id_rol = $_SESSION['id_rol']; // Supongo que id_rol está almacenado en la sesión
+
+// Consulta para obtener el nombre del rol
+$query = "SELECT nombre_rol FROM rol WHERE id_rol = ?";
+$stmt = $conexion->prepare($query);
+
+if (!$stmt) {
+  die("Error en la preparación de la consulta: " . $conexion->error);
+}
+
+$stmt->bind_param("i", $id_rol);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result && $result->num_rows > 0) {
+  $rol = $result->fetch_assoc();
+  $nombre_rol = $rol['nombre_rol'];
+} else {
+  $nombre_rol = "Usuario Desconocido";
 }
 
 // Desactivar la caché
@@ -12,8 +34,10 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,7 +80,7 @@ header("Pragma: no-cache");
   <!-- Bootstrap-->
   <script defer src="../../js/tabla.js"></script>
   <!-- ------------FIN-DATATABLES----- -->
-   
+
   <!-- -------------sweetalert2(alertas emergentes)------------------   -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../../js/alertas.js"></script>
@@ -68,21 +92,22 @@ header("Pragma: no-cache");
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <!-- ------------------------------- -->
 </head>
+
 <body>
   <style>
     body {
-      background: linear-gradient(135deg,#f2d022,#f2d022);
+      background: linear-gradient(135deg, #f2d022, #f2d022);
     }
   </style>
 
   <script>
-      window.history.pushState(null, "", window.location.href); 
-      window.onpopstate = function() {
-          window.history.pushState(null, "", window.location.href);
-      };
+    window.history.pushState(null, "", window.location.href);
+    window.onpopstate = function() {
+      window.history.pushState(null, "", window.location.href);
+    };
   </script>
-<!-- ---------------MENSAJE REGISTROS-------------- -->
-<?php
+  <!-- ---------------MENSAJE REGISTROS-------------- -->
+  <?php
   $mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : '';
   $error = isset($_GET['error']) ? $_GET['error'] : '';
   ?>
@@ -113,7 +138,7 @@ header("Pragma: no-cache");
           icon: "error",
           title: "Error",
           text: "<?php echo $error; ?>",
-          showConfirmButton: false,          
+          showConfirmButton: false,
           timer: 1700
         }).then(() => {
           // Eliminar parámetro de la URL
@@ -136,37 +161,43 @@ header("Pragma: no-cache");
           <span class="navbar-toggler-icon"></span>
         </button>
         <!-- ------------------------------------------------------- -->
-        
 
-            <div class="collapse navbar-collapse " id="navbarNav">
-              <ul class="navbar-nav mr-auto ">
-             <!-- --------------------------- -->    
-             <li class="nav-item  pr-3">
-             <a class="nav-link " href="ppl_index.php">PPL</a>
-            </li>  
+
+        <div class="collapse navbar-collapse " id="navbarNav">
+          <ul class="navbar-nav mr-auto ">
+            <!-- --------------------------- -->
             <li class="nav-item  pr-3">
-             <a class="nav-link " href="admin_index.php">Admininstrador</a>
+              <a class="nav-link " href="ppl_index.php">PPL</a>
             </li>
-          </ul>     
+            <li class="nav-item  pr-3">
+              <a class="nav-link " href="admin_index.php">Admininstrador</a>
+            </li>
+          </ul>
           <!-- ------------------------------------------------------- -->
           <form class="form-inline d-flex justify-content-end">
             <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav">
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <!-- iconos sacados de "fontawesome" -->
                     <i class="fas fa-user pr-2"></i>
-                    Administrador:
-                    <?php if (isset($_SESSION['nombres']) ) : ?>                    
-                    <?php echo $_SESSION['nombres'] ; ?>
-                    <?php endif; ?>
-                    </a>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <!-- <li><a class="dropdown-item" href="#"> <i class="fas fa-user-alt pe-2"></i>My Profile</a></li> -->
-                <li><a class="dropdown-item" href="#"> <i class="fas fa-cog pe-2"></i>Configuración</a></li>
-                <li><a class="dropdown-item" href="javascript:cerrar()"> <i class="fa fa-power-off pe-2"></i>Cerrar Sesión</a></li>
-              </ul>
-              </li>
+                    <span class="mr-3">
+                      <?php if (isset($nombre_rol)) : ?>
+                        <?php echo $nombre_rol; ?>
+                      <?php else : ?>
+                        "Usuario Desconocido"
+                      <?php endif; ?>
+                      <span>
+                      <?php if (isset($_SESSION['nombres'])) : ?>
+                        <?php echo $_SESSION['nombres']; ?>
+                      <?php endif; ?>
+                    </span>
+                    </span>
+                  </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                      <li><a class="dropdown-item" href="#"> <i class="fas fa-cog pe-2"></i>Configuración</a></li>
+                      <li><a class="dropdown-item" href="javascript:cerrar()"> <i class="fa fa-power-off pe-2"></i>Cerrar Sesión</a></li>
+                    </ul>
+                </li>
             </div>
             </ul>
           </form>
