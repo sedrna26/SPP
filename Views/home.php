@@ -1,75 +1,61 @@
 <?php
 require '../conn/connection.php';
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
+// Redirigir si ya está autenticado
 if (isset($_SESSION['id_usuario'])) {
     header('Location: admin/index.php');
     exit;
 }
 
 if ($_POST) {
-    $messages = [
-        "1" => "Credenciales incorrectas",
-        "2" => "No ha iniciado sesión",
-        "3" => "No tienes permisos"
-    ];
+    $nombre_usuario = $_POST['nombre_usuario'];
+    $contrasena = $_POST['contrasena'];
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $dni = $_POST['dni'];
-        $clave = $_POST['clave']; 
+    if (!empty($nombre_usuario) && !empty($contrasena)) {
+        $sql = "SELECT u.*, p.nombres, p.apellidos, r.nombre_rol 
+                FROM usuarios u
+                JOIN persona p ON u.id_persona = p.id
+                JOIN rol r ON u.id_rol = r.id_rol
+                WHERE u.nombre_usuario = :nombre_usuario";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':nombre_usuario', $nombre_usuario, PDO::PARAM_STR);
+        $stmt->execute();
 
-        if (!empty($dni) && !empty($clave)) {
-            
-            $sql = "SELECT persona.*, rol.nombre_rol FROM persona 
-                    JOIN rol ON persona.id_rol = rol.id_rol 
-                    WHERE dni = :dni";
-            $stmt = $db->prepare($sql);
-            $stmt->bindParam(':dni', $dni, PDO::PARAM_STR);
-            $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Verifica si el usuario existe
-            if ($stmt->rowCount() > 0) {
-                $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+            // Verificación de la contraseña
+            if (password_verify($contrasena, $usuario['contrasena'])) {
+                $_SESSION['id_usuario'] = $usuario['id_usuario'];
+                $_SESSION['nombres'] = $usuario['nombres'];
+                $_SESSION['apellidos'] = $usuario['apellidos'];
+                $_SESSION['id_rol'] = $usuario['id_rol'];
 
-                // Aca se compara la clave
-                if ($clave === $usuario['clave']) {
-                 
-                    $_SESSION['id_usuario'] = $usuario['id'];
-                    $_SESSION['nombres'] = $usuario['nombres'];
-                    $_SESSION['apellidos'] = $usuario['apellidos'];
-                    $_SESSION['id_rol'] = $usuario['id_rol'];
-
-                    // Se va a dirigir basado en el rol , actualmente hay 1(admin).
-                    if ($usuario['id_rol'] == 1) {
-                        header('Location: admin/index.php');
-                        exit;
-                    } elseif ($usuario['id_rol'] == 2) {
-                        header('Location: /index.php');
-                        exit;
-                    } elseif ($usuario['id_rol'] == 3) {
-                        header('Location: /index.php');
-                        exit;
-                    } else {
-                        $_SESSION['message'] = $messages[3];
-                    }
+                // Redirigir según el rol
+                if ($usuario['id_rol'] == 1) {
+                    header('Location: admin/index.php');
+                    exit;
                 } else {
-                    $_SESSION['message'] = $messages[1]; 
+                    header('Location: admin/index.php');
+                    exit;
                 }
             } else {
-                $_SESSION['message'] = $messages[1];
+                $_SESSION['message'] = "Credenciales incorrectas";
             }
         } else {
-            $_SESSION['message'] = $messages[1];
+            $_SESSION['message'] = "Usuario no encontrado";
         }
     }
-
-    header('Location: home.php');
-    exit;
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -80,8 +66,9 @@ if ($_POST) {
     <link rel="shortcut icon" href="../img/LOGO.ico" type="image/x-icon" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Roboto&display=swap');
+
         body {
-            background: #f2d022;
+            background: linear-gradient(135deg, #fecb37, #d4b021);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -89,31 +76,25 @@ if ($_POST) {
         }
     </style>
 </head>
+
 <body class="container d-flex justify-content-center">
-    <div class="p-4 rounded-5 text-secondary shadow my-2" style="width: 25rem; background-color: #b4b2b8;">
+    <div class="p-4 rounded-5 text-secondary shadow my-2" style="width: 25rem; background-color: #ced4da;">
         <div class="d-flex justify-content-center">
             <img src="../img/LOGO.ico" alt="login-icon" style="height: 15rem" class="w-75" />
         </div>
-        <div class="text-center fs-1 fw-bold" style="color: #000;">Bienvenid@</div>
-        <div style="color: #000;">
-
-        
-        <b>44123890</b>
-        <p><b>123sj</b></p>
-        </div>
-        
+        <div class="text-center fs-1 fw-bold">Bienvenid@</div>
         <form method="post" class="form" action="">
             <div class="input-group mt-4">
                 <div class="input-group-text bg-info">
                     <img src="../img/username-icon.svg" alt="dni-icon" style="height: 1rem" />
                 </div>
-                <input class="form-control bg-light" type="text" placeholder="DNI" name="dni" required />
+                <input class="form-control bg-light" type="text" placeholder="Nombre de Usuario" name="nombre_usuario" required />
             </div>
             <div class="input-group mt-2">
                 <div class="input-group-text bg-info">
                     <img src="../img/padlock-svgrepo-com.svg" alt="password-icon" style="height: 1rem" />
                 </div>
-                <input class="form-control bg-light" type="password" placeholder="Clave" name="clave" id="clave" required />
+                <input class="form-control bg-light" type="password" placeholder="contraseña" name="contrasena" id="contrasena" required />
             </div>
             <button type="submit" class="btn btn-primary text-white w-100 mt-4 fs-5 fw-semibold shadow-sm">Iniciar Sesión</button>
             <?php
@@ -125,4 +106,5 @@ if ($_POST) {
         </form>
     </div>
 </body>
+
 </html>
