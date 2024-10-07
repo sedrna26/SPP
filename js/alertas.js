@@ -40,23 +40,22 @@ function eliminar3 (id_persona){
            }          
     });
 }
-function eliminar4 (id_persona){
+//Funciona para mostrar alerta antes de eliminar Usuarios
+function eliminar4(id_usuario) {
   Swal.fire({
       icon: "error",
-      title: "¿Borrar?",        
+      title: "¿Borrar?",
+      text: "No podrás revertir esto.",
       showCancelButton: true,
-      confirmButtonText: "Si",   
+      confirmButtonText: "Sí",
       confirmButtonColor: "#007bff",
-      cancelButtonColor: '#dc3545',     
-    }).then((result) => {  
-          if (result.isConfirmed) { 
-            window.location = "../admin/admin_index.php?txtID="+id_persona;
-           }          
-    });
+      cancelButtonColor: '#dc3545',
+  }).then((result) => {
+      if (result.isConfirmed) {
+          window.location = "admin_index.php?txtID=" + id_usuario;
+      }
+  });
 }
-
-
-
 // ---------------------------------------------
 function cerrar (){
   Swal.fire({
