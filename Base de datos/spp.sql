@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 04-10-2024 a las 00:19:21
+-- Servidor: localhost
+-- Tiempo de generación: 11-10-2024 a las 05:42:14
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -125181,7 +125181,524 @@ INSERT INTO `ciudades` (`id`, `id_prov`, `nombre`) VALUES
 (790311, 2203, 'Ricaurte'),
 (790312, 2203, 'Sugamuxi'),
 (790313, 2203, 'Tundama'),
-(790314, 2203, 'Valderrama');
+(790314, 2203, 'Valderrama'),
+(790315, 2204, 'Comuna 1'),
+(790316, 2204, 'Comuna 2'),
+(790317, 2204, 'Comuna 3'),
+(790318, 2204, 'Comuna 4'),
+(790319, 2204, 'Comuna 5'),
+(790320, 2204, 'Comuna 6'),
+(790321, 2204, 'Comuna 7'),
+(790322, 2204, 'Comuna 8'),
+(790323, 2204, 'Comuna 9'),
+(790324, 2204, 'Comuna 10'),
+(790325, 2204, 'Comuna 11'),
+(790326, 2204, 'Comuna 12'),
+(790327, 2204, 'Comuna 13'),
+(790328, 2204, 'Comuna 14'),
+(790329, 2204, 'Comuna 15'),
+(790330, 2205, 'Aluminé'),
+(790331, 2205, 'Añelo'),
+(790332, 2205, 'Catán Lil'),
+(790333, 2205, 'Chos Malal'),
+(790334, 2205, 'Collón Curá'),
+(790335, 2205, 'Confluencia'),
+(790336, 2205, 'Huiliches'),
+(790337, 2205, 'Lácar'),
+(790338, 2205, 'Loncopué'),
+(790339, 2205, 'Los Lagos'),
+(790340, 2205, 'Minas'),
+(790341, 2205, 'Ñorquín'),
+(790342, 2205, 'Pehuenches'),
+(790343, 2205, 'Picún Leufú'),
+(790344, 2205, 'Picunches'),
+(790345, 2205, 'Zapala'),
+(790346, 2206, 'Ayacucho'),
+(790347, 2206, 'Belgrano'),
+(790348, 2206, 'Chacabuco'),
+(790349, 2206, 'Coronel Pringles'),
+(790350, 2206, 'General Pedernera'),
+(790351, 2206, 'Gobernador Dupuy'),
+(790352, 2206, 'Juan Martín de Pueyrredón'),
+(790353, 2206, 'Junín'),
+(790354, 2206, 'Libertador General San Martín'),
+(790355, 2207, 'Belgrano'),
+(790356, 2207, 'Caseros'),
+(790357, 2207, 'Castellanos'),
+(790358, 2207, 'Constitución'),
+(790359, 2207, 'Garay'),
+(790360, 2207, 'General López'),
+(790361, 2207, 'General Obligado'),
+(790362, 2207, 'Iriondo'),
+(790363, 2207, 'La Capital'),
+(790364, 2207, 'Las Colonias'),
+(790365, 2207, 'Rosario'),
+(790366, 2207, 'San Cristóbal'),
+(790367, 2207, 'San Javier'),
+(790368, 2207, 'San Jerónimo'),
+(790369, 2207, 'San Justo'),
+(790370, 2207, 'San Lorenzo'),
+(790371, 2207, 'San Martín'),
+(790372, 2207, 'Vera'),
+(790373, 2207, '9 de Julio'),
+(790374, 2208, 'Arauco'),
+(790375, 2208, 'Capital'),
+(790376, 2208, 'Castro Barros'),
+(790377, 2208, 'Chamical'),
+(790378, 2208, 'Chilecito'),
+(790379, 2208, 'Coronel Felipe Varela'),
+(790380, 2208, 'Famatina'),
+(790381, 2208, 'General Angel Vicente Peñaloza'),
+(790382, 2208, 'General Belgrano'),
+(790383, 2208, 'General Juan Facundo Quiroga'),
+(790384, 2208, 'General Lamadrid'),
+(790385, 2208, 'General Ocampo'),
+(790386, 2208, 'General San Martín'),
+(790387, 2208, 'Independencia'),
+(790388, 2208, 'Rosario Vera Peñaloza'),
+(790389, 2208, 'San Blas de los Sauces'),
+(790390, 2208, 'Sanagasta'),
+(790391, 2208, 'Vinchina'),
+(790392, 2209, 'Ambato'),
+(790393, 2209, 'Ancasti'),
+(790394, 2209, 'Andalgalá'),
+(790395, 2209, 'Antofagasta de la Sierra'),
+(790396, 2209, 'Belén'),
+(790397, 2209, 'Capayán'),
+(790398, 2209, 'Capital'),
+(790399, 2209, 'El Alto'),
+(790400, 2209, 'Fray Mamerto Esquiú'),
+(790401, 2209, 'La Paz'),
+(790402, 2209, 'Paclín'),
+(790403, 2209, 'Pomán'),
+(790404, 2209, 'Santa María'),
+(790405, 2209, 'Santa Rosa'),
+(790406, 2209, 'Tinogasta'),
+(790407, 2209, 'Valle Viejo'),
+(790408, 2210, 'Burruyacú'),
+(790409, 2210, 'Capital'),
+(790410, 2210, 'Chicligasta'),
+(790411, 2210, 'Cruz Alta'),
+(790412, 2210, 'Famaillá'),
+(790413, 2210, 'Graneros'),
+(790414, 2210, 'Juan Bautista Alberdi'),
+(790415, 2210, 'La Cocha'),
+(790416, 2210, 'Leales'),
+(790417, 2210, 'Lules'),
+(790418, 2210, 'Monteros'),
+(790419, 2210, 'Río Chico'),
+(790420, 2210, 'Simoca'),
+(790421, 2210, 'Tafí del Valle'),
+(790422, 2210, 'Tafí Viejo'),
+(790423, 2210, 'Trancas'),
+(790424, 2210, 'Yerba Buena'),
+(790425, 2211, '12 de Octubre'),
+(790426, 2211, '1° de Mayo'),
+(790427, 2211, '25 de Mayo'),
+(790428, 2211, '2 de Abril'),
+(790429, 2211, '9 de Julio'),
+(790430, 2211, 'Almirante Brown'),
+(790431, 2211, 'Bermejo'),
+(790432, 2211, 'Chacabuco'),
+(790433, 2211, 'Comandante Fernández'),
+(790434, 2211, 'Fray Justo Santa María de Oro'),
+(790435, 2211, 'General Belgrano'),
+(790436, 2211, 'General Donovan'),
+(790437, 2211, 'General Güemes'),
+(790438, 2211, 'Independencia'),
+(790439, 2211, 'Libertad'),
+(790440, 2211, 'Libertador General San Martín'),
+(790441, 2211, 'Maipú'),
+(790442, 2211, 'Mayor Luis J. Fontana'),
+(790443, 2211, 'O\'Higgins'),
+(790444, 2211, 'Presidencia de la Plaza'),
+(790445, 2211, 'Quitilipi'),
+(790446, 2211, 'San Fernando'),
+(790447, 2211, 'San Lorenzo'),
+(790448, 2211, 'Sargento Cabral'),
+(790449, 2211, 'Tapenagá'),
+(790450, 2212, 'Bermejo'),
+(790451, 2212, 'Formosa'),
+(790452, 2212, 'Laishi'),
+(790453, 2212, 'Matacos'),
+(790454, 2212, 'Patiño'),
+(790455, 2212, 'Pilagás'),
+(790456, 2212, 'Pilcomayo'),
+(790457, 2212, 'Pirané'),
+(790458, 2212, 'Ramón Lista'),
+(790459, 2213, 'Corpen Aike'),
+(790460, 2213, 'Deseado'),
+(790461, 2213, 'Güer Aike'),
+(790462, 2213, 'Lago Argentino'),
+(790463, 2213, 'Lago Buenos Aires'),
+(790464, 2213, 'Magallanes'),
+(790465, 2213, 'Río Chico'),
+(790466, 2214, 'Cushamen'),
+(790467, 2214, 'Escalante'),
+(790468, 2214, 'Florentino Ameghino'),
+(790469, 2214, 'Futaleufú'),
+(790470, 2214, 'Gaiman'),
+(790471, 2214, 'Gastre'),
+(790472, 2214, 'Languiñeo'),
+(790473, 2214, 'Mártires'),
+(790474, 2214, 'Paso de Indios'),
+(790475, 2214, 'Rawson'),
+(790476, 2214, 'Río Senguer'),
+(790477, 2214, 'Sarmiento'),
+(790478, 2214, 'Tehuelches'),
+(790479, 2214, 'Telsen'),
+(790480, 2215, 'Capital'),
+(790481, 2215, 'General Alvear'),
+(790482, 2215, 'Godoy Cruz'),
+(790483, 2215, 'Guaymallén'),
+(790484, 2215, 'Junín'),
+(790485, 2215, 'La Paz'),
+(790486, 2215, 'Las Heras'),
+(790487, 2215, 'Lavalle'),
+(790488, 2215, 'Luján de Cuyo'),
+(790489, 2215, 'Maipú'),
+(790490, 2215, 'Malargüe'),
+(790491, 2215, 'Rivadavia'),
+(790492, 2215, 'San Carlos'),
+(790493, 2215, 'San Martín'),
+(790494, 2215, 'San Rafael'),
+(790495, 2215, 'Santa Rosa'),
+(790496, 2215, 'Tunuyán'),
+(790497, 2215, 'Tupungato'),
+(790498, 2216, 'Colón'),
+(790499, 2216, 'Concordia'),
+(790500, 2216, 'Diamante'),
+(790501, 2216, 'Federación'),
+(790502, 2216, 'Federal'),
+(790503, 2216, 'Feliciano'),
+(790504, 2216, 'Gualeguay'),
+(790505, 2216, 'Gualeguaychú'),
+(790506, 2216, 'Islas del Ibicuy'),
+(790507, 2216, 'La Paz'),
+(790508, 2216, 'Nogoyá'),
+(790509, 2216, 'Paraná'),
+(790510, 2216, 'San Salvador'),
+(790511, 2216, 'Tala'),
+(790512, 2216, 'Uruguay'),
+(790513, 2216, 'Victoria'),
+(790514, 2216, 'Villaguay'),
+(790515, 2217, '25 de Mayo'),
+(790516, 2217, '9 de Julio'),
+(790517, 2217, 'Albardón'),
+(790518, 2217, 'Angaco'),
+(790519, 2217, 'Calingasta'),
+(790520, 2217, 'Capital'),
+(790521, 2217, 'Caucete'),
+(790522, 2217, 'Chimbas'),
+(790523, 2217, 'Iglesia'),
+(790524, 2217, 'Jáchal'),
+(790525, 2217, 'Pocito'),
+(790526, 2217, 'Rawson'),
+(790527, 2217, 'Rivadavia'),
+(790528, 2217, 'San Martín'),
+(790529, 2217, 'Santa Lucía'),
+(790530, 2217, 'Sarmiento'),
+(790531, 2217, 'Ullum'),
+(790532, 2217, 'Valle Fértil'),
+(790533, 2217, 'Zonda'),
+(790534, 2218, 'Cochinoca'),
+(790535, 2218, 'Dr. Manuel Belgrano'),
+(790536, 2218, 'El Carmen'),
+(790537, 2218, 'Humahuaca'),
+(790538, 2218, 'Ledesma'),
+(790539, 2218, 'Palpalá'),
+(790540, 2218, 'Rinconada'),
+(790541, 2218, 'San Antonio'),
+(790542, 2218, 'San Pedro'),
+(790543, 2218, 'Santa Bárbara'),
+(790544, 2218, 'Santa Catalina'),
+(790545, 2218, 'Susques'),
+(790546, 2218, 'Tilcara'),
+(790547, 2218, 'Tumbaya'),
+(790548, 2218, 'Valle Grande'),
+(790549, 2218, 'Yavi'),
+(790550, 2219, 'Aguirre'),
+(790551, 2219, 'Alberdi'),
+(790552, 2219, 'Atamisqui'),
+(790553, 2219, 'Avellaneda'),
+(790554, 2219, 'Banda'),
+(790555, 2219, 'Belgrano'),
+(790556, 2219, 'Capital'),
+(790557, 2219, 'Choya'),
+(790558, 2219, 'Copo'),
+(790559, 2219, 'Figueroa'),
+(790560, 2219, 'General Taboada'),
+(790561, 2219, 'Guasayán'),
+(790562, 2219, 'Jiménez'),
+(790563, 2219, 'Juan Felipe Ibarra'),
+(790564, 2219, 'Loreto'),
+(790565, 2219, 'Mitre'),
+(790566, 2219, 'Moreno'),
+(790567, 2219, 'Ojo de Agua'),
+(790568, 2219, 'Pellegrini'),
+(790569, 2219, 'Quebrachos'),
+(790570, 2219, 'Río Hondo'),
+(790571, 2219, 'Rivadavia'),
+(790572, 2219, 'Robles'),
+(790573, 2219, 'Salavina'),
+(790574, 2219, 'San Martín'),
+(790575, 2219, 'Sarmiento'),
+(790576, 2219, 'Silípica'),
+(790577, 2227, 'Ushuaia'),
+(790578, 2227, 'Río Grande'),
+(790579, 2227, 'Tolhuin'),
+(790580, 2227, 'Antártida Argentina'),
+(790581, 2227, 'Islas del Atlántico Sur'),
+(790582, 2226, 'Hucal'),
+(790583, 2226, 'Caleu Caleu'),
+(790584, 2226, 'Lihuel Calel'),
+(790585, 2226, 'Curacó'),
+(790586, 2226, 'Loventué'),
+(790587, 2226, 'Limay Mahuida'),
+(790588, 2226, 'Puelén'),
+(790589, 2226, 'Chalileo'),
+(790590, 2226, 'Chical Co'),
+(790591, 2226, 'Chapaleufú'),
+(790592, 2226, 'Realicó'),
+(790593, 2226, 'Maracó'),
+(790594, 2226, 'Trenel'),
+(790595, 2226, 'Capital'),
+(790596, 2226, 'Catriló'),
+(790597, 2226, 'Quemú Quemú'),
+(790598, 2226, 'Utracán'),
+(790599, 2226, 'Atreucó'),
+(790600, 2226, 'Guatraché'),
+(790601, 2226, 'Conhelo'),
+(790602, 2226, 'Toay'),
+(790603, 2226, 'Rancul'),
+(790604, 2224, 'Tulumba'),
+(790605, 2224, 'Cruz del Eje'),
+(790606, 2224, 'Punilla'),
+(790607, 2224, 'General Roca'),
+(790608, 2224, 'Santa María'),
+(790609, 2224, 'Minas'),
+(790610, 2224, 'San Alberto'),
+(790611, 2224, 'Río Segundo'),
+(790612, 2224, 'San Justo'),
+(790613, 2224, 'Unión'),
+(790614, 2224, 'Tercero Arriba'),
+(790615, 2224, 'Río Cuarto'),
+(790616, 2224, 'Presidente Roque Sáenz Peña'),
+(790617, 2224, 'Río Seco'),
+(790618, 2224, 'Pocho'),
+(790619, 2224, 'Sobremonte'),
+(790620, 2224, 'Capital'),
+(790621, 2224, 'Calamuchita'),
+(790622, 2224, 'Colón'),
+(790623, 2224, 'Juárez Celman'),
+(790624, 2224, 'Ischilín'),
+(790625, 2224, 'Totoral'),
+(790626, 2224, 'General San Martín'),
+(790627, 2224, 'San Javier'),
+(790628, 2224, 'Río Primero'),
+(790629, 2224, 'Marcos Juárez'),
+(790630, 2223, 'La Viña'),
+(790631, 2223, 'Metán'),
+(790632, 2223, 'Molinos'),
+(790633, 2223, 'General Güemes'),
+(790634, 2223, 'San Carlos'),
+(790635, 2223, 'Cachi'),
+(790636, 2223, 'Chicoana'),
+(790637, 2223, 'Anta'),
+(790638, 2223, 'La Caldera'),
+(790639, 2223, 'Iruya'),
+(790640, 2223, 'Los Andes'),
+(790641, 2223, 'Orán'),
+(790642, 2223, 'Rosario de la Frontera'),
+(790643, 2223, 'Capital'),
+(790644, 2223, 'La Candelaria'),
+(790645, 2223, 'Guachipas'),
+(790646, 2223, 'La Poma'),
+(790647, 2223, 'Santa Victoria'),
+(790648, 2223, 'General José de San Martín'),
+(790649, 2223, 'Rivadavia'),
+(790650, 2223, 'Rosario de Lerma'),
+(790651, 2223, 'Cafayate'),
+(790652, 2223, 'Cerrillos'),
+(790653, 2222, 'Montecarlo'),
+(790654, 2222, 'Eldorado'),
+(790655, 2222, 'San Pedro'),
+(790656, 2222, 'Libertador General San Martín'),
+(790657, 2222, 'Cainguás'),
+(790658, 2222, 'Capital'),
+(790659, 2222, 'Candelaria'),
+(790660, 2222, 'General Manuel Belgrano'),
+(790661, 2222, 'Guaraní'),
+(790662, 2222, 'Iguazú'),
+(790663, 2222, '25 de Mayo'),
+(790664, 2222, 'Oberá'),
+(790665, 2222, 'San Ignacio'),
+(790666, 2222, 'Leandro N. Alem'),
+(790667, 2222, 'San Javier'),
+(790668, 2222, 'Concepción'),
+(790669, 2222, 'Apóstoles'),
+(790670, 2221, 'Sauce'),
+(790671, 2221, 'Monte Caseros'),
+(790672, 2221, 'San Miguel'),
+(790673, 2221, 'Empedrado'),
+(790674, 2221, 'Ituzaingó'),
+(790675, 2221, 'Capital'),
+(790676, 2221, 'San Luis del Palmar'),
+(790677, 2221, 'Berón de Astrada'),
+(790678, 2221, 'San Martín'),
+(790679, 2221, 'Paso de los Libres'),
+(790680, 2221, 'Goya'),
+(790681, 2221, 'Lavalle'),
+(790682, 2221, 'San Roque'),
+(790683, 2221, 'General Alvear'),
+(790684, 2221, 'Concepción'),
+(790685, 2221, 'Bella Vista'),
+(790686, 2221, 'Santo Tomé'),
+(790687, 2221, 'Saladas'),
+(790688, 2221, 'General Paz'),
+(790689, 2221, 'Mburucuyá'),
+(790690, 2221, 'Mercedes'),
+(790691, 2220, 'San Antonio'),
+(790692, 2220, 'Conesa'),
+(790693, 2220, 'Valcheta'),
+(790694, 2220, '9 de Julio'),
+(790695, 2220, 'Ñorquinco'),
+(790696, 2220, '25 de Mayo'),
+(790697, 2220, 'Pilcaniyeu'),
+(790698, 2220, 'El Cuy'),
+(790699, 2220, 'Adolfo Alsina'),
+(790700, 2220, 'Pichi Mahuida'),
+(790701, 2220, 'Bariloche'),
+(790702, 2220, 'Avellaneda'),
+(790703, 2220, 'General Roca'),
+(790704, 2225, 'Adolfo Gonzales Chaves'),
+(790705, 2225, 'Saladillo'),
+(790706, 2225, 'Las Flores'),
+(790707, 2225, 'Rojas'),
+(790708, 2225, 'Escobar'),
+(790709, 2225, 'José C. Paz'),
+(790710, 2225, 'Bahía Blanca'),
+(790711, 2225, 'San Antonio de Areco'),
+(790712, 2225, 'Maipú'),
+(790713, 2225, 'General Alvarado'),
+(790714, 2225, 'General Pueyrredón'),
+(790715, 2225, 'Mar Chiquita'),
+(790716, 2225, 'Villa Gesell'),
+(790717, 2225, 'Pinamar'),
+(790718, 2225, 'General Lavalle'),
+(790719, 2225, 'La Costa'),
+(790720, 2225, 'Magdalena'),
+(790721, 2225, 'Vicente López'),
+(790722, 2225, 'Rauch'),
+(790723, 2225, 'Moreno'),
+(790724, 2225, 'La Matanza'),
+(790725, 2225, 'Tandil'),
+(790726, 2225, 'Coronel Suárez'),
+(790727, 2225, 'Salliqueló'),
+(790728, 2225, 'Berazategui'),
+(790729, 2225, 'General Paz'),
+(790730, 2225, 'General Guido'),
+(790731, 2225, 'General Juan Madariaga'),
+(790732, 2225, 'Tornquist'),
+(790733, 2225, 'Coronel Pringles'),
+(790734, 2225, 'Villarino'),
+(790735, 2225, 'General Pinto'),
+(790736, 2225, 'San Cayetano'),
+(790737, 2225, 'Tres Arroyos'),
+(790738, 2225, 'Coronel Dorrego'),
+(790739, 2225, 'Necochea'),
+(790740, 2225, 'Chascomús'),
+(790741, 2225, 'Punta Indio'),
+(790742, 2225, 'Lezama'),
+(790743, 2225, 'Campana'),
+(790744, 2225, 'Adolfo Alsina'),
+(790745, 2225, 'Pellegrini'),
+(790746, 2225, 'Castelli'),
+(790747, 2225, 'Almirante Brown'),
+(790748, 2225, 'Presidente Perón'),
+(790749, 2225, 'Junín'),
+(790750, 2225, 'Brandsen'),
+(790751, 2225, 'Chivilcoy'),
+(790752, 2225, 'Alberti'),
+(790753, 2225, 'Bragado'),
+(790754, 2225, 'General Las Heras'),
+(790755, 2225, 'Carlos Casares'),
+(790756, 2225, 'Marcos Paz'),
+(790757, 2225, 'General Viamonte'),
+(790758, 2225, 'Carlos Tejedor'),
+(790759, 2225, '25 de Mayo'),
+(790760, 2225, '9 de Julio'),
+(790761, 2225, 'Pehuajó'),
+(790762, 2225, 'Tapalqué'),
+(790763, 2225, 'Trenque Lauquen'),
+(790764, 2225, 'General Belgrano'),
+(790765, 2225, 'Monte'),
+(790766, 2225, 'Roque Pérez'),
+(790767, 2225, 'Olavarría'),
+(790768, 2225, 'Merlo'),
+(790769, 2225, 'Esteban Echeverría'),
+(790770, 2225, 'Arrecifes'),
+(790771, 2225, 'Capitán Sarmiento'),
+(790772, 2225, 'Carmen de Areco'),
+(790773, 2225, 'Salto'),
+(790774, 2225, 'Exaltación de la Cruz'),
+(790775, 2225, 'San Miguel'),
+(790776, 2225, 'San Andrés de Giles'),
+(790777, 2225, 'Mercedes'),
+(790778, 2225, 'Pilar'),
+(790779, 2225, 'Luján'),
+(790780, 2225, 'Hurlingham'),
+(790781, 2225, 'Morón'),
+(790782, 2225, 'Chacabuco'),
+(790783, 2225, 'Malvinas Argentinas'),
+(790784, 2225, 'Tres Lomas'),
+(790785, 2225, 'Ayacucho'),
+(790786, 2225, 'Guaminí'),
+(790787, 2225, 'General San Martín'),
+(790788, 2225, 'Lincoln'),
+(790789, 2225, 'Laprida'),
+(790790, 2225, 'San Isidro'),
+(790791, 2225, 'Benito Juárez'),
+(790792, 2225, 'Colón'),
+(790793, 2225, 'Ituzaingó'),
+(790794, 2225, 'General Rodríguez'),
+(790795, 2225, 'Suipacha'),
+(790796, 2225, 'Tres de Febrero'),
+(790797, 2225, 'Florencio Varela'),
+(790798, 2225, 'Navarro'),
+(790799, 2225, 'Cañuelas'),
+(790800, 2225, 'San Vicente'),
+(790801, 2225, 'Lobos'),
+(790802, 2225, 'General Alvear'),
+(790803, 2225, 'Quilmes'),
+(790804, 2225, 'Pila'),
+(790805, 2225, 'General La Madrid'),
+(790806, 2225, 'Bolívar'),
+(790807, 2225, 'Balcarce'),
+(790808, 2225, 'Hipólito Yrigoyen'),
+(790809, 2225, 'Dolores'),
+(790810, 2225, 'Azul'),
+(790811, 2225, 'Daireaux'),
+(790812, 2225, 'Saavedra'),
+(790813, 2225, 'Monte Hermoso'),
+(790814, 2225, 'Lobería'),
+(790815, 2225, 'Berisso'),
+(790816, 2225, 'Tordillo'),
+(790817, 2225, 'Zárate'),
+(790818, 2225, 'Ramallo'),
+(790819, 2225, 'San Nicolás'),
+(790820, 2225, 'Lanús'),
+(790821, 2225, 'Leandro N. Alem'),
+(790822, 2225, 'General Arenales'),
+(790823, 2225, 'Rivadavia'),
+(790824, 2225, 'Patagones'),
+(790825, 2225, 'Coronel de Marina Leonardo Rosales'),
+(790826, 2225, 'Baradero'),
+(790827, 2225, 'San Pedro'),
+(790828, 2225, 'Florentino Ameghino'),
+(790829, 2225, 'Lomas de Zamora'),
+(790830, 2225, 'Avellaneda'),
+(790831, 2225, 'La Plata');
 
 -- --------------------------------------------------------
 
@@ -125234,8 +125751,8 @@ CREATE TABLE `domicilio` (
   `id` int(11) NOT NULL,
   `id_pais` int(11) NOT NULL,
   `id_provincia` int(11) NOT NULL,
-  `id_ciudad` int(11) DEFAULT NULL,
-  `departamento` varchar(100) DEFAULT NULL,
+  `id_ciudad` int(11) NOT NULL,
+  `localidad` varchar(100) DEFAULT NULL,
   `direccion` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -125243,37 +125760,37 @@ CREATE TABLE `domicilio` (
 -- Volcado de datos para la tabla `domicilio`
 --
 
-INSERT INTO `domicilio` (`id`, `id_pais`, `id_provincia`, `id_ciudad`, `departamento`, `direccion`) VALUES
-(1, 1, 1, NULL, '1', 'Calle 123, Ciudad A'),
-(2, 1, 2, NULL, '2', 'Avenida 456, Ciudad B'),
-(3, 1, 3, NULL, '3', 'Boulevard 789, Ciudad C'),
-(4, 1, 1, NULL, '4', 'Carrera 321, Ciudad D'),
-(5, 1, 2, NULL, '5', 'Pasaje 654, Ciudad E'),
-(6, 1, 3, NULL, '6', 'Ruta 987, Ciudad F'),
-(7, 1, 1, NULL, '1', 'Calle 123, Ciudad A'),
-(8, 1, 2, NULL, '2', 'Avenida 456, Ciudad B'),
-(9, 1, 3, NULL, '3', 'Boulevard 789, Ciudad C'),
-(10, 1, 1, NULL, '4', 'Pasaje 101, Ciudad D'),
-(11, 1, 2, NULL, '5', 'Ruta 202, Ciudad E'),
-(12, 1, 3, NULL, '6', 'Calle 303, Ciudad F'),
-(13, 1, 1, NULL, '1', 'Calle 123, Ciudad A'),
-(14, 1, 2, NULL, '2', 'Avenida 456, Ciudad B'),
-(15, 1, 3, NULL, '3', 'Boulevard 789, Ciudad C'),
-(16, 1, 1, NULL, '4', 'Pasaje 101, Ciudad D'),
-(17, 1, 2, NULL, '5', 'Ruta 202, Ciudad E'),
-(18, 1, 3, NULL, '6', 'Calle 303, Ciudad F'),
-(19, 1, 1, NULL, '1', 'Calle 123, Ciudad A'),
-(20, 1, 2, NULL, '2', 'Avenida 456, Ciudad B'),
-(21, 1, 3, NULL, '3', 'Boulevard 789, Ciudad C'),
-(22, 1, 1, NULL, '4', 'Pasaje 101, Ciudad D'),
-(23, 1, 2, NULL, '5', 'Ruta 202, Ciudad E'),
-(24, 1, 3, NULL, '6', 'Calle 303, Ciudad F'),
-(25, 1, 1, NULL, '1', 'Calle 123, Ciudad A'),
-(26, 1, 2, NULL, '2', 'Avenida 456, Ciudad B'),
-(27, 1, 3, NULL, '3', 'Boulevard 789, Ciudad C'),
-(28, 1, 1, NULL, '4', 'Pasaje 101, Ciudad D'),
-(29, 1, 2, NULL, '5', 'Ruta 202, Ciudad E'),
-(30, 1, 3, NULL, '6', 'Calle 303, Ciudad F');
+INSERT INTO `domicilio` (`id`, `id_pais`, `id_provincia`, `id_ciudad`, `localidad`, `direccion`) VALUES
+(1, 1, 1, 0, '1', 'Calle 123, Ciudad A'),
+(2, 1, 2, 0, '2', 'Avenida 456, Ciudad B'),
+(3, 1, 3, 0, '3', 'Boulevard 789, Ciudad C'),
+(4, 1, 1, 0, '4', 'Carrera 321, Ciudad D'),
+(5, 1, 2, 0, '5', 'Pasaje 654, Ciudad E'),
+(6, 1, 3, 0, '6', 'Ruta 987, Ciudad F'),
+(7, 1, 1, 0, '1', 'Calle 123, Ciudad A'),
+(8, 1, 2, 0, '2', 'Avenida 456, Ciudad B'),
+(9, 1, 3, 0, '3', 'Boulevard 789, Ciudad C'),
+(10, 1, 1, 0, '4', 'Pasaje 101, Ciudad D'),
+(11, 1, 2, 0, '5', 'Ruta 202, Ciudad E'),
+(12, 1, 3, 0, '6', 'Calle 303, Ciudad F'),
+(13, 1, 1, 0, '1', 'Calle 123, Ciudad A'),
+(14, 1, 2, 0, '2', 'Avenida 456, Ciudad B'),
+(15, 1, 3, 0, '3', 'Boulevard 789, Ciudad C'),
+(16, 1, 1, 0, '4', 'Pasaje 101, Ciudad D'),
+(17, 1, 2, 0, '5', 'Ruta 202, Ciudad E'),
+(18, 1, 3, 0, '6', 'Calle 303, Ciudad F'),
+(19, 1, 1, 0, '1', 'Calle 123, Ciudad A'),
+(20, 1, 2, 0, '2', 'Avenida 456, Ciudad B'),
+(21, 1, 3, 0, '3', 'Boulevard 789, Ciudad C'),
+(22, 1, 1, 0, '4', 'Pasaje 101, Ciudad D'),
+(23, 1, 2, 0, '5', 'Ruta 202, Ciudad E'),
+(24, 1, 3, 0, '6', 'Calle 303, Ciudad F'),
+(25, 1, 1, 0, '1', 'Calle 123, Ciudad A'),
+(26, 1, 2, 0, '2', 'Avenida 456, Ciudad B'),
+(27, 1, 3, 0, '3', 'Boulevard 789, Ciudad C'),
+(28, 1, 1, 0, '4', 'Pasaje 101, Ciudad D'),
+(29, 1, 2, 0, '5', 'Ruta 202, Ciudad E'),
+(30, 1, 3, 0, '6', 'Calle 303, Ciudad F');
 
 -- --------------------------------------------------------
 
@@ -125712,37 +126229,26 @@ INSERT INTO `paises` (`id`, `nombre`) VALUES
 CREATE TABLE `persona` (
   `id` int(11) NOT NULL,
   `dni` varchar(9) DEFAULT NULL,
-  `clave` varchar(255) NOT NULL,
   `apellidos` varchar(50) NOT NULL,
   `nombres` varchar(50) NOT NULL,
   `fechanac` date NOT NULL,
   `edad` int(3) NOT NULL,
-  `direccion` varchar(11) NOT NULL,
+  `direccion` varchar(50) NOT NULL,
   `genero` varchar(50) NOT NULL,
   `estadocivil` varchar(50) NOT NULL,
-<<<<<<< HEAD:Base de datos/spp.sql
-  `id_rol` int(11) DEFAULT NULL
-=======
-  `educacion` int(11) NOT NULL
->>>>>>> main:Base de datos/SPP_V2.sql
+  `educacion` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `persona`
 --
 
-<<<<<<< HEAD:Base de datos/spp.sql
-INSERT INTO `persona` (`id`, `dni`, `clave`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `id_rol`) VALUES
-(1, '44123890', '123sj', 'Castro', 'Lucas Martin', '2000-09-01', 23, '9 de julio', 'Masculino', 'soltero', 1);
-=======
 INSERT INTO `persona` (`id`, `dni`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `educacion`) VALUES
-(7, '12345678', 'García', 'Juan', '1990-05-15', 34, 1, 'Masculino', 'Soltero', 1),
-(8, '23456789', 'López', 'María', '1985-08-20', 39, 2, 'Femenino', 'Casada', 2),
-(9, '34567890', 'Martínez', 'Carlos', '1992-03-10', 32, 3, 'Masculino', 'Divorciado', 3),
-(10, '45678901', 'Rodríguez', 'Ana', '1988-11-25', 36, 4, 'Femenino', 'Soltera', 4),
-(11, '56789012', 'Fernández', 'Diego', '1995-07-30', 29, 5, 'Masculino', 'Soltero', 5),
-(12, '67890123', 'Gómez', 'Laura', '1991-01-05', 33, 6, 'Femenino', 'Casada', 6);
->>>>>>> main:Base de datos/SPP_V2.sql
+(1, '12345678', 'Perez', 'Demian', '1999-05-10', 25, 'Calle Falsa 123', 'Masculino', 'Soltero', NULL),
+(2, '23456789', 'Lopez', 'Marcos', '1997-04-15', 27, 'Av. Siempreviva 456', 'Masculino', 'Casado', NULL),
+(3, '34567890', 'Garcia', 'Lopez', '2000-07-20', 24, 'Calle Luna 789', 'Masculino', 'Soltero', NULL),
+(4, '45678901', 'Rodriguez', 'Jugo', '1995-10-30', 29, 'Av. Sol 101', 'Masculino', 'Soltero', NULL),
+(5, '45476132', 'Gonzales', 'Juan', '2000-10-18', 23, 'libertador 534', 'Masculino', 'Soltero', NULL);
 
 -- --------------------------------------------------------
 
@@ -127763,7 +128269,31 @@ INSERT INTO `provincias` (`id`, `id_pais`, `nombre`) VALUES
 (2196, 69, 'Jeju'),
 (2201, 25, 'Delhi'),
 (2202, 82, 'Bolivar'),
-(2203, 82, 'Boyacá');
+(2203, 82, 'Boyacá'),
+(2204, 5, 'Ciudad Autónoma de Buenos Aires'),
+(2205, 5, 'Neuquén'),
+(2206, 5, 'San Luis'),
+(2207, 5, 'Santa Fe'),
+(2208, 5, 'La Rioja'),
+(2209, 5, 'Catamarca'),
+(2210, 5, 'Tucumán'),
+(2211, 5, 'Chaco'),
+(2212, 5, 'Formosa'),
+(2213, 5, 'Santa Cruz'),
+(2214, 5, 'Chubut'),
+(2215, 5, 'Mendoza'),
+(2216, 5, 'Entre Ríos'),
+(2217, 5, 'San Juan'),
+(2218, 5, 'Jujuy'),
+(2219, 5, 'Santiago del Estero'),
+(2220, 5, 'Río Negro'),
+(2221, 5, 'Corrientes'),
+(2222, 5, 'Misiones'),
+(2223, 5, 'Salta'),
+(2224, 5, 'Córdoba'),
+(2225, 5, 'Buenos Aires'),
+(2226, 5, 'La Pampa'),
+(2227, 5, 'Tierra del Fuego, Antártida e Islas del Atlántico Sur');
 
 -- --------------------------------------------------------
 
@@ -127781,29 +128311,9 @@ CREATE TABLE `rol` (
 --
 
 INSERT INTO `rol` (`id_rol`, `nombre_rol`) VALUES
-(1, 'admin'),
-(2, 'usuario'),
-(3, 'otro_rol');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `rol`
---
-
-CREATE TABLE `rol` (
-  `id_rol` int(11) NOT NULL,
-  `nombre_rol` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `rol`
---
-
-INSERT INTO `rol` (`id_rol`, `nombre_rol`) VALUES
-(1, 'admin'),
-(2, 'usuario'),
-(3, 'otro_rol');
+(1, 'Administrador'),
+(2, 'Correccional'),
+(3, 'Sanidad');
 
 -- --------------------------------------------------------
 
@@ -127862,6 +128372,30 @@ INSERT INTO `tipodelito` (`id`, `titulo`, `subcategoria`) VALUES
 (4, 'Lesiones', 'Graves'),
 (5, 'Narcotráfico', 'Venta'),
 (6, 'Homicidio', 'Culposo');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuarios`
+--
+
+CREATE TABLE `usuarios` (
+  `id_usuario` int(11) NOT NULL,
+  `id_persona` int(11) NOT NULL,
+  `id_rol` int(11) NOT NULL,
+  `nombre_usuario` varchar(50) NOT NULL,
+  `contrasena` varchar(255) NOT NULL,
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `activo` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id_usuario`, `id_persona`, `id_rol`, `nombre_usuario`, `contrasena`, `fecha_creacion`, `activo`) VALUES
+(1, 1, 1, 'demadmin', '$2y$10$7zlO/gJEfkGfzOlc9WGchO4tRaI7N/55cX1C5eQq6PHJ3XHxd864S', '2024-10-11 00:29:28', 1),
+(2, 5, 2, 'jugo7129', '$2y$10$BqLdJcVIlodGm3EN79glWuxu7jm..aqB44ZitELYSFkLlooODiWQy', '2024-10-11 00:35:35', 1);
 
 -- --------------------------------------------------------
 
@@ -128006,7 +128540,8 @@ ALTER TABLE `paises`
 --
 ALTER TABLE `persona`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_persona_rol` (`id_rol`);
+  ADD KEY `direccion` (`direccion`),
+  ADD KEY `educacion` (`educacion`);
 
 --
 -- Indices de la tabla `ppl`
@@ -128021,6 +128556,12 @@ ALTER TABLE `ppl`
 ALTER TABLE `provincias`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_pais` (`id_pais`);
+
+--
+-- Indices de la tabla `rol`
+--
+ALTER TABLE `rol`
+  ADD PRIMARY KEY (`id_rol`);
 
 --
 -- Indices de la tabla `situacionlegal`
@@ -128038,6 +128579,14 @@ ALTER TABLE `situacionlegal`
 --
 ALTER TABLE `tipodelito`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`id_usuario`),
+  ADD KEY `fk_usuarios_persona` (`id_persona`),
+  ADD KEY `id_rol` (`id_rol`);
 
 --
 -- Indices de la tabla `visitas`
@@ -128062,7 +128611,7 @@ ALTER TABLE `caracteristicas`
 -- AUTO_INCREMENT de la tabla `ciudades`
 --
 ALTER TABLE `ciudades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=790315;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=790832;
 
 --
 -- AUTO_INCREMENT de la tabla `clasificacion`
@@ -128158,19 +128707,25 @@ ALTER TABLE `paises`
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `ppl`
+--
+ALTER TABLE `ppl`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `provincias`
+--
+ALTER TABLE `provincias`
+  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2228;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
 --
-<<<<<<< HEAD:Base de datos/spp.sql
 ALTER TABLE `rol`
   MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-=======
-ALTER TABLE `ppl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
-  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2204;
 
 --
 -- AUTO_INCREMENT de la tabla `situacionlegal`
@@ -128185,17 +128740,23 @@ ALTER TABLE `tipodelito`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `visitas`
 --
 ALTER TABLE `visitas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
->>>>>>> main:Base de datos/SPP_V2.sql
 
 --
 -- Restricciones para tablas volcadas
 --
 
 --
+-- Filtros para la tabla `ciudades`
 --
 ALTER TABLE `ciudades`
   ADD CONSTRAINT `ciudades_ibfk_1` FOREIGN KEY (`id_prov`) REFERENCES `provincias` (`id`);
@@ -128207,98 +128768,23 @@ ALTER TABLE `clasificacion`
   ADD CONSTRAINT `clasificacion_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
 
 --
--- Filtros para la tabla `domicilio`
---
-ALTER TABLE `domicilio`
-  ADD CONSTRAINT `domicilio_ibfk_1` FOREIGN KEY (`id_pais`) REFERENCES `paises` (`id`),
-  ADD CONSTRAINT `domicilio_ibfk_2` FOREIGN KEY (`id_provincia`) REFERENCES `provincias` (`id`),
-  ADD CONSTRAINT `domicilio_ibfk_3` FOREIGN KEY (`id_ciudad`) REFERENCES `ciudades` (`id`);
-
---
--- Filtros para la tabla `educacion`
---
-ALTER TABLE `educacion`
-  ADD CONSTRAINT `educacion_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `educacion_ibfk_2` FOREIGN KEY (`id_familiar`) REFERENCES `familia` (`id`) ON UPDATE CASCADE;
-
---
 -- Filtros para la tabla `entrevista`
 --
 ALTER TABLE `entrevista`
-  ADD CONSTRAINT `entrevista_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
-
---
--- Filtros para la tabla `familia`
---
-ALTER TABLE `familia`
-  ADD CONSTRAINT `familia_ibfk_1` FOREIGN KEY (`ppl`) REFERENCES `ppl` (`id`),
-  ADD CONSTRAINT `familia_ibfk_2` FOREIGN KEY (`datos`) REFERENCES `persona` (`id`);
-
---
--- Filtros para la tabla `informe_psicologico`
---
-ALTER TABLE `informe_psicologico`
-  ADD CONSTRAINT `informe_psicologico_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
-
---
--- Filtros para la tabla `informe_psiquiatrico`
---
-ALTER TABLE `informe_psiquiatrico`
-  ADD CONSTRAINT `informe_psiquiatrico_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
-
---
--- Filtros para la tabla `informe_sanitario`
---
-ALTER TABLE `informe_sanitario`
-  ADD CONSTRAINT `informe_sanitario_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`),
-  ADD CONSTRAINT `informe_sanitario_ibfk_2` FOREIGN KEY (`id_medicamento`) REFERENCES `medicamentos` (`id`),
-  ADD CONSTRAINT `informe_sanitario_ibfk_3` FOREIGN KEY (`id_enfermedades`) REFERENCES `enfermedades` (`id`),
-  ADD CONSTRAINT `informe_sanitario_ibfk_4` FOREIGN KEY (`id_datos_antrop`) REFERENCES `datosantropometri` (`id`),
-  ADD CONSTRAINT `informe_sanitario_ibfk_5` FOREIGN KEY (`marcas_partic`) REFERENCES `caracteristicas` (`id`);
-
---
--- Filtros para la tabla `otros`
---
-ALTER TABLE `otros`
-  ADD CONSTRAINT `otros_ibfk_1` FOREIGN KEY (`datos`) REFERENCES `persona` (`id`),
-  ADD CONSTRAINT `otros_ibfk_2` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
-
---
--- Filtros para la tabla `persona`
---
-ALTER TABLE `persona`
-  ADD CONSTRAINT `persona_ibfk_1` FOREIGN KEY (`direccion`) REFERENCES `domicilio` (`id`),
-  ADD CONSTRAINT `persona_ibfk_2` FOREIGN KEY (`educacion`) REFERENCES `educacion` (`id`);
-
---
--- Filtros para la tabla `ppl`
---
-ALTER TABLE `ppl`
-  ADD CONSTRAINT `ppl_ibfk_1` FOREIGN KEY (`idpersona`) REFERENCES `persona` (`id`);
+  ADD CONSTRAINT `fk_entrevista_ppl` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
 
 --
 -- Filtros para la tabla `provincias`
 --
 ALTER TABLE `provincias`
-  ADD CONSTRAINT `provincias_ibfk_1` FOREIGN KEY (`id_pais`) REFERENCES `paises` (`id`);
+  ADD CONSTRAINT `fk_provincias_paises` FOREIGN KEY (`id_pais`) REFERENCES `paises` (`id`);
 
 --
--- Filtros para la tabla `situacionlegal`
+-- Filtros para la tabla `usuarios`
 --
-ALTER TABLE `situacionlegal`
-  ADD CONSTRAINT `situacionlegal_ibfk_1` FOREIGN KEY (`ppl`) REFERENCES `ppl` (`id`),
-  ADD CONSTRAINT `situacionlegal_ibfk_2` FOREIGN KEY (`delito`) REFERENCES `tipodelito` (`id`),
-  ADD CONSTRAINT `situacionlegal_ibfk_3` FOREIGN KEY (`fecha`) REFERENCES `fechappl` (`id`),
-  ADD CONSTRAINT `situacionlegal_ibfk_4` FOREIGN KEY (`juzgado`) REFERENCES `juzgado` (`id`),
-  ADD CONSTRAINT `situacionlegal_ibfk_5` FOREIGN KEY (`señas_partic`) REFERENCES `caracteristicas` (`id`);
-
---
--- Filtros para la tabla `visitas`
---
-ALTER TABLE `visitas`
-  ADD CONSTRAINT `visitas_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`),
-  ADD CONSTRAINT `visitas_ibfk_2` FOREIGN KEY (`id_familia`) REFERENCES `familia` (`id`),
-  ADD CONSTRAINT `visitas_ibfk_3` FOREIGN KEY (`id_otros`) REFERENCES `otros` (`id`);
+ALTER TABLE `usuarios`
+  ADD CONSTRAINT `fk_usuarios_persona` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id`),
+  ADD CONSTRAINT `fk_usuarios_rol` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
