@@ -1,4 +1,6 @@
 <?php
+//nombre de usuario:demadmin
+//Clave:demian1234
 require '../../conn/connection.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -239,8 +241,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <select name="permiso" id="permiso" class="form-control">
                                             <option value="">Seleccione una opción</option>
                                             <option value="1">Administrador</option>
-                                            <option value="2">Usuario</option>
-                                            <option value="3">otro</option>
+                                            <option value="2">Correccional</option>
+                                            <option value="3">Sanidad</option>
 
                                         </select>
                                     </div>
