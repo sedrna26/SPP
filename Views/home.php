@@ -83,6 +83,14 @@ if ($_POST) {
             <img src="../img/LOGO.ico" alt="login-icon" style="height: 15rem" class="w-75" />
         </div>
         <div class="text-center fs-1 fw-bold">Bienvenid@</div>
+        <p>Admin
+             demadmin
+            Clave:demian1234
+           
+            Correccional
+            jugo7129
+            Clave:123</p>
+
         <form method="post" class="form" action="">
             <div class="input-group mt-4">
                 <div class="input-group-text bg-info">
