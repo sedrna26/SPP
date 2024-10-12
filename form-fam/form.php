@@ -45,6 +45,8 @@
     document.getElementById('familiarForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
+      console.log('Formulario enviado. Procesando datos...'); // Mensaje de confirmación en consola
+      
       let formData = new FormData(this);
       
       fetch('insert_familiar.php', {
@@ -54,22 +56,18 @@
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
+          console.log('Datos cargados exitosamente:', data.message); // Mensaje de éxito en consola
           alert(data.message);
           this.reset();
         } else {
+          console.error('Error al cargar los datos:', data.message); // Mensaje de error en consola
           alert('Error: ' + data.message);
         }
       })
       .catch(error => {
-        console.error('Error:', error);
+        console.error('Error en la solicitud:', error); // Mensaje de error en consola
       });
     });
-
-    function mostrar(id, nombres, apellidos, dni) {
-      document.getElementById("campo").value = `${id} - ${nombres} ${apellidos} - DNI: ${dni}`;
-      document.getElementById("id_ppl").value = id;
-      document.getElementById("lista").style.display = 'none';
-    }
   </script>
 </body>
 
