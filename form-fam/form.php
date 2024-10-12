@@ -9,7 +9,7 @@
 </head>
 
 <body>
-  <form action="" method="post" autocomplete="off" class="card">
+  <form id="familiarForm" action="insert_familiar.php" method="post" autocomplete="off" class="card">
     <div class="card-header">
       <h2>Formulario Familiar</h2>
     </div>
@@ -20,8 +20,9 @@
           <input type="text" name="campo" id="campo" required>
           <ul id="lista"></ul>
         </div>
+        <input type="hidden" name="id_ppl" id="id_ppl">
         <label for="vinculo">Vínculo Familiar</label>
-        <select id="vinculo" onchange="handleVinculoChange(this.value)" required>
+        <select id="vinculo" name="vinculo" onchange="handleVinculoChange(this.value)" required>
           <option value="">Seleccione vínculo familiar</option>
           <option value="PADRE">Padre</option>
           <option value="MADRE">Madre</option>
@@ -40,6 +41,36 @@
 
   <script src="./js/script.js"></script>
   <script src="js/peticiones.js"></script>
+  <script>
+    document.getElementById('familiarForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      let formData = new FormData(this);
+      
+      fetch('insert_familiar.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          alert(data.message);
+          this.reset();
+        } else {
+          alert('Error: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+
+    function mostrar(id, nombres, apellidos, dni) {
+      document.getElementById("campo").value = `${id} - ${nombres} ${apellidos} - DNI: ${dni}`;
+      document.getElementById("id_ppl").value = id;
+      document.getElementById("lista").style.display = 'none';
+    }
+  </script>
 </body>
 
 </html>
