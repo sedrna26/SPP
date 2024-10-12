@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 11-10-2024 a las 05:42:14
+-- Tiempo de generación: 12-10-2024 a las 20:04:46
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -125714,18 +125714,6 @@ CREATE TABLE `clasificacion` (
   `pabellon_nro` int(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `clasificacion`
---
-
-INSERT INTO `clasificacion` (`id`, `id_ppl`, `sugerencia`, `sector_nro`, `pabellon_nro`) VALUES
-(1, 1, 'Baja peligrosidad', 1, 1),
-(2, 2, 'Media peligrosidad', 2, 2),
-(3, 3, 'Baja peligrosidad', 1, 2),
-(4, 4, 'Media peligrosidad', 2, 1),
-(5, 5, 'Alta peligrosidad', 3, 1),
-(6, 6, 'Baja peligrosidad', 1, 3);
-
 -- --------------------------------------------------------
 
 --
@@ -125756,42 +125744,6 @@ CREATE TABLE `domicilio` (
   `direccion` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `domicilio`
---
-
-INSERT INTO `domicilio` (`id`, `id_pais`, `id_provincia`, `id_ciudad`, `localidad`, `direccion`) VALUES
-(1, 1, 1, 0, '1', 'Calle 123, Ciudad A'),
-(2, 1, 2, 0, '2', 'Avenida 456, Ciudad B'),
-(3, 1, 3, 0, '3', 'Boulevard 789, Ciudad C'),
-(4, 1, 1, 0, '4', 'Carrera 321, Ciudad D'),
-(5, 1, 2, 0, '5', 'Pasaje 654, Ciudad E'),
-(6, 1, 3, 0, '6', 'Ruta 987, Ciudad F'),
-(7, 1, 1, 0, '1', 'Calle 123, Ciudad A'),
-(8, 1, 2, 0, '2', 'Avenida 456, Ciudad B'),
-(9, 1, 3, 0, '3', 'Boulevard 789, Ciudad C'),
-(10, 1, 1, 0, '4', 'Pasaje 101, Ciudad D'),
-(11, 1, 2, 0, '5', 'Ruta 202, Ciudad E'),
-(12, 1, 3, 0, '6', 'Calle 303, Ciudad F'),
-(13, 1, 1, 0, '1', 'Calle 123, Ciudad A'),
-(14, 1, 2, 0, '2', 'Avenida 456, Ciudad B'),
-(15, 1, 3, 0, '3', 'Boulevard 789, Ciudad C'),
-(16, 1, 1, 0, '4', 'Pasaje 101, Ciudad D'),
-(17, 1, 2, 0, '5', 'Ruta 202, Ciudad E'),
-(18, 1, 3, 0, '6', 'Calle 303, Ciudad F'),
-(19, 1, 1, 0, '1', 'Calle 123, Ciudad A'),
-(20, 1, 2, 0, '2', 'Avenida 456, Ciudad B'),
-(21, 1, 3, 0, '3', 'Boulevard 789, Ciudad C'),
-(22, 1, 1, 0, '4', 'Pasaje 101, Ciudad D'),
-(23, 1, 2, 0, '5', 'Ruta 202, Ciudad E'),
-(24, 1, 3, 0, '6', 'Calle 303, Ciudad F'),
-(25, 1, 1, 0, '1', 'Calle 123, Ciudad A'),
-(26, 1, 2, 0, '2', 'Avenida 456, Ciudad B'),
-(27, 1, 3, 0, '3', 'Boulevard 789, Ciudad C'),
-(28, 1, 1, 0, '4', 'Pasaje 101, Ciudad D'),
-(29, 1, 2, 0, '5', 'Ruta 202, Ciudad E'),
-(30, 1, 3, 0, '6', 'Calle 303, Ciudad F');
-
 -- --------------------------------------------------------
 
 --
@@ -125808,18 +125760,6 @@ CREATE TABLE `educacion` (
   `motivo_abandono` text DEFAULT NULL,
   `oferta_educ` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `educacion`
---
-
-INSERT INTO `educacion` (`id`, `id_ppl`, `id_familiar`, `establecimiento`, `grado`, `año`, `motivo_abandono`, `oferta_educ`) VALUES
-(19, 1, NULL, 'Escuela A', '6to', 2010, NULL, 1),
-(20, 0, NULL, 'Colegio B', '3ro', 2008, 'Problemas familiares', 2),
-(21, 0, NULL, 'Instituto C', '2do', 2012, NULL, 3),
-(22, 0, NULL, 'Escuela D', '7mo', 2011, 'Mudanza', 1),
-(23, 0, NULL, 'Colegio E', '5to', 2009, NULL, 2),
-(24, 0, NULL, 'Instituto F', '1ro', 2013, 'Problemas económicos', 3);
 
 -- --------------------------------------------------------
 
@@ -125855,12 +125795,16 @@ CREATE TABLE `entrevista` (
 CREATE TABLE `familia` (
   `id` int(11) NOT NULL,
   `ppl` int(11) NOT NULL,
-  `relacion` text NOT NULL,
+  `vinculo` varchar(50) NOT NULL,
   `datos` int(11) NOT NULL,
   `ffaa` tinyint(1) DEFAULT NULL,
   `fam_detenida` tinyint(1) DEFAULT NULL,
+  `vive` tinyint(1) DEFAULT NULL,
   `fecha_fall` date DEFAULT NULL,
-  `causa_fall` text DEFAULT NULL
+  `causa_fall` text DEFAULT NULL,
+  `instruc` varchar(80) DEFAULT NULL,
+  `ocupacion` varchar(50) DEFAULT NULL,
+  `nacional` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -126244,11 +126188,8 @@ CREATE TABLE `persona` (
 --
 
 INSERT INTO `persona` (`id`, `dni`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `educacion`) VALUES
-(1, '12345678', 'Perez', 'Demian', '1999-05-10', 25, 'Calle Falsa 123', 'Masculino', 'Soltero', NULL),
-(2, '23456789', 'Lopez', 'Marcos', '1997-04-15', 27, 'Av. Siempreviva 456', 'Masculino', 'Casado', NULL),
-(3, '34567890', 'Garcia', 'Lopez', '2000-07-20', 24, 'Calle Luna 789', 'Masculino', 'Soltero', NULL),
-(4, '45678901', 'Rodriguez', 'Jugo', '1995-10-30', 29, 'Av. Sol 101', 'Masculino', 'Soltero', NULL),
-(5, '45476132', 'Gonzales', 'Juan', '2000-10-18', 23, 'libertador 534', 'Masculino', 'Soltero', NULL);
+(1, '44123890', 'Castro', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL),
+(2, '44123891', 'Demian', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL);
 
 -- --------------------------------------------------------
 
@@ -126265,18 +126206,6 @@ CREATE TABLE `ppl` (
   `foto` varchar(30) DEFAULT NULL,
   `huella` blob DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `ppl`
---
-
-INSERT INTO `ppl` (`id`, `idpersona`, `apodo`, `trabaja`, `profesion`, `foto`, `huella`) VALUES
-(1, 7, 'Juancho', 1, 'Carpintero', 'foto1.jpg', NULL),
-(2, 8, 'Mari', 0, NULL, 'foto2.jpg', NULL),
-(3, 9, 'Charly', 1, 'Electricista', 'foto3.jpg', NULL),
-(4, 10, 'Ani', 0, NULL, 'foto4.jpg', NULL),
-(5, 11, 'Diegui', 1, 'Plomero', 'foto5.jpg', NULL),
-(6, 12, 'Lau', 0, NULL, 'foto6.jpg', NULL);
 
 -- --------------------------------------------------------
 
@@ -128323,7 +128252,7 @@ INSERT INTO `rol` (`id_rol`, `nombre_rol`) VALUES
 
 CREATE TABLE `situacionlegal` (
   `id` int(11) NOT NULL,
-  `ppl` int(11) NOT NULL,
+  `id_ppl` int(11) NOT NULL,
   `motivo_t` varchar(100) DEFAULT NULL,
   `situacionlegal` varchar(15) NOT NULL,
   `prontuario` int(6) DEFAULT NULL,
@@ -128331,23 +128260,11 @@ CREATE TABLE `situacionlegal` (
   `salida_transitoria` tinyint(1) NOT NULL,
   `libertad_asistida` tinyint(1) NOT NULL,
   `libertad_condicional` tinyint(1) NOT NULL,
-  `delito` int(11) NOT NULL,
-  `fecha` int(11) NOT NULL,
-  `juzgado` int(11) NOT NULL,
-  `señas_partic` int(11) NOT NULL
+  `id_delito` int(11) NOT NULL,
+  `Id_fecha` int(11) NOT NULL,
+  `id_juzgado` int(11) NOT NULL,
+  `id_señas_partic` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `situacionlegal`
---
-
-INSERT INTO `situacionlegal` (`id`, `ppl`, `motivo_t`, `situacionlegal`, `prontuario`, `reincidencia`, `salida_transitoria`, `libertad_asistida`, `libertad_condicional`, `delito`, `fecha`, `juzgado`, `señas_partic`) VALUES
-(1, 1, 'Robo simple', 'Procesado', 123456, 0, 0, 0, 0, 1, 1, 1, 1),
-(2, 2, 'Hurto calificado', 'Condenado', 234567, 1, 0, 0, 0, 2, 2, 2, 2),
-(3, 3, 'Estafa electrónica', 'Procesado', 345678, 0, 0, 0, 0, 3, 3, 3, 3),
-(4, 4, 'Lesiones graves', 'Condenado', 456789, 0, 1, 0, 0, 4, 4, 4, 4),
-(5, 5, 'Narcotráfico', 'Procesado', 567890, 1, 0, 0, 0, 5, 5, 5, 5),
-(6, 6, 'Homicidio culposo', 'Condenado', 678901, 0, 0, 1, 0, 6, 6, 6, 6);
 
 -- --------------------------------------------------------
 
@@ -128394,8 +128311,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `id_persona`, `id_rol`, `nombre_usuario`, `contrasena`, `fecha_creacion`, `activo`) VALUES
-(1, 1, 1, 'demadmin', '$2y$10$7zlO/gJEfkGfzOlc9WGchO4tRaI7N/55cX1C5eQq6PHJ3XHxd864S', '2024-10-11 00:29:28', 1),
-(2, 5, 2, 'jugo7129', '$2y$10$BqLdJcVIlodGm3EN79glWuxu7jm..aqB44ZitELYSFkLlooODiWQy', '2024-10-11 00:35:35', 1);
+(1, 1, 1, 'demadmin', '$2y$10$7zlO/gJEfkGfzOlc9WGchO4tRaI7N/55cX1C5eQq6PHJ3XHxd864S', '2024-09-29 18:15:24', 1);
 
 -- --------------------------------------------------------
 
@@ -128445,9 +128361,9 @@ ALTER TABLE `datosantropometri`
 --
 ALTER TABLE `domicilio`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `id_pais` (`id_pais`),
   ADD KEY `id_provincia` (`id_provincia`),
-  ADD KEY `id_ciudad` (`id_ciudad`);
+  ADD KEY `id_ciudad` (`id_ciudad`),
+  ADD KEY `idx_domicilio_localizacion` (`id_pais`,`id_provincia`,`id_ciudad`);
 
 --
 -- Indices de la tabla `educacion`
@@ -128475,8 +128391,9 @@ ALTER TABLE `entrevista`
 --
 ALTER TABLE `familia`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `ppl` (`ppl`),
-  ADD KEY `datos` (`datos`);
+  ADD KEY `idx_familia_ppl` (`ppl`),
+  ADD KEY `idx_familia_datos` (`datos`),
+  ADD KEY `idx_familia_nacional` (`nacional`);
 
 --
 -- Indices de la tabla `fechappl`
@@ -128548,7 +128465,8 @@ ALTER TABLE `persona`
 --
 ALTER TABLE `ppl`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idpersona` (`idpersona`);
+  ADD KEY `idpersona` (`idpersona`),
+  ADD KEY `idx_idpersona` (`idpersona`);
 
 --
 -- Indices de la tabla `provincias`
@@ -128568,11 +128486,11 @@ ALTER TABLE `rol`
 --
 ALTER TABLE `situacionlegal`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `ppl` (`ppl`),
-  ADD KEY `delito` (`delito`),
-  ADD KEY `fecha` (`fecha`),
-  ADD KEY `juzgado` (`juzgado`),
-  ADD KEY `caracteristicas` (`señas_partic`);
+  ADD KEY `ppl` (`id_ppl`),
+  ADD KEY `delito` (`id_delito`),
+  ADD KEY `fecha` (`Id_fecha`),
+  ADD KEY `juzgado` (`id_juzgado`),
+  ADD KEY `caracteristicas` (`id_señas_partic`);
 
 --
 -- Indices de la tabla `tipodelito`
@@ -128617,7 +128535,7 @@ ALTER TABLE `ciudades`
 -- AUTO_INCREMENT de la tabla `clasificacion`
 --
 ALTER TABLE `clasificacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `datosantropometri`
@@ -128629,13 +128547,13 @@ ALTER TABLE `datosantropometri`
 -- AUTO_INCREMENT de la tabla `domicilio`
 --
 ALTER TABLE `domicilio`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `educacion`
 --
 ALTER TABLE `educacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `enfermedades`
@@ -128707,13 +128625,13 @@ ALTER TABLE `paises`
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl`
 --
 ALTER TABLE `ppl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `provincias`
@@ -128731,7 +128649,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `situacionlegal`
 --
 ALTER TABLE `situacionlegal`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `tipodelito`
@@ -128743,7 +128661,7 @@ ALTER TABLE `tipodelito`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `visitas`
@@ -128759,13 +128677,28 @@ ALTER TABLE `visitas`
 -- Filtros para la tabla `ciudades`
 --
 ALTER TABLE `ciudades`
-  ADD CONSTRAINT `ciudades_ibfk_1` FOREIGN KEY (`id_prov`) REFERENCES `provincias` (`id`);
+  ADD CONSTRAINT `fk_ciudades_provincias` FOREIGN KEY (`id_prov`) REFERENCES `provincias` (`id`);
 
 --
 -- Filtros para la tabla `clasificacion`
 --
 ALTER TABLE `clasificacion`
-  ADD CONSTRAINT `clasificacion_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
+  ADD CONSTRAINT `fk_clasificacion_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `domicilio`
+--
+ALTER TABLE `domicilio`
+  ADD CONSTRAINT `fk_domicilio_ciudad` FOREIGN KEY (`id_ciudad`) REFERENCES `ciudades` (`id`),
+  ADD CONSTRAINT `fk_domicilio_pais` FOREIGN KEY (`id_pais`) REFERENCES `paises` (`id`),
+  ADD CONSTRAINT `fk_domicilio_provincia` FOREIGN KEY (`id_provincia`) REFERENCES `provincias` (`id`);
+
+--
+-- Filtros para la tabla `educacion`
+--
+ALTER TABLE `educacion`
+  ADD CONSTRAINT `fk_educacion_familia` FOREIGN KEY (`id_familiar`) REFERENCES `familia` (`id`),
+  ADD CONSTRAINT `fk_educacion_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
 
 --
 -- Filtros para la tabla `entrevista`
@@ -128774,10 +128707,67 @@ ALTER TABLE `entrevista`
   ADD CONSTRAINT `fk_entrevista_ppl` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
 
 --
+-- Filtros para la tabla `familia`
+--
+ALTER TABLE `familia`
+  ADD CONSTRAINT `fk_familia_datos` FOREIGN KEY (`datos`) REFERENCES `persona` (`id`),
+  ADD CONSTRAINT `fk_familia_nacional` FOREIGN KEY (`nacional`) REFERENCES `paises` (`id`),
+  ADD CONSTRAINT `fk_familia_ppl` FOREIGN KEY (`ppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `informe_psicologico`
+--
+ALTER TABLE `informe_psicologico`
+  ADD CONSTRAINT `fk_pscilogico_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `informe_psiquiatrico`
+--
+ALTER TABLE `informe_psiquiatrico`
+  ADD CONSTRAINT `fk_psiquiatrico_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `informe_sanitario`
+--
+ALTER TABLE `informe_sanitario`
+  ADD CONSTRAINT `fk_informe_sanitario_datos_antrop` FOREIGN KEY (`id_datos_antrop`) REFERENCES `datosantropometri` (`id`),
+  ADD CONSTRAINT `fk_informe_sanitario_enfermedades` FOREIGN KEY (`id_enfermedades`) REFERENCES `enfermedades` (`id`),
+  ADD CONSTRAINT `fk_informe_sanitario_medicamento` FOREIGN KEY (`id_medicamento`) REFERENCES `medicamentos` (`id`),
+  ADD CONSTRAINT `fk_informe_sanitario_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `otros`
+--
+ALTER TABLE `otros`
+  ADD CONSTRAINT `fk_otros_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `persona`
+--
+ALTER TABLE `persona`
+  ADD CONSTRAINT `fk_persona_educacion` FOREIGN KEY (`educacion`) REFERENCES `educacion` (`id`);
+
+--
+-- Filtros para la tabla `ppl`
+--
+ALTER TABLE `ppl`
+  ADD CONSTRAINT `fk_ppl_persona` FOREIGN KEY (`idpersona`) REFERENCES `persona` (`id`);
+
+--
 -- Filtros para la tabla `provincias`
 --
 ALTER TABLE `provincias`
-  ADD CONSTRAINT `fk_provincias_paises` FOREIGN KEY (`id_pais`) REFERENCES `paises` (`id`);
+  ADD CONSTRAINT `fk_provincias_pais` FOREIGN KEY (`id_pais`) REFERENCES `paises` (`id`);
+
+--
+-- Filtros para la tabla `situacionlegal`
+--
+ALTER TABLE `situacionlegal`
+  ADD CONSTRAINT `fk_situacion_legal_delito` FOREIGN KEY (`id_delito`) REFERENCES `tipodelito` (`id`),
+  ADD CONSTRAINT `fk_situacion_legal_fecha` FOREIGN KEY (`Id_fecha`) REFERENCES `fechappl` (`id`),
+  ADD CONSTRAINT `fk_situacion_legal_juzgado` FOREIGN KEY (`id_juzgado`) REFERENCES `juzgado` (`id`),
+  ADD CONSTRAINT `fk_situacion_legal_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`),
+  ADD CONSTRAINT `fk_situacion_legal_señas` FOREIGN KEY (`id_señas_partic`) REFERENCES `caracteristicas` (`id`);
 
 --
 -- Filtros para la tabla `usuarios`
@@ -128785,6 +128775,14 @@ ALTER TABLE `provincias`
 ALTER TABLE `usuarios`
   ADD CONSTRAINT `fk_usuarios_persona` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id`),
   ADD CONSTRAINT `fk_usuarios_rol` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`);
+
+--
+-- Filtros para la tabla `visitas`
+--
+ALTER TABLE `visitas`
+  ADD CONSTRAINT `fk_visitas_familia` FOREIGN KEY (`id_familia`) REFERENCES `familia` (`id`),
+  ADD CONSTRAINT `fk_visitas_otros` FOREIGN KEY (`id_otros`) REFERENCES `otros` (`id`),
+  ADD CONSTRAINT `fk_visitas_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
