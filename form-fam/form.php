@@ -34,7 +34,7 @@
       <div id="form-content">
         <!-- Los campos específicos según el vínculo se agregarán aquí -->
       </div>
-      <button class="submit-button" type="submit">Enviar</button>
+      <button class="submit-button" type="submit">Agregar familiar</button>
     </div>
   </form>
 
