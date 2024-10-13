@@ -1,6 +1,4 @@
-<?php
-require '../../conn/connection.php'; 
-require 'navbar.php';
+<?php require 'navbar.php';
 //-------------DAR DE BAJA------------------
 if (isset($_GET['txtID'])) {
     $txtID = isset($_GET['txtID']) ? $_GET['txtID'] : "";
@@ -23,10 +21,8 @@ if (isset($_GET['txtID'])) {
             <div class="card rounded-2 border-0">
                 <div class="card-header bg-dark text-white pb-0">
                     <h5 class="d-inline-block">Listado de PPL</h5>
-                    <a class="btn btn-primary float-right mb-2" href="ppl_crea.php">Nuevo Informe PPL</a>
+                    <a class="btn btn-primary float-right mb-2" href="persona_crea.php">Nuevo Informe PPL</a>
                 </div>
-                <!-- --------------------- -->
-                <p>Lugar donde se lista todos los ppl, se lista por ultimo ppl agregado.</p>
                 <!-- -------------------- -->
                 <div class="card-body table-responsive">
                     <table id="example" class="table table-striped table-sm" style="width:100%">
@@ -36,13 +32,14 @@ if (isset($_GET['txtID'])) {
                                 <th>Nombre y Apellido</th>
                                 <th>DNI</th>
                                 <th>Domicilio</th>
-                                <th>Acciones</th>
+                                <th>Carga</th>
+                                <th>Prontuario PPL</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
                             try {
-                                $query = "SELECT * FROM persona WHERE id_rol = 1  ";
+                                $query = "SELECT * FROM persona ";
                                 $stmt = $db->prepare($query);
                                 $stmt->execute();
                                 $pples = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -54,14 +51,13 @@ if (isset($_GET['txtID'])) {
                                 <td><?php echo htmlspecialchars($ppl['dni'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo htmlspecialchars($ppl['direccion'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 
-                                <td class="text-center">
-                                <div class="btn-group">
-                                <!-- <a class="btn btn-success float-right mb-2" href="">Carga ppl</a> -->
-                                 
-                                <a class="btn btn-info float-right mb-2" href="ppl_perfil.php">Ver Perfil</a>
+                                <td><a class="btn btn-info " href="ppl_informe.php">Informe(IEII)</a></td>
+                                <td>    
+                                    <a href="prontuario_index.php?id=<?php echo $ppl['id']; ?>" data-toggle="modal" data-backdrop="false" class="btn btn-info btn-sm" type="button" title="ver">
+                                        <i class="fa-solid fa-eye" style="color: #000000;"></i>
+                                    </a>
+                                </td>
                                 
-                                </div>
-
                                     <!-- <div class="btn-group">
                                         <a href="profe_edit.php?id_usuario=<?php echo htmlspecialchars($ppl['id_usuario'], ENT_QUOTES, 'UTF-8'); ?>" 
                                         class="btn btn-warning btn-sm" role="button">
