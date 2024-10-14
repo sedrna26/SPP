@@ -364,345 +364,328 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-<section class="content mt-3">
-    <div class="row px-5 mx-5 ">
-        <div class="col-sm">
-            <div class="card rounded-2 border-0">
-                <div class="card-header bg-dark text-white pb-0">
-                    <h5 class="d-inline-block ">Nuevo Informe de Evaluación Integral Interdiciplinario (IEII)</h5>
-                    <!-- <a class="btn btn-primary float-right mb-2" href="">(boton)</a>                     -->
+<section class="container mt-3">
+    <div class="card rounded-2 border-0">
+        <div class="card-header bg-dark text-white pb-0">
+            <h5 class="d-inline-block ">Nuevo Informe de Evaluación Integral Interdiciplinario (IEII)</h5>
+            <!-- <a class="btn btn-primary float-right mb-2" href="">(boton)</a>                     -->
+        </div>
+        <div class="card-body table-responsive">
+            <form id="personaForm" action="" method="POST" enctype="multipart/form-data">
+     
+                <h4>Datos de la Persona</h4>
+                <!-- Formulario de Persona -->
+                <div class="form-group">
+                    <label for="dni">DNI:</label>
+                    <input type="number" class="form-control" id="dni" name="dni" required>
                 </div>
-                <div class="card-body table-responsive">
-                <div class="container ">
+                <div class="form-group">
+                    <label for="nombres">Nombres:</label>
+                    <input type="text" class="form-control" id="nombres" name="nombres" required>
+                </div>
+                <div class="form-group">
+                    <label for="apellidos">Apellidos:</label>
+                    <input type="text" class="form-control" id="apellidos" name="apellidos" required>
+                </div>
+                <div class="mb-3">
+                    <label for="foto" class="form-label">Foto</label>
+                    <input type="file" class="form-control" id="foto" name="foto" onchange="copyPhoto()">
+                    <br>
+                    <img id="Foto" class="form-control" style="max-width: 150px; height: 100px;" alt="Foto de PERSONA">
+                </div
+                <!-- Selección de Ubicación -->
+                <div class="form-group">
+                    <label for="direccionp" class="form-label">Seleccionar Ubicación</label>
+                    <select class="form-control" id="direccionp" name="direccionp" onchange="toggleNewLocation()">
+                        <option value="">-- Seleccione una ubicación --</option>
+                        <option style="color: green;" value="new">Agregar nueva ubicación</option>
+                        <?php
+                        // Código PHP para obtener las ubicaciones de la base de datos
+                        $resultado = $db->query("SELECT id, id_pais, id_provincia, localidad, direccion FROM domicilio");
+                        while ($fila = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                            echo "<option value='{$fila['id']}'>{$fila['pais']} - {$fila['provincia']} - {$fila['departamento']} - {$fila['direccion']}</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
                     
-                                        
-<form id="personaForm" action="" method="POST" enctype="multipart/form-data">
-        <div class="container">
-             
-            <h4>Datos de la Persona</h4>
-            <!-- Formulario de Persona -->
-            <div class="form-group">
-                <label for="dni">DNI:</label>
-                <input type="number" class="form-control" id="dni" name="dni" required>
-            </div>
-            <div class="form-group">
-                <label for="nombres">Nombres:</label>
-                <input type="text" class="form-control" id="nombres" name="nombres" required>
-            </div>
-            <div class="form-group">
-                <label for="apellidos">Apellidos:</label>
-                <input type="text" class="form-control" id="apellidos" name="apellidos" required>
-            </div>
-            <div class="mb-3">
-                <label for="foto" class="form-label">Foto</label>
-                <input type="file" class="form-control" id="foto" name="foto" onchange="copyPhoto()">
-                <br>
-                <img id="Foto" class="form-control" style="max-width: 150px; height: 100px;" alt="Foto de PERSONA">
-            </div>
-
-            <!-- Selección de Ubicación -->
-            <div class="form-group">
-                <label for="direccionp" class="form-label">Seleccionar Ubicación</label>
-                <select class="form-control" id="direccionp" name="direccionp" onchange="toggleNewLocation()">
-                    <option value="">-- Seleccione una ubicación --</option>
-                    <option style="color: green;" value="new">Agregar nueva ubicación</option>
-                    <?php
-                    // Código PHP para obtener las ubicaciones de la base de datos
-                    $resultado = $db->query("SELECT id, id_pais, id_provincia, localidad, direccion FROM domicilio");
-                    while ($fila = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                        echo "<option value='{$fila['id']}'>{$fila['pais']} - {$fila['provincia']} - {$fila['departamento']} - {$fila['direccion']}</option>";
-                    }
-                    ?>
-                </select>
-            </div>
-
-            <!-- Sección para agregar nueva Ubicación -->
-            <div id="newLocationSection" style="display: none;">
-                <div class="row mb-3">
-                    <div class="col-md-3">
-                        <label for="pais" class="form-label">País</label>
-                        <input type="text" class="form-control" id="pais" name="pais">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="provincia" class="form-label">Provincia</label>
-                        <input type="text" class="form-control" id="provincia" name="provincia">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="departamento" class="form-label">Departamento</label>
-                        <input type="text" class="form-control" id="departamento" name="departamento">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="direccion" class="form-label">Dirección</label>
-                        <input type="text" class="form-control" id="direccion" name="direccion">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="fechanac">Fecha de Nacimiento:</label>
-                <input type="date" class="form-control" id="fechanac" name="fechanac" required>
-            </div>
-
-            <div class="form-group">
-                <label for="edad">Edad:</label>
-                <input type="number" class="form-control" id="edad" name="edad" min="1" max="70" required>
-            </div>
-            <div class="form-group">
-                <label for="genero">Género:</label>
-                <select class="form-control" id="genero" name="genero" required>
-                    <option value="Masculino">Masculino</option>
-                    <option value="Femenino">Femenino</option>
-                    <option value="Otro">Otro</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="estadocivil">Estado Civil:</label>
-                <select class="form-control" id="estadocivil" name="estadocivil">
-                    <option value="Soltero">Soltero</option>
-                    <option value="Casado">Casado</option>
-                    <option value="Divorciado">Divorciado</option>
-                    <option value="Viudo">Viudo</option>
-                </select>
-            </div>
-            <!-- ¿Es PPL? -->
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="esPPL" name="esPPL" onclick="togglePPL()" >
-                <label class="form-check-label" for="esPPL">¿Es una Persona Privada de la Libertad (PPL)?</label>
-            </div>
-
-            <!-- Sección PPL -->
-            <div id="pplSection" style="display: none;">
-                <h4 class="mt-4">Datos de PPL</h4>
-
-                <div class="mb-3">
-                    <label for="datetimeInput"  class="form-label">Selecciona fecha y hora:</label>
-                    <input type="datetime-local" class="form-control"  id="datetimeInput" name="datetimeInput">
-                </div>
-
-                <div class="mb-3">
-                    <label for="apodo" class="form-label">Apodo</label>
-                    <input type="text" class="form-control" id="apodo" name="apodo">
-                </div>
-
-                <div class="mb-3">
-                    <label for="profesion" class="form-label">Profesión</label>
-                    <input type="text" class="form-control" id="profesion" name="profesion">
-                </div>
-
-                <div class="mb-3">
-                    <label for="trabaja" class="form-label">¿Trabaja?</label>
-                    <select class="form-control" id="trabaja" name="trabaja">
-                        <option value="Si">Sí</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="pplFoto" class="form-label">Foto de PPL</label>
-                    <img id="pplFoto" class="form-control" style="max-width: 150px; height: 100px;" alt="Foto de PPL">
-                </div>
-
-                <div class="mb-3">
-                    <label for="huella" class="form-label">Huella</label>
-                    <input type="file" class="form-control" id="huella" name="huella">
-                </div>
-
-            </div>
-
-            <!-- Sección Situación Legal -->
-            <div id="situacionLegalSection" style="display: none;">
-                <h4 class="mt-4">Datos de Situación Legal</h4>
-                <input type="hidden" id="idppl" name="idppl" value="<?php echo $idppl; ?>">
-
-                <div class="form-group">
-                    <label for="motivo_t">Motivo de detención:</label>
-                    <input type="text" class="form-control" id="motivo_t" name="motivo_t" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="situacionlegal">Situación Legal:</label>
-                    <input type="text" class="form-control" id="situacionlegal" name="situacionlegal" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="prontuario">Prontuario:</label>
-                    <input type="number" class="form-control" id="prontuario" name="prontuario" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="reincidencia">Reincidencia:</label>
-                    <input type="checkbox" id="reincidencia" name="reincidencia" value="1">
-                    <input type="hidden" name="reincidencia" value="0">
-                </div>
-
-                <div class="form-group">
-                    <label for="salida_transitoria">Salida Transitoria:</label>
-                    <input type="checkbox" id="salida_transitoria" name="salida_transitoria" value="1">
-                    <input type="hidden" name="salida_transitoria" value="0">
-                </div>
-
-                <div class="form-group">
-                    <label for="libertad_asistida">Libertad Asistida:</label>
-                    <input type="checkbox" id="libertad_asistida" name="libertad_asistida" value="1">
-                    <input type="hidden" name="libertad_asistida" value="0">
-                </div>
-
-                <div class="form-group">
-                    <label for="libertad_condicional">Libertad Condicional:</label>
-                    <input type="checkbox" id="libertad_condicional" name="libertad_condicional" value="1">
-                    <input type="hidden" name="libertad_condicional" value="0">
-                </div>
-
-                <div class="form-group">
-                    <label for="delito">ID Delito:</label>
-                    <select class="form-control" id="delito" name="delito" onchange="toggleNewDelito()">
-                        <option value="">-- Seleccione un delito --</option>
-                        <option style="color: green;" value="new">Agregar nuevo delito</option>
-                        <?php
-                        // Código PHP para obtener los delitos de la base de datos
-                        $resultado = $conexion->query("SELECT id, titulo, subcategoria FROM tipodelito");
-                        while ($fila = $resultado->fetch_assoc()) {
-                            echo "<option value='{$fila['id']}'>{$fila['titulo']} - {$fila['subcategoria']}</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <!-- Sección para agregar nuevo delito -->
-                <div id="newDelitoSection" style="display: none;">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="titulo" class="form-label">Título</label>
-                            <input type="text" class="form-control" id="titulo" name="titulo">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="subcategoria" class="form-label">Subcategoría</label>
-                            <input type="text" class="form-control" id="subcategoria" name="subcategoria">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="fechappl">Fecha de la situación (timestamp):</label>
-                    <select class="form-control" id="fechappl" name="fechappl" onchange="toggleNewfecha()">
-                        <option value="">-- Seleccione una fecha de la situación --</option>
-                        <option style="color: green;" value="new">Agregar nueva fecha</option>
-                        <?php
-                        // Código PHP para obtener las fechas de la base de datos
-                        $resultado = $conexion->query("SELECT id, fechadet, fechacond, fechavenc FROM fechappl");
-                        while ($fila = $resultado->fetch_assoc()) {
-                            // Mostrar las fechas de detención, condena y vencimiento correctamente
-                            echo "<option value='{$fila['id']}'>Fecha de detención: {$fila['fechadet']} - Fecha de condena: {$fila['fechacond']} - Fecha de vencimiento: {$fila['fechavenc']}</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <!-- Sección para agregar nueva fecha -->
-                <div id="newfechaSection" style="display: none;">
+                <!-- Sección para agregar nueva Ubicación -->
+                <div id="newLocationSection" style="display: none;">
                     <div class="row mb-3">
                         <div class="col-md-3">
-                            <label for="fechadet" class="form-label">Fecha de detención</label>
-                            <input type="date" class="form-control" id="fechadet" name="fechadet">
+                            <label for="pais" class="form-label">País</label>
+                            <input type="text" class="form-control" id="pais" name="pais">
                         </div>
                         <div class="col-md-3">
-                            <label for="fechacond" class="form-label">Fecha de condena</label>
-                            <input type="date" class="form-control" id="fechacond" name="fechacond">
+                            <label for="provincia" class="form-label">Provincia</label>
+                            <input type="text" class="form-control" id="provincia" name="provincia">
                         </div>
                         <div class="col-md-3">
-                            <label for="fechavenc" class="form-label">Fecha de vencimiento</label>
-                            <input type="date" class="form-control" id="fechavenc" name="fechavenc">
+                            <label for="departamento" class="form-label">Departamento</label>
+                            <input type="text" class="form-control" id="departamento" name="departamento">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="direccion" name="direccion">
                         </div>
                     </div>
                 </div>
-
+                    
                 <div class="form-group">
-                    <label for="juzgado">ID del Juzgado:</label>
-                    <select class="form-control" id="juzgado" name="juzgado" onchange="toggleNewjuez()">
-                        <option value="">-- Seleccione un Juez --</option>
-                        <option style="color: green;" value="new">Agregar nuevo juez</option>
-                        <?php
-                        // Código PHP para obtener juzgados de la base de datos
-                        $resultado = $conexion->query("SELECT id, nombre, nombre_juez FROM juzgado");
-                        while ($fila = $resultado->fetch_assoc()) {
-                            // Corregir las comillas del value y del contenido
-                            echo "<option value='{$fila['id']}'>{$fila['nombre']} - {$fila['nombre_juez']}</option>";
-                        }
-                        ?>
+                    <label for="fechanac">Fecha de Nacimiento:</label>
+                    <input type="date" class="form-control" id="fechanac" name="fechanac" required>
+                </div>
+                    
+                <div class="form-group">
+                    <label for="edad">Edad:</label>
+                    <input type="number" class="form-control" id="edad" name="edad" min="1" max="70" required>
+                </div>
+                <div class="form-group">
+                    <label for="genero">Género:</label>
+                    <select class="form-control" id="genero" name="genero" required>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                        <option value="Otro">Otro</option>
                     </select>
                 </div>
-
-                <!-- Sección para agregar un nuevo juez -->
-                <div id="newjuezSection" style="display: none;">
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="nombre" class="form-label">Nombre del juzgado</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="nombrejuez" class="form-label">Nombre del juez</label>
-                            <input type="text" class="form-control" id="nombrejuez" name="nombrejuez">
-                        </div>
-                    </div>
-                </div>
-
+                    
                 <div class="form-group">
-                    <label for="senas_partic">ID de las características:</label>
-                    <select class="form-control" id="senas_partic" name="senas_partic" onchange="toggleNewcaracteristica()">
-                        <option value="">-- Seleccione las características --</option>
-                        <option style="color: green;" value="new">Agregar nueva característica</option>
-                        <?php
-                        // Código PHP para obtener características de la base de datos
-                        $resultado = $conexion->query("SELECT id, zona, tipo, descripcion, tamaño FROM caracteristicas");
-                        while ($fila = $resultado->fetch_assoc()) {
-                            // Corregir las comillas del value y del contenido
-                            echo "<option value='{$fila['id']}'>{$fila['zona']} - {$fila['tipo']} - {$fila['descripcion']} - {$fila['tamaño']}</option>";
-                        }
-                        ?>
+                    <label for="estadocivil">Estado Civil:</label>
+                    <select class="form-control" id="estadocivil" name="estadocivil">
+                        <option value="Soltero">Soltero</option>
+                        <option value="Casado">Casado</option>
+                        <option value="Divorciado">Divorciado</option>
+                        <option value="Viudo">Viudo</option>
                     </select>
                 </div>
-
-                <!-- Sección para agregar nueva característica -->
-                <div id="newcaracteristicaSection" style="display: none;">
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="zona" class="form-label">Zona</label>
-                            <input type="text" class="form-control" id="zona" name="zona">
+                <!-- ¿Es PPL? -->
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="esPPL" name="esPPL" onclick="togglePPL()" >
+                    <label class="form-check-label" for="esPPL">¿Es una Persona Privada de la Libertad (PPL)?</label>
+                </div>
+                    
+                <!-- Sección PPL -->
+                <div id="pplSection" style="display: none;">
+                    <h4 class="mt-4">Datos de PPL</h4>
+                    
+                    <div class="mb-3">
+                        <label for="datetimeInput"  class="form-label">Selecciona fecha y hora:</label>
+                        <input type="datetime-local" class="form-control"  id="datetimeInput" name="datetimeInput">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="apodo" class="form-label">Apodo</label>
+                        <input type="text" class="form-control" id="apodo" name="apodo">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="profesion" class="form-label">Profesión</label>
+                        <input type="text" class="form-control" id="profesion" name="profesion">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="trabaja" class="form-label">¿Trabaja?</label>
+                        <select class="form-control" id="trabaja" name="trabaja">
+                            <option value="Si">Sí</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="pplFoto" class="form-label">Foto de PPL</label>
+                        <img id="pplFoto" class="form-control" style="max-width: 150px; height: 100px;" alt="Foto de PPL">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="huella" class="form-label">Huella</label>
+                        <input type="file" class="form-control" id="huella" name="huella">
+                    </div>
+                    
+                </div>
+                    
+                <!-- Sección Situación Legal -->
+                <div id="situacionLegalSection" style="display: none;">
+                    <h4 class="mt-4">Datos de Situación Legal</h4>
+                    <input type="hidden" id="idppl" name="idppl" value="<?php echo $idppl; ?>">
+                    
+                    <div class="form-group">
+                        <label for="motivo_t">Motivo de detención:</label>
+                        <input type="text" class="form-control" id="motivo_t" name="motivo_t" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="situacionlegal">Situación Legal:</label>
+                        <input type="text" class="form-control" id="situacionlegal" name="situacionlegal" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="prontuario">Prontuario:</label>
+                        <input type="number" class="form-control" id="prontuario" name="prontuario" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reincidencia">Reincidencia:</label>
+                        <input type="checkbox" id="reincidencia" name="reincidencia" value="1">
+                        <input type="hidden" name="reincidencia" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="salida_transitoria">Salida Transitoria:</label>
+                        <input type="checkbox" id="salida_transitoria" name="salida_transitoria" value="1">
+                        <input type="hidden" name="salida_transitoria" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="libertad_asistida">Libertad Asistida:</label>
+                        <input type="checkbox" id="libertad_asistida" name="libertad_asistida" value="1">
+                        <input type="hidden" name="libertad_asistida" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="libertad_condicional">Libertad Condicional:</label>
+                        <input type="checkbox" id="libertad_condicional" name="libertad_condicional" value="1">
+                        <input type="hidden" name="libertad_condicional" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="delito">ID Delito:</label>
+                        <select class="form-control" id="delito" name="delito" onchange="toggleNewDelito()">
+                            <option value="">-- Seleccione un delito --</option>
+                            <option style="color: green;" value="new">Agregar nuevo delito</option>
+                            <?php
+                            // Código PHP para obtener los delitos de la base de datos
+                            $resultado = $conexion->query("SELECT id, titulo, subcategoria FROM tipodelito");
+                            while ($fila = $resultado->fetch_assoc()) {
+                                echo "<option value='{$fila['id']}'>{$fila['titulo']} - {$fila['subcategoria']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                        
+                    <!-- Sección para agregar nuevo delito -->
+                    <div id="newDelitoSection" style="display: none;">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="titulo" class="form-label">Título</label>
+                                <input type="text" class="form-control" id="titulo" name="titulo">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="subcategoria" class="form-label">Subcategoría</label>
+                                <input type="text" class="form-control" id="subcategoria" name="subcategoria">
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <label for="tipo" class="form-label">Tipo</label>
-                            <input type="text" class="form-control" id="tipo" name="tipo">
+                    </div>
+                        
+                    <div class="form-group">
+                        <label for="fechappl">Fecha de la situación (timestamp):</label>
+                        <select class="form-control" id="fechappl" name="fechappl" onchange="toggleNewfecha()">
+                            <option value="">-- Seleccione una fecha de la situación --</option>
+                            <option style="color: green;" value="new">Agregar nueva fecha</option>
+                            <?php
+                            // Código PHP para obtener las fechas de la base de datos
+                            $resultado = $conexion->query("SELECT id, fechadet, fechacond, fechavenc FROM fechappl");
+                            while ($fila = $resultado->fetch_assoc()) {
+                                // Mostrar las fechas de detención, condena y vencimiento correctamente
+                                echo "<option value='{$fila['id']}'>Fecha de detención: {$fila['fechadet']} - Fecha de condena: {$fila['fechacond']} - Fecha de vencimiento: {$fila['fechavenc']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                        
+                    <!-- Sección para agregar nueva fecha -->
+                    <div id="newfechaSection" style="display: none;">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="fechadet" class="form-label">Fecha de detención</label>
+                                <input type="date" class="form-control" id="fechadet" name="fechadet">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="fechacond" class="form-label">Fecha de condena</label>
+                                <input type="date" class="form-control" id="fechacond" name="fechacond">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="fechavenc" class="form-label">Fecha de vencimiento</label>
+                                <input type="date" class="form-control" id="fechavenc" name="fechavenc">
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <label for="descripcion" class="form-label">Descripción</label>
-                            <input type="text" class="form-control" id="descripcion" name="descripcion">
+                    </div>
+                        
+                    <div class="form-group">
+                        <label for="juzgado">ID del Juzgado:</label>
+                        <select class="form-control" id="juzgado" name="juzgado" onchange="toggleNewjuez()">
+                            <option value="">-- Seleccione un Juez --</option>
+                            <option style="color: green;" value="new">Agregar nuevo juez</option>
+                            <?php
+                            // Código PHP para obtener juzgados de la base de datos
+                            $resultado = $conexion->query("SELECT id, nombre, nombre_juez FROM juzgado");
+                            while ($fila = $resultado->fetch_assoc()) {
+                                // Corregir las comillas del value y del contenido
+                                echo "<option value='{$fila['id']}'>{$fila['nombre']} - {$fila['nombre_juez']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                        
+                    <!-- Sección para agregar un nuevo juez -->
+                    <div id="newjuezSection" style="display: none;">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="nombre" class="form-label">Nombre del juzgado</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="nombrejuez" class="form-label">Nombre del juez</label>
+                                <input type="text" class="form-control" id="nombrejuez" name="nombrejuez">
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <label for="tamano" class="form-label">Tamaño</label>
-                            <input type="text" class="form-control" id="tamano" name="tamano">
+                    </div>
+                        
+                    <div class="form-group">
+                        <label for="senas_partic">ID de las características:</label>
+                        <select class="form-control" id="senas_partic" name="senas_partic" onchange="toggleNewcaracteristica()">
+                            <option value="">-- Seleccione las características --</option>
+                            <option style="color: green;" value="new">Agregar nueva característica</option>
+                            <?php
+                            // Código PHP para obtener características de la base de datos
+                            $resultado = $conexion->query("SELECT id, zona, tipo, descripcion, tamaño FROM caracteristicas");
+                            while ($fila = $resultado->fetch_assoc()) {
+                                // Corregir las comillas del value y del contenido
+                                echo "<option value='{$fila['id']}'>{$fila['zona']} - {$fila['tipo']} - {$fila['descripcion']} - {$fila['tamaño']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                        
+                    <!-- Sección para agregar nueva característica -->
+                    <div id="newcaracteristicaSection" style="display: none;">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="zona" class="form-label">Zona</label>
+                                <input type="text" class="form-control" id="zona" name="zona">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="tipo" class="form-label">Tipo</label>
+                                <input type="text" class="form-control" id="tipo" name="tipo">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="descripcion" class="form-label">Descripción</label>
+                                <input type="text" class="form-control" id="descripcion" name="descripcion">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="tamano" class="form-label">Tamaño</label>
+                                <input type="text" class="form-control" id="tamano" name="tamano">
+                            </div>
                         </div>
                     </div>
                 </div>
-
-
+                <!-- <div class="d-flex justify-content-center mt-3">
+                    <button type="submit" class="btn btn-primary">Guardar Todos los datos</button>
+                </div> -->
+                <div class="d-flex justify-content-center mt-3">
+                    <button type="button" class="btn btn-primary ms-2" onclick="guardarPersona()">Guardar </button>
+                </div>
+            </form>
             </div>
-
         </div>
-        <!-- <div class="d-flex justify-content-center mt-3">
-            <button type="submit" class="btn btn-primary">Guardar Todos los datos</button>
-        </div> -->
-        <div class="d-flex justify-content-center mt-3">
-            <button type="button" class="btn btn-primary ms-2" onclick="guardarPersona()">Guardar </button>
-        </div>
-    </form>
-
-
-                </div>
-                <div></div>
-            </div> 
-        </div>   
-        </div>   
-    </div>
+    </div>         
 </section>
-    
