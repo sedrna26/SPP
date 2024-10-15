@@ -88,7 +88,7 @@ if ($_POST) {
             Clave:demian1234
            
             Correccional
-            jugo7129
+            maol4192
             Clave:123</p>
 
         <form method="post" class="form" action="">
