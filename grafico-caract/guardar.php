@@ -1,31 +1,37 @@
 <?php
-// Configuración de la base de datos
-$servername = "localhost";
-$username = "user";
-$password = "";
-$dbname = "spp";
+// Conexión a la base de datos
+$host = "localhost"; // Cambia por el host de tu servidor
+$dbname = "SPP"; // Nombre de tu base de datos
+$username = "root"; // Usuario de la base de datos
+$password = ""; // Contraseña de la base de datos
 
-// Recibir los datos JSON
-$datos = json_decode(file_get_contents('php://input'), true);
-
-// Conectar a la base de datos
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar la conexión
-if ($conn->connect_error) {
-    die(json_encode(['success' => false, 'message' => "Conexión fallida: " . $conn->connect_error]));
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Error en la conexión: " . $e->getMessage());
 }
 
-// Preparar la consulta SQL
-$stmt = $conn->prepare("INSERT INTO marcas (parte_cuerpo, tipo_marca, observaciones) VALUES (?, ?, ?)");
-$stmt->bind_param("sss", $datos['parte'], $datos['tipo'], $datos['observaciones']);
-
-// Ejecutar la consulta
-if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'message' => "Marca guardada con éxito"]);
-} else {
-    echo json_encode(['success' => false, 'message' => "Error al guardar la marca: " . $stmt->error]);
+// Verificar si el formulario ha sido enviado
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Obtener los datos enviados por el formulario
+    $parte = $_POST['parte']; // La parte del cuerpo seleccionada
+    $tipoMarca = $_POST['tipoMarca']; // El tipo de marca
+    $observaciones = $_POST['observaciones']; // Observaciones
+    
+    // Preparar la consulta SQL para insertar los datos en la tabla 'caracteristicas'
+    $sql = "INSERT INTO caracteristicas (parte, tipo_marca, observaciones) VALUES (:parte, :tipoMarca, :observaciones)";
+    
+    $stmt = $pdo->prepare($sql);
+    
+    // Ejecutar la consulta con los valores del formulario
+    $stmt->execute([
+        ':parte' => $parte,
+        ':tipoMarca' => $tipoMarca,
+        ':observaciones' => $observaciones,
+    ]);
+    
+    echo "Datos insertados correctamente.";
 }
+?>
 
-$stmt->close();
-$conn->close();
