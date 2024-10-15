@@ -259,7 +259,7 @@
             </svg>
         </div>
         <div class="form-container">
-            <form id="marcaForm" method="POST" action="nuevo.php" @submit.prevent="guardarMarca">
+            <form id="marcaForm" method="POST" action="guardar.php" @submit.prevent="guardarMarca">
               <h2>Información de la Marca</h2>
               <p>Parte seleccionada: {{ parteSeleccionadaEspanol }}</p>
               <label for="tipoMarca">Tipo de Marca:</label>
