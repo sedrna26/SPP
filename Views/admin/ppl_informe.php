@@ -40,9 +40,10 @@
                     <!-- ---------------------------------------------- -->
                     <div class="tab-pane fade" id="form2" role="tabpanel" aria-labelledby="form2-tab">
                         <?php
-                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 3) {
+                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
                                 include 'socio-familiar_crea(IA).php';
                             } else {
+                                include 'app.php';
                             }
                         ?>
                     </div>
@@ -53,7 +54,7 @@
                     <!-- ---------------------------------------------- -->
                     <div class="tab-pane fade" id="form4" role="tabpanel" aria-labelledby="form4-tab">
                         <?php
-                            if ($_SESSION['id_rol'] === 4 || $_SESSION['id_rol'] === 3) {     
+                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 3) {     
                                 //busca si el informe de educacion está activo segun el id del ppl, si está activo, solo se lista, sino se crea.                                 
                                 $sql_educa = "SELECT * FROM educacion WHERE estado = 'activo'";
                                 $result_educa = $conexion->query($sql_educa);
