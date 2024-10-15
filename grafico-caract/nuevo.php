@@ -259,14 +259,15 @@
             </svg>
         </div>
         <div class="form-container">
-            <form id="marcaForm" @submit.prevent="guardarMarca">
-                <h2>Información de la Marca</h2>
-                <p>Parte seleccionada: {{ parteSeleccionadaEspanol }}</p>
-                <label for="tipoMarca">Tipo de Marca:</label>
-                <input type="text" id="tipoMarca" v-model="tipoMarca" required><br><br>
-                <label for="observaciones">Observaciones:</label><br>
-                <textarea id="observaciones" v-model="observaciones" rows="4" cols="50"></textarea><br><br>
-                <input type="submit" value="Guardar">
+            <form id="marcaForm" method="POST" action="nuevo.php" @submit.prevent="guardarMarca">
+              <h2>Información de la Marca</h2>
+              <p>Parte seleccionada: {{ parteSeleccionadaEspanol }}</p>
+              <label for="tipoMarca">Tipo de Marca:</label>
+              <input type="text" id="tipoMarca" name="tipoMarca" v-model="tipoMarca" required><br><br>
+              <label for="observaciones">Observaciones:</label><br>
+              <textarea id="observaciones" name="observaciones" v-model="observaciones" rows="4" cols="50"></textarea><br><br>
+              <input type="hidden" name="parte" :value="parteSeleccionadaEspanol">
+              <input type="submit" value="Guardar">
             </form>
         </div>
     </div>
