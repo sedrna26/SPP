@@ -21,7 +21,7 @@ if (isset($_GET['txtID'])) {
             <div class="card rounded-2 border-0">
                 <div class="card-header bg-dark text-white pb-0">
                     <h5 class="d-inline-block">Listado de PPL</h5>
-                    <a class="btn btn-primary float-right mb-2" href="persona_crea.php">Nuevo Informe PPL</a>
+                    <a class="btn btn-primary float-right mb-2" href="persona_crea.php">Nueva Persona</a>
                 </div>
                 <!-- -------------------- -->
                 <div class="card-body table-responsive">

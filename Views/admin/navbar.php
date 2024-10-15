@@ -169,9 +169,16 @@ if ($result && $result->num_rows > 0) {
             <li class="nav-item  pr-3">
               <a class="nav-link " href="ppl_index.php">PPL</a>
             </li>
-            <li class="nav-item  pr-3">
+            <?php
+              if ($_SESSION['id_rol'] === 1) {
+                ?>
+                <li class="nav-item  pr-3">
               <a class="nav-link " href="admin_index.php">Admininstrador</a>
             </li>
+            <?php      
+              } 
+            ?>
+            
           </ul>
           <!-- ------------------------------------------------------- -->
           <form class="form-inline d-flex justify-content-end">
