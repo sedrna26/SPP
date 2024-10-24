@@ -22,7 +22,7 @@
                         <button class="nav-link" id="form4-tab" data-bs-toggle="tab" data-bs-target="#form4" type="button" role="tab" aria-controls="form4" aria-selected="false">Informe Educacional</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="form5-tab" data-bs-toggle="tab" data-bs-target="#form5" type="button" role="tab" aria-controls="form5" aria-selected="false">Formulario 3</button>
+                        <button class="nav-link" id="form5-tab" data-bs-toggle="tab" data-bs-target="#form5" type="button" role="tab" aria-controls="form5" aria-selected="false">Marcas del Cuerpo</button>
                     </li>            
                 </ul>
                 <!-- --------------------------------------------------------------- -->
@@ -75,7 +75,7 @@
                     </div>
                     <!-- ---------------------------------------------- -->
                     <div class="tab-pane fade" id="form5" role="tabpanel" aria-labelledby="form5-tab">
-                        <?php include 'edu.php'; ?>
+                        <?php include 'app.php'; ?>
                     </div>
                     <!-- ---------------------------------------------- -->
                 </div>
