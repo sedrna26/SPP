@@ -30,3 +30,42 @@ th, td {
   text-align: center !important;
   vertical-align: middle !important;
 }
+.body-image {
+  position: relative;
+  display: inline-block;
+}
+.mark {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background-color: blue !important;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white !important;
+  font-weight: bold;
+  cursor: pointer;
+}
+#dialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+#dialogOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}

@@ -1,5 +1,5 @@
 <?php 
-require '../../conn/connection.php'; 
+//require '../../conn/connection.php'; 
 require 'navbar.php';
 
 // Manejo de la actualización
