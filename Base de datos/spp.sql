@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 12-10-2024 a las 20:04:46
+-- Tiempo de generación: 25-10-2024 a las 23:53:05
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -32,20 +32,21 @@ CREATE TABLE `caracteristicas` (
   `zona` varchar(50) NOT NULL,
   `tipo` varchar(50) NOT NULL,
   `descripcion` text DEFAULT NULL,
-  `tamaño` varchar(50) DEFAULT NULL
+  `tamaño` varchar(50) DEFAULT NULL,
+  `estado` enum('Activo','Inactivo') DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `caracteristicas`
 --
 
-INSERT INTO `caracteristicas` (`id`, `zona`, `tipo`, `descripcion`, `tamaño`) VALUES
-(1, 'Brazo', 'Tatuaje', 'Águila', 'Grande'),
-(2, 'Espalda', 'Cicatriz', 'Lineal', 'Mediana'),
-(3, 'Pierna', 'Lunar', 'Redondo', 'Pequeño'),
-(4, 'Rostro', 'Cicatriz', 'Irregular', 'Pequeña'),
-(5, 'Pecho', 'Tatuaje', 'Corazón', 'Mediano'),
-(6, 'Mano', 'Cicatriz', 'Quemadura', 'Grande');
+INSERT INTO `caracteristicas` (`id`, `zona`, `tipo`, `descripcion`, `tamaño`, `estado`) VALUES
+(1, 'Brazo', 'Tatuaje', 'Águila', 'Grande', 'Activo'),
+(2, 'Espalda', 'Cicatriz', 'Lineal', 'Mediana', 'Activo'),
+(3, 'Pierna', 'Lunar', 'Redondo', 'Pequeño', 'Activo'),
+(4, 'Rostro', 'Cicatriz', 'Irregular', 'Pequeña', 'Activo'),
+(5, 'Pecho', 'Tatuaje', 'Corazón', 'Mediano', 'Activo'),
+(6, 'Mano', 'Cicatriz', 'Quemadura', 'Grande', 'Activo');
 
 -- --------------------------------------------------------
 
@@ -125711,7 +125712,8 @@ CREATE TABLE `clasificacion` (
   `id_ppl` int(11) NOT NULL,
   `sugerencia` varchar(50) DEFAULT NULL,
   `sector_nro` int(4) NOT NULL,
-  `pabellon_nro` int(4) NOT NULL
+  `pabellon_nro` int(4) NOT NULL,
+  `estado` enum('Activo','Inactivo') DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -125758,7 +125760,8 @@ CREATE TABLE `educacion` (
   `grado` varchar(10) DEFAULT NULL,
   `año` int(4) DEFAULT NULL,
   `motivo_abandono` text DEFAULT NULL,
-  `oferta_educ` int(11) NOT NULL
+  `oferta_educ` int(11) NOT NULL,
+  `estado` enum('Activo','Inactivo') DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -125804,7 +125807,8 @@ CREATE TABLE `familia` (
   `causa_fall` text DEFAULT NULL,
   `instruc` varchar(80) DEFAULT NULL,
   `ocupacion` varchar(50) DEFAULT NULL,
-  `nacional` int(11) NOT NULL
+  `nacional` int(11) NOT NULL,
+  `estado` enum('Activo','Inactivo') DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -125930,7 +125934,8 @@ CREATE TABLE `otros` (
   `vinculo_fam` text DEFAULT NULL,
   `frec_visita` varchar(20) DEFAULT NULL,
   `tiene_dni` tinyint(1) DEFAULT NULL,
-  `prejuicio` text DEFAULT NULL
+  `prejuicio` text DEFAULT NULL,
+  `estado` enum('Activo','Inactivo') DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -126180,16 +126185,17 @@ CREATE TABLE `persona` (
   `direccion` varchar(50) NOT NULL,
   `genero` varchar(50) NOT NULL,
   `estadocivil` varchar(50) NOT NULL,
-  `educacion` int(11) DEFAULT NULL
+  `educacion` int(11) DEFAULT NULL,
+  `estado` enum('Activo','Inactivo') DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `persona`
 --
 
-INSERT INTO `persona` (`id`, `dni`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `educacion`) VALUES
-(1, '44123890', 'Castro', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL),
-(2, '44123891', 'Demian', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL);
+INSERT INTO `persona` (`id`, `dni`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `educacion`, `estado`) VALUES
+(1, '44123890', 'Castro', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL, 'Activo'),
+(2, '44123891', 'Demian', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL, 'Activo');
 
 -- --------------------------------------------------------
 
@@ -126204,7 +126210,8 @@ CREATE TABLE `ppl` (
   `trabaja` tinyint(1) NOT NULL,
   `profesion` varchar(50) DEFAULT NULL,
   `foto` varchar(30) DEFAULT NULL,
-  `huella` blob DEFAULT NULL
+  `huella` blob DEFAULT NULL,
+  `estado` enum('Activo','Inactivo') DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -128323,7 +128330,8 @@ CREATE TABLE `visitas` (
   `id` int(11) NOT NULL,
   `id_ppl` int(11) NOT NULL,
   `id_familia` int(11) DEFAULT NULL,
-  `id_otros` int(11) DEFAULT NULL
+  `id_otros` int(11) DEFAULT NULL,
+  `estado` enum('Activo','Inactivo') DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
