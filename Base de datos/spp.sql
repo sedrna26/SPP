@@ -1,9 +1,9 @@
-git-- phpMyAdmin SQL Dump
+-- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-10-2024 a las 00:58:40
+-- Tiempo de generación: 30-10-2024 a las 01:26:49
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -125776,6 +125776,94 @@ CREATE TABLE `datos_anexos` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `delitos`
+--
+
+CREATE TABLE `delitos` (
+  `id` int(11) NOT NULL,
+  `id_tipo_delito` int(11) DEFAULT NULL,
+  `nombre` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `delitos`
+--
+
+INSERT INTO `delitos` (`id`, `id_tipo_delito`, `nombre`) VALUES
+(1, 1, 'DELITO CONTRA LA VIDA'),
+(2, 1, 'LESIONES'),
+(3, 1, 'HOMICIDIO O LESIONES EN RIÑA'),
+(4, 1, 'DUELO'),
+(5, 1, 'ABUSO DE ARMA'),
+(6, 1, 'ABANDONO DE PERSONA'),
+(7, 2, 'INJURIA, CALUMNIA O FALSAS IMPUTACION'),
+(8, 3, 'ABUSO SEXUAL'),
+(9, 3, 'CORRUPCION DE MENORES'),
+(10, 3, 'PROMOCION Y/O FACILITACION A LA PROSTITUCION'),
+(11, 3, 'PRODUCCION, FINANCIACION, COMERCIALIZACION, TENENCIA, DISTRIBUCION Y/O DIVULGACION DE REPRODUCCIONES SEXUALES'),
+(12, 3, 'GROOMING'),
+(13, 4, 'CONTRAER MATRIMONIO SABIENDO QUE EXISTE CAUSA QUE PUEDA DECLARAR LA NULIDAD ABSOLUTA'),
+(14, 4, 'ALTERACION O SUPRESION DEL ESTADO CIVIL Y DE LA IDENTIDAD'),
+(15, 5, 'DELITOS CONTRA LA LIBERTAD INDIVIDUAL'),
+(16, 5, 'VIOLACION DE DOMICILIO'),
+(17, 5, 'VIOLACION DE SECRETOS O DE PRIVACIDAD'),
+(18, 5, 'DELITO CONTRA LA LIBERTAD DE TRABAJO Y ASOCIACION'),
+(19, 5, 'DELITO CONTRA LA LIBERTAD DE REUNION'),
+(20, 5, 'DELITO CONTRA LA LIBERTAD DE PRENSA'),
+(21, 6, 'HURTO'),
+(22, 6, 'ROBO'),
+(23, 6, 'ABIGEATO'),
+(24, 6, 'EXTORSION'),
+(25, 6, 'ESTAFAS Y OTRAS DEFRAUDACIONES'),
+(26, 6, 'USURA'),
+(27, 6, 'QUEBRADOS Y OTROS DEUDORES PUNIBLES'),
+(28, 6, 'USURPACION'),
+(29, 6, 'DAÑO'),
+(30, 6, 'DISPOSICIONES GENERALES'),
+(31, 7, 'INCENDIOS Y OTROS ESTRAGOS'),
+(32, 7, 'DELITOS CONTRA LA SEGURIDAD DEL TRANSITO Y DE LOS MEDIOS DE TRANSPORTE Y DE COMUNICACIÓN'),
+(33, 7, 'PIRATERIA'),
+(34, 7, 'DELITOS CONTRA LA SALUD PUBLICA'),
+(35, 8, 'INSTIGACION A COMETER DELITO'),
+(36, 8, 'ASOCIACION ILICITA'),
+(37, 8, 'INTIMIDACION PUBLICA'),
+(38, 8, 'APOLOGIA DEL CRIMEN'),
+(39, 8, 'OTROS ATENTADOS CONTRA EL ORDEN PUBLICO'),
+(40, 8, 'ASOCIACIONES ILICITAS TERRORISTAS Y FINANCIACION DEL TERRORISMO'),
+(41, 9, 'TRAICION'),
+(42, 9, 'DELITOS QUE COMPROMETEN LA PAZ Y LA DIGNIDAD DE LA NACION'),
+(43, 10, 'ATENTADOS AL ORDEN CONSTITUCIONAL Y A LA VIDA DEMOCRATICA'),
+(44, 10, 'SEDICION'),
+(45, 10, 'DISPOSICIONES COMUNES A LOS CAPITULOS PRECEDENTES'),
+(46, 11, 'ATENTADO Y RESISTENCIA CONTRA LA AUTORIDAD'),
+(47, 11, 'FALSA DENUNCIA'),
+(48, 11, 'USURPACION DE AUTORIDAD, TITULOS U HONORES'),
+(49, 11, 'ABUSO DE AUTORIDAD Y DEBERES DE FUNCIONARIOS PUBLICOS'),
+(50, 11, 'VIOLACION DE SELLOS Y DOCUMENTOS'),
+(51, 11, 'COHECHO Y TRAFICO DE INFLUENCIAS'),
+(52, 11, 'MALVERSACION DE CAUDALES'),
+(53, 11, 'NEGOCIACIONES INCOMPATIBLES CON EL EJERCICIO DE FUNCIONES PUBLICAS'),
+(54, 11, 'EXACCIONES ILEGALES'),
+(55, 11, 'ENRIQUECIMIENTO ILICITO DE FUNCIONARIOS Y EMPLEADOS'),
+(56, 11, 'PREVARICATO'),
+(57, 11, 'DENEGACION Y RETARDO DE LA JUSTICIA'),
+(58, 11, 'FALSO TESTIMONIO'),
+(59, 11, 'ENCUBRIMIENTO'),
+(60, 11, 'EVASION Y QUEBRANTAMIENTO DE PENA'),
+(61, 12, 'FALSIFICACION DE MONEDAS, BILLETES DE BANCO TITULOS AL PORTADOR Y DOCUMENTOS DE CREDITO'),
+(62, 12, 'FALSIFICACION DE SELLOS, TIMBRES Y MARCAS'),
+(63, 12, 'FALSIFICACION DE DOCUMENTOS EN GENERAL'),
+(64, 12, 'DISPOSICIONES COMUNES A LOS CAPITULOS PRECEDENTES'),
+(65, 12, 'FRAUDES AL COMERCIO Y A LA INDUSTRIA'),
+(66, 12, 'DEL PAGO CON CHEQUES SIN PROVISION DE FONDOS'),
+(67, 13, 'DELITO CONTRA EL ORDEN ECONOMICO PUBLICO Y FINANCIERO'),
+(68, 14, 'INF A LA LEY 23.737 (ESTUPEFACIENTES)'),
+(69, 14, 'INF A LA LEY 26.364 (TRATA)'),
+(70, 14, 'INF A LA LEY 26.842 (EXPLOTACION LABORAL)');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `domicilio`
 --
 
@@ -128426,26 +128514,33 @@ CREATE TABLE `sociofamiliar` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tipodelito`
+-- Estructura de tabla para la tabla `tiposdelito`
 --
 
-CREATE TABLE `tipodelito` (
+CREATE TABLE `tiposdelito` (
   `id` int(11) NOT NULL,
-  `titulo` varchar(30) NOT NULL,
-  `subcategoria` varchar(30) NOT NULL
+  `nombre` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `tipodelito`
+-- Volcado de datos para la tabla `tiposdelito`
 --
 
-INSERT INTO `tipodelito` (`id`, `titulo`, `subcategoria`) VALUES
-(1, 'Robo', 'Simple'),
-(2, 'Hurto', 'Calificado'),
-(3, 'Estafa', 'Electrónica'),
-(4, 'Lesiones', 'Graves'),
-(5, 'Narcotráfico', 'Venta'),
-(6, 'Homicidio', 'Culposo');
+INSERT INTO `tiposdelito` (`id`, `nombre`) VALUES
+(1, 'DELITO CONTRA LAS PERSONAS'),
+(2, 'DELITO CONTRA EL HONOR'),
+(3, 'DELITO CONTRA LA INTEGRIDAD SEXUAL'),
+(4, 'DELITO CONTRA EL ESTADO CIVIL'),
+(5, 'DELITO CONTRA LA LIBERTAD'),
+(6, 'DELITO CONTRA LA PROPIEDAD'),
+(7, 'DELITO CONTRA LA SEGURIDAD PUBLICA'),
+(8, 'DELITO CONTRA EL ORDEN PUBLICO'),
+(9, 'DELITO CONTRA LA SEGURIDAD DE LA NACION'),
+(10, 'DELITO CONTRA LOS PODERES PUBLICOS Y EL ORDEN CONSTITUCIONAL'),
+(11, 'DELITO CONTRA LA ADMINISTRACION PUBLICA'),
+(12, 'DELITO CONTRA LA FE PUBLICA'),
+(13, 'DELITO CONTRA EL ORDEN ECONOMICO PUBLICO Y FINANCIERO'),
+(14, 'DELITO FEDERAL');
 
 -- --------------------------------------------------------
 
@@ -128529,6 +128624,13 @@ ALTER TABLE `datosantropometri`
 --
 ALTER TABLE `datos_anexos`
   ADD PRIMARY KEY (`id_datos_anex`);
+
+--
+-- Indices de la tabla `delitos`
+--
+ALTER TABLE `delitos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_tipo_delito` (`id_tipo_delito`);
 
 --
 -- Indices de la tabla `domicilio`
@@ -128711,9 +128813,9 @@ ALTER TABLE `sociofamiliar`
   ADD PRIMARY KEY (`id_sociof`);
 
 --
--- Indices de la tabla `tipodelito`
+-- Indices de la tabla `tiposdelito`
 --
-ALTER TABLE `tipodelito`
+ALTER TABLE `tiposdelito`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -128772,6 +128874,12 @@ ALTER TABLE `datosantropometri`
 --
 ALTER TABLE `datos_anexos`
   MODIFY `id_datos_anex` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `delitos`
+--
+ALTER TABLE `delitos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT de la tabla `domicilio`
@@ -128918,10 +129026,10 @@ ALTER TABLE `sociofamiliar`
   MODIFY `id_sociof` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `tipodelito`
+-- AUTO_INCREMENT de la tabla `tiposdelito`
 --
-ALTER TABLE `tipodelito`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+ALTER TABLE `tiposdelito`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
@@ -128950,6 +129058,12 @@ ALTER TABLE `ciudades`
 --
 ALTER TABLE `clasificacion`
   ADD CONSTRAINT `fk_clasificacion_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `delitos`
+--
+ALTER TABLE `delitos`
+  ADD CONSTRAINT `delitos_ibfk_1` FOREIGN KEY (`id_tipo_delito`) REFERENCES `tiposdelito` (`id`);
 
 --
 -- Filtros para la tabla `domicilio`
