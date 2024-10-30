@@ -10,7 +10,7 @@ $sql = "CREATE TABLE IF NOT EXISTS body_marks (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
-// Handle AJAX requests
+// Handle AJAX request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action']) && $_POST['action'] === 'delete') {
         $id = $conexion->real_escape_string($_POST['id']);
