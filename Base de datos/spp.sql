@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: localhost
--- Tiempo de generación: 31-10-2024 a las 20:55:30
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 31-10-2024 a las 22:29:14
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -125732,23 +125732,6 @@ CREATE TABLE `clasificacion` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `conyuge`
---
-
-CREATE TABLE `conyuge` (
-  `id_conyuge` int(11) NOT NULL,
-  `apellido` int(11) NOT NULL,
-  `nombre` int(11) NOT NULL,
-  `nacionalidad` int(11) NOT NULL,
-  `ocupacion` varchar(100) NOT NULL,
-  `tipo_union` varchar(100) NOT NULL,
-  `tiene_hijos` tinyint(1) NOT NULL,
-  `cant_hijos` int(3) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `datosantropometri`
 --
 
@@ -125780,7 +125763,7 @@ CREATE TABLE `datos_anexos` (
 --
 
 CREATE TABLE `delitos` (
-  `id` int(11) NOT NULL,
+  `id_delito` int(11) NOT NULL,
   `id_tipo_delito` int(11) DEFAULT NULL,
   `nombre` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -125789,7 +125772,7 @@ CREATE TABLE `delitos` (
 -- Volcado de datos para la tabla `delitos`
 --
 
-INSERT INTO `delitos` (`id`, `id_tipo_delito`, `nombre`) VALUES
+INSERT INTO `delitos` (`id_delito`, `id_tipo_delito`, `nombre`) VALUES
 (1, 1, 'DELITO CONTRA LA VIDA'),
 (2, 1, 'LESIONES'),
 (3, 1, 'HOMICIDIO O LESIONES EN RIÑA'),
@@ -125922,29 +125905,6 @@ CREATE TABLE `entrevista` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `familia`
---
-
-CREATE TABLE `familia` (
-  `id` int(11) NOT NULL,
-  `ppl` int(11) NOT NULL,
-  `datos` int(11) NOT NULL,
-  `ffaa` tinyint(1) DEFAULT NULL,
-  `familia_ffaa` varchar(100) NOT NULL,
-  `fam_detenida` tinyint(1) DEFAULT NULL,
-  `nombre_detenido` varchar(100) NOT NULL,
-  `tiene_hijo` tinyint(1) NOT NULL,
-  `cant_hijos` int(3) NOT NULL,
-  `id_padre` int(11) NOT NULL,
-  `id_madre` int(11) NOT NULL,
-  `id_hermano` int(11) NOT NULL,
-  `id_conyuge` int(11) NOT NULL,
-  `id_hijo` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `fechappl`
 --
 
@@ -125979,33 +125939,6 @@ CREATE TABLE `firma` (
   `id_persona` int(11) DEFAULT NULL,
   `firma` varchar(120) DEFAULT NULL,
   `digito` varchar(120) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `hermano`
---
-
-CREATE TABLE `hermano` (
-  `id_hermano` int(11) NOT NULL,
-  `apellido` varchar(100) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `edad` int(3) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `hijo`
---
-
-CREATE TABLE `hijo` (
-  `id_hijo` int(11) NOT NULL,
-  `apellido` varchar(100) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `edad` int(3) NOT NULL,
-  `vive` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -126138,23 +126071,6 @@ CREATE TABLE `otros` (
   `domicilio` varchar(100) DEFAULT NULL,
   `vinculo_filial` varchar(80) DEFAULT NULL,
   `telefono` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `padre`
---
-
-CREATE TABLE `padre` (
-  `id_padre` int(11) NOT NULL,
-  `vive` tinyint(1) DEFAULT NULL,
-  `apellido` varchar(100) DEFAULT NULL,
-  `nombre` varchar(100) DEFAULT NULL,
-  `edad` int(3) NOT NULL,
-  `nacionalidad` int(11) NOT NULL,
-  `estado_civil` varchar(100) NOT NULL,
-  `oficio` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -126430,6 +126346,135 @@ CREATE TABLE `ppl` (
   `profesion` varchar(50) DEFAULT NULL,
   `foto` varchar(30) DEFAULT NULL,
   `huella` blob DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ppl_causas`
+--
+
+CREATE TABLE `ppl_causas` (
+  `id_ppl_causa` int(11) NOT NULL,
+  `id_ppl` int(11) NOT NULL,
+  `id_causa` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ppl_familiar_info`
+--
+
+CREATE TABLE `ppl_familiar_info` (
+  `id` int(11) NOT NULL,
+  `idppl` int(11) NOT NULL,
+  `familiares_ffaa` tinyint(1) DEFAULT 0,
+  `ffaa_detalles` text DEFAULT NULL,
+  `familiares_detenidos` tinyint(1) DEFAULT 0,
+  `detenidos_detalles` text DEFAULT NULL,
+  `telefono_familiar` varchar(20) DEFAULT NULL,
+  `posee_dni` tinyint(1) DEFAULT NULL,
+  `motivo_no_dni` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ppl_hermanos`
+--
+
+CREATE TABLE `ppl_hermanos` (
+  `id` int(11) NOT NULL,
+  `idppl` int(11) NOT NULL,
+  `apellido` varchar(50) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `edad` int(3) DEFAULT NULL,
+  `visita` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ppl_hijos`
+--
+
+CREATE TABLE `ppl_hijos` (
+  `id` int(11) NOT NULL,
+  `idppl` int(11) NOT NULL,
+  `apellido` varchar(50) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `edad` int(3) DEFAULT NULL,
+  `fallecido` tinyint(1) DEFAULT 0,
+  `visita` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ppl_otros_visitantes`
+--
+
+CREATE TABLE `ppl_otros_visitantes` (
+  `id` int(11) NOT NULL,
+  `idppl` int(11) NOT NULL,
+  `apellido` varchar(50) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `domicilio` varchar(100) DEFAULT NULL,
+  `vinculo_filial` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ppl_padres`
+--
+
+CREATE TABLE `ppl_padres` (
+  `id` int(11) NOT NULL,
+  `idppl` int(11) NOT NULL,
+  `tipo` enum('PADRE','MADRE') NOT NULL,
+  `vivo` tinyint(1) NOT NULL DEFAULT 1,
+  `apellido` varchar(50) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `edad` int(3) DEFAULT NULL,
+  `nacionalidad` varchar(50) DEFAULT NULL,
+  `estado_civil` varchar(20) DEFAULT NULL,
+  `instruccion` varchar(100) DEFAULT NULL,
+  `visita` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ppl_pareja`
+--
+
+CREATE TABLE `ppl_pareja` (
+  `id` int(11) NOT NULL,
+  `idppl` int(11) NOT NULL,
+  `apellido` varchar(50) DEFAULT NULL,
+  `nombre` varchar(50) DEFAULT NULL,
+  `edad` int(3) DEFAULT NULL,
+  `nacionalidad` varchar(50) DEFAULT NULL,
+  `instruccion` varchar(100) DEFAULT NULL,
+  `tipo_union` enum('Casado/a','Union Convivencial') DEFAULT NULL,
+  `visita` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ppl_situacion_sociofamiliar`
+--
+
+CREATE TABLE `ppl_situacion_sociofamiliar` (
+  `id` int(11) NOT NULL,
+  `idppl` int(11) NOT NULL,
+  `edad_inicio_laboral` int(3) DEFAULT NULL,
+  `situacion_economica_precaria` tinyint(1) DEFAULT 0,
+  `mendicidad_calle` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -128503,7 +128548,7 @@ CREATE TABLE `situacionlegal` (
   `dependencia` varchar(50) NOT NULL,
   `motivo_t` varchar(100) DEFAULT NULL,
   `situacionlegal` varchar(15) NOT NULL,
-  `causa` varchar(100) NOT NULL,
+  `causas` int(11) NOT NULL,
   `id_juzgado` int(11) NOT NULL,
   `en_prejucio` varchar(100) DEFAULT NULL,
   `condena` varchar(100) NOT NULL,
@@ -128521,25 +128566,11 @@ CREATE TABLE `situacionlegal` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `sociofamiliar`
---
-
-CREATE TABLE `sociofamiliar` (
-  `id_sociof` int(11) NOT NULL,
-  `edad_inicio` int(3) NOT NULL,
-  `sit_pracaria` tinyint(1) NOT NULL,
-  `sit_calle` tinyint(1) NOT NULL,
-  `nro_familiar` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `tiposdelito`
 --
 
 CREATE TABLE `tiposdelito` (
-  `id` int(11) NOT NULL,
+  `id_tipo_delito` int(11) NOT NULL,
   `nombre` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -128547,7 +128578,7 @@ CREATE TABLE `tiposdelito` (
 -- Volcado de datos para la tabla `tiposdelito`
 --
 
-INSERT INTO `tiposdelito` (`id`, `nombre`) VALUES
+INSERT INTO `tiposdelito` (`id_tipo_delito`, `nombre`) VALUES
 (1, 'DELITO CONTRA LAS PERSONAS'),
 (2, 'DELITO CONTRA EL HONOR'),
 (3, 'DELITO CONTRA LA INTEGRIDAD SEXUAL'),
@@ -128587,23 +128618,6 @@ INSERT INTO `usuarios` (`id_usuario`, `id_persona`, `id_rol`, `nombre_usuario`, 
 (1, 1, 1, 'demadmin', '$2y$10$7zlO/gJEfkGfzOlc9WGchO4tRaI7N/55cX1C5eQq6PHJ3XHxd864S', '2024-09-29 18:15:24', 1),
 (2, 3, 2, 'horo3670', '$2y$10$8KOt0RcZi/Z.2DM.Vy/N4OGoX7jhQhQ/ylctvaFo0x0im9eVG2/4u', '2024-10-14 17:56:47', 0);
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `visitas`
---
-
-CREATE TABLE `visitas` (
-  `id` int(11) NOT NULL,
-  `id_ppl` int(11) NOT NULL,
-  `id_familia` int(11) DEFAULT NULL,
-  `id_otros` int(11) DEFAULT NULL,
-  `reg_acerc_fam` tinyint(1) NOT NULL,
-  `quien_regim` varchar(50) NOT NULL,
-  `reg_visit_interc` tinyint(1) NOT NULL,
-  `quien_visit_inter` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 --
 -- Índices para tablas volcadas
 --
@@ -128629,12 +128643,6 @@ ALTER TABLE `clasificacion`
   ADD KEY `id_ppl` (`id_ppl`);
 
 --
--- Indices de la tabla `conyuge`
---
-ALTER TABLE `conyuge`
-  ADD PRIMARY KEY (`id_conyuge`);
-
---
 -- Indices de la tabla `datosantropometri`
 --
 ALTER TABLE `datosantropometri`
@@ -128650,7 +128658,7 @@ ALTER TABLE `datos_anexos`
 -- Indices de la tabla `delitos`
 --
 ALTER TABLE `delitos`
-  ADD PRIMARY KEY (`id`),
+  ADD PRIMARY KEY (`id_delito`),
   ADD KEY `id_tipo_delito` (`id_tipo_delito`);
 
 --
@@ -128683,19 +128691,6 @@ ALTER TABLE `entrevista`
   ADD KEY `idppl` (`idppl`);
 
 --
--- Indices de la tabla `familia`
---
-ALTER TABLE `familia`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_familia_ppl` (`ppl`),
-  ADD KEY `idx_familia_datos` (`datos`),
-  ADD KEY `id_padre` (`id_padre`),
-  ADD KEY `id_madre` (`id_madre`),
-  ADD KEY `id_hijo` (`id_hijo`),
-  ADD KEY `id_hermano` (`id_hermano`),
-  ADD KEY `id_conyuge` (`id_conyuge`);
-
---
 -- Indices de la tabla `fechappl`
 --
 ALTER TABLE `fechappl`
@@ -128707,18 +128702,6 @@ ALTER TABLE `fechappl`
 ALTER TABLE `firma`
   ADD PRIMARY KEY (`id_firma`),
   ADD KEY `id_ppl` (`id_ppl`);
-
---
--- Indices de la tabla `hermano`
---
-ALTER TABLE `hermano`
-  ADD PRIMARY KEY (`id_hermano`);
-
---
--- Indices de la tabla `hijo`
---
-ALTER TABLE `hijo`
-  ADD PRIMARY KEY (`id_hijo`);
 
 --
 -- Indices de la tabla `informe_psicologico`
@@ -128779,12 +128762,6 @@ ALTER TABLE `otros`
   ADD KEY `id_ppl` (`id_ppl`);
 
 --
--- Indices de la tabla `padre`
---
-ALTER TABLE `padre`
-  ADD PRIMARY KEY (`id_padre`);
-
---
 -- Indices de la tabla `paises`
 --
 ALTER TABLE `paises`
@@ -128805,6 +128782,63 @@ ALTER TABLE `ppl`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idpersona` (`idpersona`),
   ADD KEY `idx_idpersona` (`idpersona`);
+
+--
+-- Indices de la tabla `ppl_causas`
+--
+ALTER TABLE `ppl_causas`
+  ADD PRIMARY KEY (`id_ppl_causa`),
+  ADD KEY `id_ppl` (`id_ppl`),
+  ADD KEY `id_causa` (`id_causa`);
+
+--
+-- Indices de la tabla `ppl_familiar_info`
+--
+ALTER TABLE `ppl_familiar_info`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
+-- Indices de la tabla `ppl_hermanos`
+--
+ALTER TABLE `ppl_hermanos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
+-- Indices de la tabla `ppl_hijos`
+--
+ALTER TABLE `ppl_hijos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
+-- Indices de la tabla `ppl_otros_visitantes`
+--
+ALTER TABLE `ppl_otros_visitantes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
+-- Indices de la tabla `ppl_padres`
+--
+ALTER TABLE `ppl_padres`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
+-- Indices de la tabla `ppl_pareja`
+--
+ALTER TABLE `ppl_pareja`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
+-- Indices de la tabla `ppl_situacion_sociofamiliar`
+--
+ALTER TABLE `ppl_situacion_sociofamiliar`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
 
 --
 -- Indices de la tabla `provincias`
@@ -128832,19 +128866,14 @@ ALTER TABLE `rol`
 ALTER TABLE `situacionlegal`
   ADD PRIMARY KEY (`id`),
   ADD KEY `ppl` (`id_ppl`),
-  ADD KEY `juzgado` (`id_juzgado`);
-
---
--- Indices de la tabla `sociofamiliar`
---
-ALTER TABLE `sociofamiliar`
-  ADD PRIMARY KEY (`id_sociof`);
+  ADD KEY `juzgado` (`id_juzgado`),
+  ADD KEY `causas` (`causas`);
 
 --
 -- Indices de la tabla `tiposdelito`
 --
 ALTER TABLE `tiposdelito`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id_tipo_delito`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -128853,15 +128882,6 @@ ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id_usuario`),
   ADD KEY `fk_usuarios_persona` (`id_persona`),
   ADD KEY `id_rol` (`id_rol`);
-
---
--- Indices de la tabla `visitas`
---
-ALTER TABLE `visitas`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_ppl` (`id_ppl`),
-  ADD KEY `id_familia` (`id_familia`),
-  ADD KEY `id_otros` (`id_otros`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -128886,12 +128906,6 @@ ALTER TABLE `clasificacion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `conyuge`
---
-ALTER TABLE `conyuge`
-  MODIFY `id_conyuge` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `datosantropometri`
 --
 ALTER TABLE `datosantropometri`
@@ -128907,7 +128921,7 @@ ALTER TABLE `datos_anexos`
 -- AUTO_INCREMENT de la tabla `delitos`
 --
 ALTER TABLE `delitos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id_delito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT de la tabla `domicilio`
@@ -128934,28 +128948,10 @@ ALTER TABLE `entrevista`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `familia`
---
-ALTER TABLE `familia`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `fechappl`
 --
 ALTER TABLE `fechappl`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT de la tabla `hermano`
---
-ALTER TABLE `hermano`
-  MODIFY `id_hermano` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `hijo`
---
-ALTER TABLE `hijo`
-  MODIFY `id_hijo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `informe_psicologico`
@@ -129006,12 +129002,6 @@ ALTER TABLE `otros`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `padre`
---
-ALTER TABLE `padre`
-  MODIFY `id_padre` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `paises`
 --
 ALTER TABLE `paises`
@@ -129027,6 +129017,54 @@ ALTER TABLE `persona`
 -- AUTO_INCREMENT de la tabla `ppl`
 --
 ALTER TABLE `ppl`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ppl_causas`
+--
+ALTER TABLE `ppl_causas`
+  MODIFY `id_ppl_causa` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ppl_familiar_info`
+--
+ALTER TABLE `ppl_familiar_info`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ppl_hermanos`
+--
+ALTER TABLE `ppl_hermanos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ppl_hijos`
+--
+ALTER TABLE `ppl_hijos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ppl_otros_visitantes`
+--
+ALTER TABLE `ppl_otros_visitantes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ppl_padres`
+--
+ALTER TABLE `ppl_padres`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ppl_pareja`
+--
+ALTER TABLE `ppl_pareja`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ppl_situacion_sociofamiliar`
+--
+ALTER TABLE `ppl_situacion_sociofamiliar`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -129054,28 +129092,16 @@ ALTER TABLE `situacionlegal`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `sociofamiliar`
---
-ALTER TABLE `sociofamiliar`
-  MODIFY `id_sociof` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `tiposdelito`
 --
 ALTER TABLE `tiposdelito`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_tipo_delito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
   MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de la tabla `visitas`
---
-ALTER TABLE `visitas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Restricciones para tablas volcadas
@@ -129097,7 +129123,7 @@ ALTER TABLE `clasificacion`
 -- Filtros para la tabla `delitos`
 --
 ALTER TABLE `delitos`
-  ADD CONSTRAINT `delitos_ibfk_1` FOREIGN KEY (`id_tipo_delito`) REFERENCES `tiposdelito` (`id`);
+  ADD CONSTRAINT `delitos_ibfk_1` FOREIGN KEY (`id_tipo_delito`) REFERENCES `tiposdelito` (`id_tipo_delito`);
 
 --
 -- Filtros para la tabla `domicilio`
@@ -129118,17 +129144,6 @@ ALTER TABLE `educacion`
 --
 ALTER TABLE `entrevista`
   ADD CONSTRAINT `fk_entrevista_ppl` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
-
---
--- Filtros para la tabla `familia`
---
-ALTER TABLE `familia`
-  ADD CONSTRAINT `familia_ibfk_1` FOREIGN KEY (`id_padre`) REFERENCES `padre` (`id_padre`),
-  ADD CONSTRAINT `familia_ibfk_2` FOREIGN KEY (`id_madre`) REFERENCES `padre` (`id_padre`),
-  ADD CONSTRAINT `familia_ibfk_3` FOREIGN KEY (`id_hijo`) REFERENCES `hijo` (`id_hijo`),
-  ADD CONSTRAINT `familia_ibfk_4` FOREIGN KEY (`id_hermano`) REFERENCES `hermano` (`id_hermano`),
-  ADD CONSTRAINT `familia_ibfk_5` FOREIGN KEY (`id_conyuge`) REFERENCES `conyuge` (`id_conyuge`),
-  ADD CONSTRAINT `fk_familia_ppl` FOREIGN KEY (`ppl`) REFERENCES `ppl` (`id`);
 
 --
 -- Filtros para la tabla `firma`
@@ -129188,6 +129203,55 @@ ALTER TABLE `ppl`
   ADD CONSTRAINT `fk_ppl_persona` FOREIGN KEY (`idpersona`) REFERENCES `persona` (`id`);
 
 --
+-- Filtros para la tabla `ppl_causas`
+--
+ALTER TABLE `ppl_causas`
+  ADD CONSTRAINT `ppl_causas_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`),
+  ADD CONSTRAINT `ppl_causas_ibfk_2` FOREIGN KEY (`id_causa`) REFERENCES `delitos` (`id_delito`);
+
+--
+-- Filtros para la tabla `ppl_familiar_info`
+--
+ALTER TABLE `ppl_familiar_info`
+  ADD CONSTRAINT `ppl_familiar_info_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `ppl_hermanos`
+--
+ALTER TABLE `ppl_hermanos`
+  ADD CONSTRAINT `ppl_hermanos_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `ppl_hijos`
+--
+ALTER TABLE `ppl_hijos`
+  ADD CONSTRAINT `ppl_hijos_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `ppl_otros_visitantes`
+--
+ALTER TABLE `ppl_otros_visitantes`
+  ADD CONSTRAINT `ppl_otros_visitantes_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `ppl_padres`
+--
+ALTER TABLE `ppl_padres`
+  ADD CONSTRAINT `ppl_padres_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `ppl_pareja`
+--
+ALTER TABLE `ppl_pareja`
+  ADD CONSTRAINT `ppl_pareja_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `ppl_situacion_sociofamiliar`
+--
+ALTER TABLE `ppl_situacion_sociofamiliar`
+  ADD CONSTRAINT `ppl_situacion_sociofamiliar_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
 -- Filtros para la tabla `provincias`
 --
 ALTER TABLE `provincias`
@@ -129204,7 +129268,8 @@ ALTER TABLE `registro_acceso`
 --
 ALTER TABLE `situacionlegal`
   ADD CONSTRAINT `fk_situacion_legal_juzgado` FOREIGN KEY (`id_juzgado`) REFERENCES `juzgado` (`id`),
-  ADD CONSTRAINT `fk_situacion_legal_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
+  ADD CONSTRAINT `fk_situacion_legal_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`),
+  ADD CONSTRAINT `situacionlegal_ibfk_1` FOREIGN KEY (`causas`) REFERENCES `ppl_causas` (`id_ppl_causa`);
 
 --
 -- Filtros para la tabla `usuarios`
@@ -129212,14 +129277,6 @@ ALTER TABLE `situacionlegal`
 ALTER TABLE `usuarios`
   ADD CONSTRAINT `fk_usuarios_persona` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id`),
   ADD CONSTRAINT `fk_usuarios_rol` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`);
-
---
--- Filtros para la tabla `visitas`
---
-ALTER TABLE `visitas`
-  ADD CONSTRAINT `fk_visitas_familia` FOREIGN KEY (`id_familia`) REFERENCES `familia` (`id`),
-  ADD CONSTRAINT `fk_visitas_otros` FOREIGN KEY (`id_otros`) REFERENCES `otros` (`id`),
-  ADD CONSTRAINT `fk_visitas_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

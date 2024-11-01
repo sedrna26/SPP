@@ -23,28 +23,28 @@
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="form5-tab" data-bs-toggle="tab" data-bs-target="#form5" type="button" role="tab" aria-controls="form5" aria-selected="false">Marcas del Cuerpo</button>
-                    </li>            
+                    </li>
                 </ul>
                 <!-- --------------------------------------------------------------- -->
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="form1" role="tabpanel" aria-labelledby="form1-tab">
                         <?php
-                            //en esta ventana solo se puede listar el primer formulario
-                            //dentro del archivo persona_lista.php se encuntra el boton persona_edita.php y se activa segun el rol
-                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
-                                include 'persona_lista(IA).php';
-                            } else {
-                            }
+                        //en esta ventana solo se puede listar el primer formulario
+                        //dentro del archivo persona_lista.php se encuntra el boton persona_edita.php y se activa segun el rol
+                        if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                            include 'persona_lista(IA).php';
+                        } else {
+                        }
                         ?>
                     </div>
                     <!-- ---------------------------------------------- -->
                     <div class="tab-pane fade" id="form2" role="tabpanel" aria-labelledby="form2-tab">
                         <?php
-                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
-                                include 'socio-familiar_crea(IA).php';
-                            } else {
-                                include 'app.php';
-                            }
+                        if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                            include 'socio-familiar_crea.php';
+                        } else {
+                            include 'app.php';
+                        }
                         ?>
                     </div>
                     <!-- ---------------------------------------------- -->
@@ -54,23 +54,23 @@
                     <!-- ---------------------------------------------- -->
                     <div class="tab-pane fade" id="form4" role="tabpanel" aria-labelledby="form4-tab">
                         <?php
-                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 3) {     
-                                //busca si el informe de educacion está activo segun el id del ppl, si está activo, solo se lista, sino se crea.                                 
-                                $sql_educa = "SELECT * FROM educacion WHERE estado = 'activo'";
-                                $result_educa = $conexion->query($sql_educa);
-                                $educa = $result_educa->fetch_assoc();
-                                //condicion para que el error no aparezca en la pantalla.
-                                //Warning: Trying to access array offset on value of type null in C:\xampp\htdocs\PLANTILLAS\SPP\SPP\Views\admin\ppl_informe.php on line 61
-                                $select_educa = isset($educa['estado']) ? $educa['estado'] : null; 
-                                
-                                if ($select_educa ==='activo'){
-                                    include 'educacion_lista.php';
-                                }else{
-                                    include 'educacion_crea.php';
-                                }    
-                            } else {
+                        if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 3) {
+                            //busca si el informe de educacion está activo segun el id del ppl, si está activo, solo se lista, sino se crea.                                 
+                            $sql_educa = "SELECT * FROM educacion WHERE estado = 'activo'";
+                            $result_educa = $conexion->query($sql_educa);
+                            $educa = $result_educa->fetch_assoc();
+                            //condicion para que el error no aparezca en la pantalla.
+                            //Warning: Trying to access array offset on value of type null in C:\xampp\htdocs\PLANTILLAS\SPP\SPP\Views\admin\ppl_informe.php on line 61
+                            $select_educa = isset($educa['estado']) ? $educa['estado'] : null;
+
+                            if ($select_educa === 'activo') {
                                 include 'educacion_lista.php';
+                            } else {
+                                include 'educacion_crea.php';
                             }
+                        } else {
+                            include 'educacion_lista.php';
+                        }
                         ?>
                     </div>
                     <!-- ---------------------------------------------- -->
