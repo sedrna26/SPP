@@ -128497,6 +128497,27 @@ INSERT INTO `provincias` (`id`, `id_pais`, `nombre`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `registro_acceso`
+--
+
+CREATE TABLE `registro_acceso` (
+  `id_acceso` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `hora_inicio` datetime NOT NULL,
+  `hora_cierre` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `registro_acceso`
+--
+
+INSERT INTO `registro_acceso` (`id_acceso`, `id_usuario`, `hora_inicio`, `hora_cierre`) VALUES
+(1, 1, '2024-10-31 16:52:10', '2024-10-31 16:52:26'),
+(2, 1, '2024-10-31 16:52:38', '2024-10-31 16:52:53');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `rol`
 --
 
@@ -128827,6 +128848,13 @@ ALTER TABLE `provincias`
   ADD KEY `id_pais` (`id_pais`);
 
 --
+-- Indices de la tabla `registro_acceso`
+--
+ALTER TABLE `registro_acceso`
+  ADD PRIMARY KEY (`id_acceso`),
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
 -- Indices de la tabla `rol`
 --
 ALTER TABLE `rol`
@@ -129046,6 +129074,12 @@ ALTER TABLE `provincias`
   MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2228;
 
 --
+-- AUTO_INCREMENT de la tabla `registro_acceso`
+--
+ALTER TABLE `registro_acceso`
+  MODIFY `id_acceso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `rol`
 --
 ALTER TABLE `rol`
@@ -129222,6 +129256,12 @@ ALTER TABLE `ppl_situacion_sociofamiliar`
 --
 ALTER TABLE `provincias`
   ADD CONSTRAINT `fk_provincias_pais` FOREIGN KEY (`id_pais`) REFERENCES `paises` (`id`);
+
+--
+-- Filtros para la tabla `registro_acceso`
+--
+ALTER TABLE `registro_acceso`
+  ADD CONSTRAINT `registro_acceso_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `situacionlegal`
