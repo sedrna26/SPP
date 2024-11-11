@@ -16,13 +16,16 @@
                         <button class="nav-link" id="form2-tab" data-bs-toggle="tab" data-bs-target="#form2" type="button" role="tab" aria-controls="form2" aria-selected="false">Situacion Social y Familiar</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="form3-tab" data-bs-toggle="tab" data-bs-target="#form3" type="button" role="tab" aria-controls="form3" aria-selected="false">Informe Sanitario</button>
+                        <button class="nav-link" id="form3-tab" data-bs-toggle="tab" data-bs-target="#form3" type="button" role="tab" aria-controls="form3" aria-selected="false">Situacion Laboral y Espiritual</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="form4-tab" data-bs-toggle="tab" data-bs-target="#form4" type="button" role="tab" aria-controls="form4" aria-selected="false">Informe Educacional</button>
+                        <button class="nav-link" id="form4-tab" data-bs-toggle="tab" data-bs-target="#form4" type="button" role="tab" aria-controls="form4" aria-selected="false">Informe Sanitario</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="form5-tab" data-bs-toggle="tab" data-bs-target="#form5" type="button" role="tab" aria-controls="form5" aria-selected="false">Marcas del Cuerpo</button>
+                        <button class="nav-link" id="form5-tab" data-bs-toggle="tab" data-bs-target="#form5" type="button" role="tab" aria-controls="form5" aria-selected="false">Informe Educacional</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="form6-tab" data-bs-toggle="tab" data-bs-target="#form6" type="button" role="tab" aria-controls="form6" aria-selected="false">Marcas del Cuerpo</button>
                     </li>
                 </ul>
                 <!-- --------------------------------------------------------------- -->
@@ -47,8 +50,19 @@
                         }
                         ?>
                     </div>
+
                     <!-- ---------------------------------------------- -->
                     <div class="tab-pane fade" id="form3" role="tabpanel" aria-labelledby="form3-tab">
+                        <?php
+                        if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                            include 'laboral_espiritual.php';
+                        } else {
+                            include 'app.php';
+                        }
+                        ?>
+                    </div>
+                    <!-- ---------------------------------------------- -->
+                    <div class="tab-pane fade" id="form4" role="tabpanel" aria-labelledby="form3-tab">
                         <?php include 'sanitario_crea.php'; ?>
                     </div>
                     <!-- ---------------------------------------------- -->
