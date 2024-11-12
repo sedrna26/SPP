@@ -60,8 +60,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'get_marks') {
     exit;
 }
 ?>
-<!-- ------------------------------------------------- -->
 <div>
+<?php echo "ID traido desde ppl_informe.php=".$idppl."(eliminar despues)";?>
 <!-- ----------------------------------------------------- -->
 <div class="content mt-2">
     <div class="row px-4">

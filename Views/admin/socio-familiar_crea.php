@@ -2,9 +2,6 @@
 // Definir la ruta base del proyecto
 define('BASE_PATH', dirname(__DIR__, 2));
 
-// Incluir el archivo de conexión
-require_once BASE_PATH . '/conn/connection.php';
-
 // Obtener el ID del PPL de la URL
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -160,172 +157,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
-<?php
-// Definir la ruta base del proyecto
-define('BASE_PATH', dirname(__DIR__, 2));
-
-// Incluir el archivo de conexión
-require_once BASE_PATH . '/conn/connection.php';
-
-// Obtener el ID del PPL de la URL
-$idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
-
-// Procesar el formulario cuando se envía
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $db->beginTransaction();
-
-        // Insertar información familiar general en ppl_familiar_info
-        $stmt = $db->prepare("INSERT INTO ppl_familiar_info (idppl, familiares_ffaa, ffaa_detalles, familiares_detenidos, detenidos_detalles, telefono_familiar, posee_dni, motivo_no_dni) 
-                             VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([
-            $idppl,
-            isset($_POST['familiares_ffaa']) && $_POST['familiares_ffaa'] == '1' ? 1 : 0,
-            $_POST['ffaa_details'] ?? null,
-            isset($_POST['familiares_detenidos']) && $_POST['familiares_detenidos'] == '1' ? 1 : 0,
-            $_POST['detenidos_details'] ?? null,
-            $_POST['telefono_familiar'] ?? null,
-            $_POST['posee_dni'] === 'SI' ? 1 : 0,
-            $_POST['motivo_no_dni'] ?? null
-        ]);
-
-        // Insertar situación sociofamiliar
-        $stmt = $db->prepare("INSERT INTO ppl_situacion_sociofamiliar (idppl, edad_inicio_laboral, situacion_economica_precaria, mendicidad_calle) 
-                             VALUES (?, ?, ?, ?)");
-        $stmt->execute([
-            $idppl,
-            $_POST['edad_laboral'] ?? null,
-            $_POST['situacion_economica'] === 'SI' ? 1 : 0,
-            $_POST['mendicidad'] === 'SI' ? 1 : 0
-        ]);
-
-        // Insertar datos del padre si está vivo
-        if (!empty($_POST['padre_nombre']) && isset($_POST['padre_vivo'])) {
-            $stmt = $db->prepare("INSERT INTO ppl_padres (idppl, tipo, vivo, apellido, nombre, edad, nacionalidad, estado_civil, instruccion, visita) 
-                                VALUES (?, 'PADRE', ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([
-                $idppl,
-                $_POST['padre_vivo'] === 'Vivo' ? 1 : 0,
-                $_POST['padre_apellido'],
-                $_POST['padre_nombre'],
-                $_POST['padre_edad'] ?? null,
-                $_POST['padre_nacionalidad'] ?? null,
-                $_POST['padre_estado_civil'] ?? null,
-                $_POST['padre_instruccion'] ?? null,
-                $_POST['visita_padre'] === 'SI' ? 1 : 0
-            ]);
-        }
-
-        // Insertar datos de la madre si está viva
-        if (!empty($_POST['madre_nombre']) && isset($_POST['madre_viva'])) {
-            $stmt = $db->prepare("INSERT INTO ppl_padres (idppl, tipo, vivo, apellido, nombre, edad, nacionalidad, estado_civil, instruccion, visita) 
-                                VALUES (?, 'MADRE', ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([
-                $idppl,
-                $_POST['padre_vivo'] === 'Vivo' ? 1 : 0,
-                $_POST['madre_apellido'],
-                $_POST['madre_nombre'],
-                $_POST['madre_edad'] ?? null,
-                $_POST['madre_nacionalidad'] ?? null,
-                $_POST['madre_estado_civil'] ?? null,
-                $_POST['madre_instruccion'] ?? null,
-                $_POST['visita_madre'] === 'SI' ? 1 : 0
-            ]);
-        }
-
-        // Insertar datos de hermanos
-        if (isset($_POST['num_hermanos']) && intval($_POST['num_hermanos']) > 0) {
-            $stmt = $db->prepare("INSERT INTO ppl_hermanos (idppl, apellido, nombre, edad, visita) 
-                                VALUES (?, ?, ?, ?, ?)");
-
-            for ($i = 0; $i < intval($_POST['num_hermanos']); $i++) {
-                if (!empty($_POST["hermano_nombre_$i"])) {
-                    $stmt->execute([
-                        $idppl,
-                        $_POST["hermano_apellido_$i"] ?? null,
-                        $_POST["hermano_nombre_$i"],
-                        $_POST["hermano_edad_$i"] ?? null,
-                        isset($_POST["hermano_visita_$i"]) && $_POST["hermano_visita_$i"] === 'SI' ? 1 : 0
-                    ]);
-                }
-            }
-        }
-
-        // Insertar datos de la pareja si existe
-        if (!empty($_POST['pareja_nombre'])) {
-            $stmt = $db->prepare("INSERT INTO ppl_pareja (idppl, apellido, nombre, edad, nacionalidad, instruccion, tipo_union, visita) 
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $visita_pareja = ($_POST['visita_esposo'] === 'SI' || $_POST['visita_concubino'] === 'SI') ? 1 : 0;
-            $stmt->execute([
-                $idppl,
-                $_POST['pareja_apellido'] ?? null,
-                $_POST['pareja_nombre'],
-                $_POST['pareja_edad'] ?? null,
-                $_POST['pareja_nacionalidad'] ?? null,
-                $_POST['pareja_instruccion'] ?? null,
-                $_POST['pareja_tipo_union'] ?? null,
-                $visita_pareja
-            ]);
-        }
-
-        // Insertar datos de hijos
-        if (
-            isset($_POST['tiene_hijos']) && $_POST['tiene_hijos'] == '1' &&
-            isset($_POST['num_hijos']) && intval($_POST['num_hijos']) > 0
-        ) {
-
-            $stmt = $db->prepare("INSERT INTO ppl_hijos (idppl, apellido, nombre, edad, fallecido, visita) 
-                                VALUES (?, ?, ?, ?, ?, ?)");
-
-            for ($i = 0; $i < intval($_POST['num_hijos']); $i++) {
-                if (!empty($_POST["hijo_nombre_$i"])) {
-                    $stmt->execute([
-                        $idppl,
-                        $_POST["hijo_apellido_$i"] ?? null,
-                        $_POST["hijo_nombre_$i"],
-                        $_POST["hijo_edad_$i"] ?? null,
-                        isset($_POST["hijo_fallecido_$i"]) ? 1 : 0,
-                        isset($_POST["hijo_visita_$i"]) && $_POST["hijo_visita_$i"] === 'SI' ? 1 : 0
-                    ]);
-                }
-            }
-        }
-
-        // Insertar otros visitantes
-        if (
-            isset($_POST['visita_otros']) && $_POST['visita_otros'] === 'SI' &&
-            isset($_POST['otro_nombre']) && is_array($_POST['otro_nombre'])
-        ) {
-
-            $stmt = $db->prepare("INSERT INTO ppl_otros_visitantes (idppl, apellido, nombre, telefono, domicilio, vinculo_filial) 
-                                VALUES (?, ?, ?, ?, ?, ?)");
-
-            foreach ($_POST['otro_nombre'] as $key => $nombre) {
-                if (!empty($nombre)) {
-                    $stmt->execute([
-                        $idppl,
-                        $_POST['otro_apellido'][$key] ?? null,
-                        $nombre,
-                        $_POST['otro_telefono'][$key] ?? null,
-                        $_POST['otro_domicilio'][$key] ?? null,
-                        $_POST['otro_vinculo'][$key] ?? null
-                    ]);
-                }
-            }
-        }
-
-        $db->commit();
-        echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
-    } catch (Exception $e) {
-        $db->rollBack();
-        echo "<div class='alert alert-danger'>Error al guardar los datos: " . $e->getMessage() . "</div>";
-    }
-}
-?>
-
-<head>
-
 
     <style>
         .form-section {
@@ -359,18 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 4px;
         }
 
-        .btn {
-            padding: 10px 15px;
-            background-color: #212529;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        }
+        
 
         .familiar-container {
             border-left: 3px solid #212529;
@@ -392,24 +212,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         #titulo {
             padding-bottom: 1rem;
         }
-
-        #titulo {
-            padding-bottom: 1rem;
-        }
     </style>
-
-
-</head>
-
-<body>
-    <form onsubmit="enviarFormulario(event)" id="familyDataForm" method="POST" novalidate>
-        <input type="hidden" name="idppl" value="<?php echo htmlspecialchars($idppl); ?>">
+<?php echo "ID traido desde ppl_informe.php=".$idppl."(eliminar despues)";?>
     <form onsubmit="enviarFormulario(event)" id="familyDataForm" method="POST" novalidate>
         <input type="hidden" name="idppl" value="<?php echo htmlspecialchars($idppl); ?>">
         <!-- Familiares FF.AA y Detenidos -->
         <div class="form-section">
             <div class="form-group">
-                <label id="titulo">Familiares de FF.AA:</label>
                 <label id="titulo">Familiares de FF.AA:</label>
                 <select name="familiares_ffaa" id="familiares_ffaa">
                     <option value="0">No</option>
@@ -419,10 +228,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div id="ffaa_details" class="hidden">
                 <input type="text" name="ffaa_details" placeholder="Especifique familiares FF.AA" required>
-                <input type="text" name="ffaa_details" placeholder="Especifique familiares FF.AA" required>
             </div>
             <div class="form-group">
-                <label id="titulo">Familiares Detenidos:</label>
                 <label id="titulo">Familiares Detenidos:</label>
                 <select name="familiares_detenidos" id="familiares_detenidos">
                     <option value="0">No</option>
@@ -432,13 +239,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div id="detenidos_details" class="hidden">
                 <input type="text" name="detenidos_details" placeholder="Especifique familiares detenidos" required>
-                <input type="text" name="detenidos_details" placeholder="Especifique familiares detenidos" required>
             </div>
         </div>
 
         <!-- Datos del Padre -->
         <div class="form-section">
-            <h3 id="titulo">Datos del Padre</h3>
             <h3 id="titulo">Datos del Padre</h3>
             <div class="form-group">
                 <label>Estado del padre:</label>
@@ -483,7 +288,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Datos de la Madre -->
         <div class="form-section">
             <h3 id="titulo">Datos de la Madre</h3>
-            <h3 id="titulo">Datos de la Madre</h3>
             <div class="form-group">
                 <label>Estado de la madre:</label>
                 <select name="madre_viva" id="madre_viva">
@@ -512,7 +316,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Hermanos -->
         <div class="form-section">
             <h3 id="titulo">Hermanos</h3>
-            <h3 id="titulo">Hermanos</h3>
             <div class="form-group">
                 <label>Número de hermanos:</label>
                 <select name="num_hermanos" id="num_hermanos">
@@ -536,7 +339,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- Grupo Familiar Secundario -->
         <div class="form-section">
-            <h3 id="titulo">Grupo Familiar Secundario</h3>
             <h3 id="titulo">Grupo Familiar Secundario</h3>
             <div class="familiar-container">
                 <input type="text" name="pareja_apellido" placeholder="Apellido">
@@ -621,7 +423,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Situación Sociofamiliar -->
         <div class="form-section">
             <h3 id="titulo">Situación Sociofamiliar Durante la Niñez o Adolescencia</h3>
-            <h3 id="titulo">Situación Sociofamiliar Durante la Niñez o Adolescencia</h3>
 
             <div class="form-group">
                 <label>Edad de inicio de actividades laborales:</label>
@@ -652,7 +453,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- Personas que ingresarán como visita -->
         <div class="form-section">
-            <h3 id="titulo">Personas que ingresarán como visita</h3>
             <h3 id="titulo">Personas que ingresarán como visita</h3>
 
             <div class="form-group">
@@ -756,7 +556,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Datos Anexos -->
         <div class="form-section">
             <h3 id="titulo">Datos Anexos</h3>
-            <h3 id="titulo">Datos Anexos</h3>
 
             <div class="form-group">
                 <label>¿Posee su D.N.I?</label>
@@ -772,7 +571,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="motivo_no_dni" class="form-control">
             </div>
         </div>
-        <button type="submit" class="btn">Guardar Datos</button>
+        <button type="submit" class=" btn btn-primary">Guardar Datos</button>
     </form>
 
     <script>
@@ -961,4 +760,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         });
     </script>
-</body>
+    

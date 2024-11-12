@@ -26,6 +26,8 @@
         <?php 
     }    
     ?>
+    
+    <?php echo "ID traido desde ppl_informe.php=".$idppl."(eliminar despues)";?>
 <!-- ----------------------------------------- -->
         <div class="card">
             <div class="card-body">
