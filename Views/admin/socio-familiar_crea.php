@@ -239,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-section">
             <div class="form-group">
                 <label id="titulo">Familiares de FF.AA:</label>
-                <select name="familiares_ffaa" id="familiares_ffaa">
+                <select name="familiares_ffaa" id="familiares_ffaa" required>
                     <option value="0">No</option>
                     <option value="1">Sí</option>
                 </select>
@@ -250,7 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="form-group">
                 <label id="titulo">Familiares Detenidos:</label>
-                <select name="familiares_detenidos" id="familiares_detenidos">
+                <select name="familiares_detenidos" id="familiares_detenidos" required>
                     <option value="0">No</option>
                     <option value="1">Sí</option>
                 </select>
@@ -266,7 +266,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h3 id="titulo">Datos del Padre</h3>
             <div class="form-group">
                 <label>Estado del padre:</label>
-                <select name="padre_vivo" id="padre_vivo">
+                <select name="padre_vivo" id="padre_vivo" required>
                     <option value="1">Vivo</option>
                     <option value="0">Fallecido</option>
                 </select>
@@ -284,8 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <option value="Viudo">Viudo</option>
                     <option value="Union Convivencial">Unión Convivencial</option>
                 </select>
-                <input type="text" name="padre_instruccion" placeholder="Grado de instrucción/profesión/oficio"
-                    required>
+                <input type="text" name="padre_instruccion" placeholder="Grado de instrucción/profesión/oficio" required>
             </div>
         </div>
 
@@ -294,7 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h3 id="titulo">Datos de la Madre</h3>
             <div class="form-group">
                 <label>Estado de la madre:</label>
-                <select name="madre_viva" id="madre_viva">
+                <select name="madre_viva" id="madre_viva" required>
                     <option value="1">Viva</option>
                     <option value="0">Fallecida</option>
                 </select>
@@ -322,7 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h3 id="titulo">Hermanos</h3>
             <div class="form-group">
                 <label>Número de hermanos:</label>
-                <select name="num_hermanos" id="num_hermanos">
+                <select name="num_hermanos" id="num_hermanos" required>
                     <option value="0">0</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -358,7 +357,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="form-group">
                     <label>¿Tiene hijos?</label>
-                    <select name="tiene_hijos" id="tiene_hijos">
+                    <select name="tiene_hijos" id="tiene_hijos" required>
                         <option value="0">No</option>
                         <option value="1">Sí</option>
                     </select>

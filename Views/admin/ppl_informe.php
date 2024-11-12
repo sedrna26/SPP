@@ -42,7 +42,7 @@
                     <div class="tab-pane fade" id="form2" role="tabpanel" aria-labelledby="form2-tab">
                         <?php
                         if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
-                            include 'socio-familiar_crea.php';
+                            include 'socio-familiar_lista.php';
                         } else {
                             include 'app.php';
                         }
@@ -53,7 +53,7 @@
                     <div class="tab-pane fade" id="form3" role="tabpanel" aria-labelledby="form3-tab">
                         <?php
                         if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
-                            include 'laboral_espiritual.php';
+                            include 'laboral_espiritual_lista.php';
                         } else {
                             include 'app.php';
                         }
@@ -69,7 +69,7 @@
 
                             <?php
                             if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
-                                require_once 'clasificacion.php';
+                                require_once 'clasificacion_lista.php';
                             } else {
                                 require_once 'app.php';
                             }
@@ -86,7 +86,7 @@
             </div>
             <div class="tab-pane fade" id="form7" role="tabpanel" aria-labelledby="form7-tab">
                 <?php if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
-                    include 'educacion_crea.php';
+                    include 'educacion_lista.php';
                 } else {
                     include 'app.php';
                 } ?>
