@@ -22,11 +22,9 @@
                         <button class="nav-link" id="form4-tab" data-bs-toggle="tab" data-bs-target="#form4" type="button" role="tab" aria-controls="form4" aria-selected="false">Informe Sanitario</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="form5-tab" data-bs-toggle="tab" data-bs-target="#form5" type="button" role="tab" aria-controls="form5" aria-selected="false">Informe Educacional</button>
+                        <button class="nav-link" id="form5-tab" data-bs-toggle="tab" data-bs-target="#form5" type="button" role="tab" aria-controls="form5" aria-selected="false">Clasificación</button>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="form6-tab" data-bs-toggle="tab" data-bs-target="#form6" type="button" role="tab" aria-controls="form6" aria-selected="false">Marcas del Cuerpo</button>
-                    </li>
+                    <li class="nav-item" role="presentation"> <button class="nav-link" id="form7-tab" data-bs-toggle="tab" data-bs-target="#form7" type="button" role="tab" aria-controls="form7" aria-selected="false">Educación</button>
                 </ul>
                 <!-- --------------------------------------------------------------- -->
                 <div class="tab-content" id="myTabContent">
@@ -62,40 +60,43 @@
                         ?>
                     </div>
                     <!-- ---------------------------------------------- -->
-                    <div class="tab-pane fade" id="form4" role="tabpanel" aria-labelledby="form3-tab">
+                    <div class="tab-pane fade" id="form4" role="tabpanel" aria-labelledby="form4-tab">
                         <?php include 'sanitario_crea.php'; ?>
                     </div>
                     <!-- ---------------------------------------------- -->
-                    <div class="tab-pane fade" id="form4" role="tabpanel" aria-labelledby="form4-tab">
-                        <?php
-                        if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 3) {
-                            //busca si el informe de educacion está activo segun el id del ppl, si está activo, solo se lista, sino se crea.                                 
-                            $sql_educa = "SELECT * FROM educacion WHERE estado = 'activo'";
-                            $result_educa = $conexion->query($sql_educa);
-                            $educa = $result_educa->fetch_assoc();
-                            //condicion para que el error no aparezca en la pantalla.
-                            //Warning: Trying to access array offset on value of type null in C:\xampp\htdocs\PLANTILLAS\SPP\SPP\Views\admin\ppl_informe.php on line 61
-                            $select_educa = isset($educa['estado']) ? $educa['estado'] : null;
-
-                            if ($select_educa === 'activo') {
-                                include 'educacion_lista.php';
-                            } else {
-                                include 'educacion_crea.php';
-                            }
-                        } else {
-                            include 'educacion_lista.php';
-                        }
-                        ?>
-                    </div>
-                    <!-- ---------------------------------------------- -->
                     <div class="tab-pane fade" id="form5" role="tabpanel" aria-labelledby="form5-tab">
-                        <?php include 'app.php'; ?>
+                        <div id="clasificacion-content" class="p-3">
+
+                            <?php
+                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                                require_once 'clasificacion.php';
+                            } else {
+                                require_once 'app.php';
+                            }
+                            ?>
+                        </div>
+                    </div>
+
+                    <!-- ---------------------------------------------- -->
+                    <div class="tab-pane fade" id="form6" role="tabpanel" aria-labelledby="form6-tab">
+
                     </div>
                     <!-- ---------------------------------------------- -->
                 </div>
             </div>
+            <div class="tab-pane fade" id="form7" role="tabpanel" aria-labelledby="form7-tab">
+                <?php if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                    include 'educacion_crea.php';
+                } else {
+                    include 'app.php';
+                } ?>
+            </div>
+
         </div>
     </div>
+    </div>
 </section>
+
+
 
 <?php require 'footer.php'; ?>
