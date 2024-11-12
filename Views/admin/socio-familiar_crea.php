@@ -1,6 +1,168 @@
+<?php
+// Definir la ruta base del proyecto
+define('BASE_PATH', dirname(__DIR__, 2));
+
+// Incluir el archivo de conexión
+require_once BASE_PATH . '/conn/connection.php';
+
+// Obtener el ID del PPL de la URL
+$idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Procesar el formulario cuando se envía
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        $db->beginTransaction();
+
+        // Insertar información familiar general en ppl_familiar_info
+        $stmt = $db->prepare("INSERT INTO ppl_familiar_info (idppl, familiares_ffaa, ffaa_detalles, familiares_detenidos, detenidos_detalles, telefono_familiar, posee_dni, motivo_no_dni) 
+                             VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([
+            $idppl,
+            isset($_POST['familiares_ffaa']) && $_POST['familiares_ffaa'] == '1' ? 1 : 0,
+            $_POST['ffaa_details'] ?? null,
+            isset($_POST['familiares_detenidos']) && $_POST['familiares_detenidos'] == '1' ? 1 : 0,
+            $_POST['detenidos_details'] ?? null,
+            $_POST['telefono_familiar'] ?? null,
+            $_POST['posee_dni'] === 'SI' ? 1 : 0,
+            $_POST['motivo_no_dni'] ?? null
+        ]);
+
+        // Insertar situación sociofamiliar
+        $stmt = $db->prepare("INSERT INTO ppl_situacion_sociofamiliar (idppl, edad_inicio_laboral, situacion_economica_precaria, mendicidad_calle) 
+                             VALUES (?, ?, ?, ?)");
+        $stmt->execute([
+            $idppl,
+            $_POST['edad_laboral'] ?? null,
+            $_POST['situacion_economica'] === 'SI' ? 1 : 0,
+            $_POST['mendicidad'] === 'SI' ? 1 : 0
+        ]);
+
+        // Insertar datos del padre si está vivo
+        if (!empty($_POST['padre_nombre']) && isset($_POST['padre_vivo'])) {
+            $stmt = $db->prepare("INSERT INTO ppl_padres (idppl, tipo, vivo, apellido, nombre, edad, nacionalidad, estado_civil, instruccion, visita) 
+                                VALUES (?, 'PADRE', ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([
+                $idppl,
+                $_POST['padre_vivo'] === 'Vivo' ? 1 : 0,
+                $_POST['padre_apellido'],
+                $_POST['padre_nombre'],
+                $_POST['padre_edad'] ?? null,
+                $_POST['padre_nacionalidad'] ?? null,
+                $_POST['padre_estado_civil'] ?? null,
+                $_POST['padre_instruccion'] ?? null,
+                $_POST['visita_padre'] === 'SI' ? 1 : 0
+            ]);
+        }
+
+        // Insertar datos de la madre si está viva
+        if (!empty($_POST['madre_nombre']) && isset($_POST['madre_viva'])) {
+            $stmt = $db->prepare("INSERT INTO ppl_padres (idppl, tipo, vivo, apellido, nombre, edad, nacionalidad, estado_civil, instruccion, visita) 
+                                VALUES (?, 'MADRE', ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([
+                $idppl,
+                $_POST['padre_vivo'] === 'Vivo' ? 1 : 0,
+                $_POST['madre_apellido'],
+                $_POST['madre_nombre'],
+                $_POST['madre_edad'] ?? null,
+                $_POST['madre_nacionalidad'] ?? null,
+                $_POST['madre_estado_civil'] ?? null,
+                $_POST['madre_instruccion'] ?? null,
+                $_POST['visita_madre'] === 'SI' ? 1 : 0
+            ]);
+        }
+
+        // Insertar datos de hermanos
+        if (isset($_POST['num_hermanos']) && intval($_POST['num_hermanos']) > 0) {
+            $stmt = $db->prepare("INSERT INTO ppl_hermanos (idppl, apellido, nombre, edad, visita) 
+                                VALUES (?, ?, ?, ?, ?)");
+
+            for ($i = 0; $i < intval($_POST['num_hermanos']); $i++) {
+                if (!empty($_POST["hermano_nombre_$i"])) {
+                    $stmt->execute([
+                        $idppl,
+                        $_POST["hermano_apellido_$i"] ?? null,
+                        $_POST["hermano_nombre_$i"],
+                        $_POST["hermano_edad_$i"] ?? null,
+                        isset($_POST["hermano_visita_$i"]) && $_POST["hermano_visita_$i"] === 'SI' ? 1 : 0
+                    ]);
+                }
+            }
+        }
+
+        // Insertar datos de la pareja si existe
+        if (!empty($_POST['pareja_nombre'])) {
+            $stmt = $db->prepare("INSERT INTO ppl_pareja (idppl, apellido, nombre, edad, nacionalidad, instruccion, tipo_union, visita) 
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $visita_pareja = ($_POST['visita_esposo'] === 'SI' || $_POST['visita_concubino'] === 'SI') ? 1 : 0;
+            $stmt->execute([
+                $idppl,
+                $_POST['pareja_apellido'] ?? null,
+                $_POST['pareja_nombre'],
+                $_POST['pareja_edad'] ?? null,
+                $_POST['pareja_nacionalidad'] ?? null,
+                $_POST['pareja_instruccion'] ?? null,
+                $_POST['pareja_tipo_union'] ?? null,
+                $visita_pareja
+            ]);
+        }
+
+        // Insertar datos de hijos
+        if (
+            isset($_POST['tiene_hijos']) && $_POST['tiene_hijos'] == '1' &&
+            isset($_POST['num_hijos']) && intval($_POST['num_hijos']) > 0
+        ) {
+
+            $stmt = $db->prepare("INSERT INTO ppl_hijos (idppl, apellido, nombre, edad, fallecido, visita) 
+                                VALUES (?, ?, ?, ?, ?, ?)");
+
+            for ($i = 0; $i < intval($_POST['num_hijos']); $i++) {
+                if (!empty($_POST["hijo_nombre_$i"])) {
+                    $stmt->execute([
+                        $idppl,
+                        $_POST["hijo_apellido_$i"] ?? null,
+                        $_POST["hijo_nombre_$i"],
+                        $_POST["hijo_edad_$i"] ?? null,
+                        isset($_POST["hijo_fallecido_$i"]) ? 1 : 0,
+                        isset($_POST["hijo_visita_$i"]) && $_POST["hijo_visita_$i"] === 'SI' ? 1 : 0
+                    ]);
+                }
+            }
+        }
+
+        // Insertar otros visitantes
+        if (
+            isset($_POST['visita_otros']) && $_POST['visita_otros'] === 'SI' &&
+            isset($_POST['otro_nombre']) && is_array($_POST['otro_nombre'])
+        ) {
+
+            $stmt = $db->prepare("INSERT INTO ppl_otros_visitantes (idppl, apellido, nombre, telefono, domicilio, vinculo_filial) 
+                                VALUES (?, ?, ?, ?, ?, ?)");
+
+            foreach ($_POST['otro_nombre'] as $key => $nombre) {
+                if (!empty($nombre)) {
+                    $stmt->execute([
+                        $idppl,
+                        $_POST['otro_apellido'][$key] ?? null,
+                        $nombre,
+                        $_POST['otro_telefono'][$key] ?? null,
+                        $_POST['otro_domicilio'][$key] ?? null,
+                        $_POST['otro_vinculo'][$key] ?? null
+                    ]);
+                }
+            }
+        }
+
+        $db->commit();
+        echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
+    } catch (Exception $e) {
+        $db->rollBack();
+        echo "<div class='alert alert-danger'>Error al guardar los datos: " . $e->getMessage() . "</div>";
+    }
+}
+?>
+
 <head>
-    <meta charset="UTF-8">
-    <title>Datos Sociales y Familiares</title>
+
     <style>
         .form-section {
             margin: 20px 0;
@@ -62,15 +224,21 @@
             padding: 10px;
             border-left: 2px dashed #212529;
         }
+
+        #titulo {
+            padding-bottom: 1rem;
+        }
     </style>
+
 </head>
 
 <body>
-    <form id="familyDataForm" action="process.php" method="POST">
+    <form onsubmit="enviarFormulario(event)" id="familyDataForm" method="POST" novalidate>
+        <input type="hidden" name="idppl" value="<?php echo htmlspecialchars($idppl); ?>">
         <!-- Familiares FF.AA y Detenidos -->
         <div class="form-section">
             <div class="form-group">
-                <label>Familiares de FF.AA:</label>
+                <label id="titulo">Familiares de FF.AA:</label>
                 <select name="familiares_ffaa" id="familiares_ffaa">
                     <option value="0">No</option>
                     <option value="1">Sí</option>
@@ -78,10 +246,10 @@
 
             </div>
             <div id="ffaa_details" class="hidden">
-                <input type="text" name="ffaa_details" placeholder="Especifique familiares FF.AA">
+                <input type="text" name="ffaa_details" placeholder="Especifique familiares FF.AA" required>
             </div>
             <div class="form-group">
-                <label>Familiares Detenidos:</label>
+                <label id="titulo">Familiares Detenidos:</label>
                 <select name="familiares_detenidos" id="familiares_detenidos">
                     <option value="0">No</option>
                     <option value="1">Sí</option>
@@ -89,13 +257,13 @@
 
             </div>
             <div id="detenidos_details" class="hidden">
-                <input type="text" name="detenidos_details" placeholder="Especifique familiares detenidos">
+                <input type="text" name="detenidos_details" placeholder="Especifique familiares detenidos" required>
             </div>
         </div>
 
         <!-- Datos del Padre -->
         <div class="form-section">
-            <h3>Datos del Padre</h3>
+            <h3 id="titulo">Datos del Padre</h3>
             <div class="form-group">
                 <label>Estado del padre:</label>
                 <select name="padre_vivo" id="padre_vivo">
@@ -118,12 +286,27 @@
                 </select>
                 <input type="text" name="padre_instruccion" placeholder="Grado de instrucción/profesión/oficio"
                     required>
+            <div id="padre_details" class="familiar-container">
+                <input type="text" name="padre_apellido" placeholder="Apellido" required>
+                <input type="text" name="padre_nombre" placeholder="Nombre" required>
+                <input type="number" name="padre_edad" placeholder="Edad" required>
+                <input type="text" name="padre_nacionalidad" placeholder="Nacionalidad" required>
+                <select name="padre_estado_civil" required>
+                    <option value="">Estado Civil</option>
+                    <option value="Soltero">Soltero</option>
+                    <option value="Casado">Casado</option>
+                    <option value="Divorciado">Divorciado</option>
+                    <option value="Viudo">Viudo</option>
+                    <option value="Union Convivencial">Unión Convivencial</option>
+                </select>
+                <input type="text" name="padre_instruccion" placeholder="Grado de instrucción/profesión/oficio"
+                    required>
             </div>
         </div>
 
         <!-- Datos de la Madre -->
         <div class="form-section">
-            <h3>Datos de la Madre</h3>
+            <h3 id="titulo">Datos de la Madre</h3>
             <div class="form-group">
                 <label>Estado de la madre:</label>
                 <select name="madre_viva" id="madre_viva">
@@ -151,7 +334,7 @@
 
         <!-- Hermanos -->
         <div class="form-section">
-            <h3>Hermanos</h3>
+            <h3 id="titulo">Hermanos</h3>
             <div class="form-group">
                 <label>Número de hermanos:</label>
                 <select name="num_hermanos" id="num_hermanos">
@@ -175,7 +358,7 @@
 
         <!-- Grupo Familiar Secundario -->
         <div class="form-section">
-            <h3>Grupo Familiar Secundario</h3>
+            <h3 id="titulo">Grupo Familiar Secundario</h3>
             <div class="familiar-container">
                 <input type="text" name="pareja_apellido" placeholder="Apellido">
                 <input type="text" name="pareja_nombre" placeholder="Nombre">
@@ -224,12 +407,41 @@
                             <option value="1">Sí</option>
                         </select>
                     </div>
+
+                <div id="hijos_section" class="hidden">
+                    <div class="form-group">
+                        <label>Número de hijos:</label>
+                        <select name="num_hijos" id="num_hijos">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                    </div>
+                    <div id="hijos_container"></div>
+
+                    <div class="form-group">
+                        <label>¿Tiene hijos fallecidos?</label>
+                        <select name="hijos_fallecidos">
+                            <option value="0">No</option>
+                            <option value="1">Sí</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- Situación Sociofamiliar -->
         <div class="form-section">
-            <h3>Situación Sociofamiliar Durante la Niñez o Adolescencia</h3>
+            <h3 id="titulo">Situación Sociofamiliar Durante la Niñez o Adolescencia</h3>
 
             <div class="form-group">
                 <label>Edad de inicio de actividades laborales:</label>
@@ -260,7 +472,7 @@
 
         <!-- Personas que ingresarán como visita -->
         <div class="form-section">
-            <h3>Personas que ingresarán como visita</h3>
+            <h3 id="titulo">Personas que ingresarán como visita</h3>
 
             <div class="form-group">
                 <label>Seleccione los visitantes:</label>
@@ -332,13 +544,37 @@
                         <label>Vínculo Filial:</label>
                         <input type="text" name="otro_vinculo[]" class="form-control">
                     </div>
+            </div>
+
+            <div id="otrosVisitantes" class="hidden">
+                <div class="familiar-container">
+                    <div class="form-group">
+                        <label>Apellido:</label>
+                        <input type="text" name="otro_apellido[]" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre:</label>
+                        <input type="text" name="otro_nombre[]" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Número de teléfono:</label>
+                        <input type="tel" name="otro_telefono[]" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Domicilio:</label>
+                        <input type="text" name="otro_domicilio[]" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Vínculo Filial:</label>
+                        <input type="text" name="otro_vinculo[]" class="form-control">
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Datos Anexos -->
         <div class="form-section">
-            <h3>Datos Anexos</h3>
+            <h3 id="titulo">Datos Anexos</h3>
 
             <div class="form-group">
                 <label>¿Posee su D.N.I?</label>
@@ -544,184 +780,3 @@
         });
     </script>
 </body>
-<?php
-require_once 'connection.php';
-
-try {
-    // Iniciamos una transacción para asegurar la integridad de los datos
-    $db->beginTransaction();
-
-    // Asumimos que el idppl viene de una sesión o parámetro
-    $idppl = $_POST['idppl']; // Asegúrate de tener este valor
-
-    // 1. Insertar información familiar básica
-    $stmt = $db->prepare("INSERT INTO ppl_familiar_info (idppl, familiares_ffaa, ffaa_detalles, 
-        familiares_detenidos, detenidos_detalles, telefono_familiar, posee_dni, motivo_no_dni) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-
-    $familiares_ffaa = isset($_POST['familiares_ffaa']) ? 1 : 0;
-    $familiares_detenidos = isset($_POST['familiares_detenidos']) ? 1 : 0;
-    $posee_dni = $_POST['posee_dni'] === 'SI' ? 1 : 0;
-
-    $stmt->execute([
-        $idppl,
-        $familiares_ffaa,
-        $_POST['ffaa_details'] ?? null,
-        $familiares_detenidos,
-        $_POST['detenidos_details'] ?? null,
-        $_POST['telefono_familiar'] ?? null,
-        $posee_dni,
-        $_POST['motivo_no_dni'] ?? null
-    ]);
-
-    // 2. Insertar datos del padre
-    $stmt = $db->prepare("INSERT INTO ppl_padres (idppl, tipo, vivo, apellido, nombre, edad, 
-        nacionalidad, estado_civil, instruccion, visita) VALUES (?, 'PADRE', ?, ?, ?, ?, ?, ?, ?, ?)");
-
-    $padre_vivo = $_POST['padre_vivo'] == 1 ? 1 : 0;
-    $visita_padre = $_POST['visita_padre'] === 'SI' ? 1 : 0;
-
-    $stmt->execute([
-        $idppl,
-        $padre_vivo,
-        $_POST['padre_apellido'],
-        $_POST['padre_nombre'],
-        $_POST['padre_edad'],
-        $_POST['padre_nacionalidad'],
-        $_POST['padre_estado_civil'],
-        $_POST['padre_instruccion'],
-        $visita_padre
-    ]);
-
-    // 3. Insertar datos de la madre
-    $stmt = $db->prepare("INSERT INTO ppl_padres (idppl, tipo, vivo, apellido, nombre, edad, 
-        nacionalidad, estado_civil, instruccion, visita) VALUES (?, 'MADRE', ?, ?, ?, ?, ?, ?, ?, ?)");
-
-    $madre_viva = $_POST['madre_viva'] == 1 ? 1 : 0;
-    $visita_madre = $_POST['visita_madre'] === 'SI' ? 1 : 0;
-
-    $stmt->execute([
-        $idppl,
-        $madre_viva,
-        $_POST['madre_apellido'],
-        $_POST['madre_nombre'],
-        $_POST['madre_edad'],
-        $_POST['madre_nacionalidad'],
-        $_POST['madre_estado_civil'],
-        $_POST['madre_instruccion'],
-        $visita_madre
-    ]);
-
-    // 4. Insertar hermanos
-    $num_hermanos = (int)$_POST['num_hermanos'];
-    if ($num_hermanos > 0) {
-        $stmt = $db->prepare("INSERT INTO ppl_hermanos (idppl, apellido, nombre, edad, visita) 
-            VALUES (?, ?, ?, ?, ?)");
-
-        for ($i = 0; $i < $num_hermanos; $i++) {
-            $visita_hermano = isset($_POST["hermano_visita_$i"]) && $_POST["hermano_visita_$i"] === 'SI' ? 1 : 0;
-
-            $stmt->execute([
-                $idppl,
-                $_POST["hermano_apellido_$i"],
-                $_POST["hermano_nombre_$i"],
-                $_POST["hermano_edad_$i"],
-                $visita_hermano
-            ]);
-        }
-    }
-
-    // 5. Insertar datos de la pareja (si existe)
-    if (!empty($_POST['pareja_apellido']) || !empty($_POST['pareja_nombre'])) {
-        $stmt = $db->prepare("INSERT INTO ppl_pareja (idppl, apellido, nombre, edad, nacionalidad, 
-            instruccion, tipo_union, visita) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-
-        $visita_pareja = ($_POST['visita_esposo'] === 'SI' || $_POST['visita_concubino'] === 'SI') ? 1 : 0;
-
-        $stmt->execute([
-            $idppl,
-            $_POST['pareja_apellido'],
-            $_POST['pareja_nombre'],
-            $_POST['pareja_edad'] ?? null,
-            $_POST['pareja_nacionalidad'],
-            $_POST['pareja_instruccion'],
-            $_POST['pareja_tipo_union'],
-            $visita_pareja
-        ]);
-    }
-
-    // 6. Insertar hijos
-    if (isset($_POST['tiene_hijos']) && $_POST['tiene_hijos'] == 1) {
-        $num_hijos = (int)$_POST['num_hijos'];
-        $stmt = $db->prepare("INSERT INTO ppl_hijos (idppl, apellido, nombre, edad, fallecido, visita) 
-            VALUES (?, ?, ?, ?, ?, ?)");
-
-        for ($i = 0; $i < $num_hijos; $i++) {
-            $visita_hijo = isset($_POST["hijo_visita_$i"]) && $_POST["hijo_visita_$i"] === 'SI' ? 1 : 0;
-            $fallecido = isset($_POST['hijos_fallecidos']) && $_POST['hijos_fallecidos'] == 1 ? 1 : 0;
-
-            $stmt->execute([
-                $idppl,
-                $_POST["hijo_apellido_$i"],
-                $_POST["hijo_nombre_$i"],
-                $_POST["hijo_edad_$i"],
-                $fallecido,
-                $visita_hijo
-            ]);
-        }
-    }
-
-    // 7. Insertar otros visitantes
-    if (isset($_POST['visita_otros']) && $_POST['visita_otros'] === 'SI') {
-        $stmt = $db->prepare("INSERT INTO ppl_otros_visitantes (idppl, apellido, nombre, telefono, 
-            domicilio, vinculo_filial) VALUES (?, ?, ?, ?, ?, ?)");
-
-        // Asumiendo que los arrays están configurados en el formulario
-        $otros_apellidos = $_POST['otro_apellido'] ?? [];
-        $otros_nombres = $_POST['otro_nombre'] ?? [];
-        $otros_telefonos = $_POST['otro_telefono'] ?? [];
-        $otros_domicilios = $_POST['otro_domicilio'] ?? [];
-        $otros_vinculos = $_POST['otro_vinculo'] ?? [];
-
-        foreach ($otros_apellidos as $key => $apellido) {
-            if (!empty($apellido) || !empty($otros_nombres[$key])) {
-                $stmt->execute([
-                    $idppl,
-                    $apellido,
-                    $otros_nombres[$key],
-                    $otros_telefonos[$key] ?? null,
-                    $otros_domicilios[$key] ?? null,
-                    $otros_vinculos[$key] ?? null
-                ]);
-            }
-        }
-    }
-
-    // 8. Insertar situación sociofamiliar
-    $stmt = $db->prepare("INSERT INTO ppl_situacion_sociofamiliar (idppl, edad_inicio_laboral, 
-        situacion_economica_precaria, mendicidad_calle) VALUES (?, ?, ?, ?)");
-
-    $situacion_economica = $_POST['situacion_economica'] === 'SI' ? 1 : 0;
-    $mendicidad = $_POST['mendicidad'] === 'SI' ? 1 : 0;
-
-    $stmt->execute([
-        $idppl,
-        $_POST['edad_laboral'] ?? null,
-        $situacion_economica,
-        $mendicidad
-    ]);
-
-    // Confirmar la transacción
-    $db->commit();
-
-    // Redirigir o mostrar mensaje de éxito
-    header('Location: success.php');
-    exit();
-} catch (Exception $e) {
-    // Si algo falla, revertir todos los cambios
-    $db->rollBack();
-    error_log("Error en la inserción de datos: " . $e->getMessage());
-    header('Location: error.php');
-    exit();
-}
-?>

@@ -45,20 +45,21 @@ if (isset($_GET['txtID'])) {
                                 $pples = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 foreach ($pples as $ppl) {
                             ?>
-                            <tr>    
-                                <td><?php echo htmlspecialchars($ppl['id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($ppl['nombres'] . ' ' . $ppl['apellidos'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($ppl['dni'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($ppl['direccion'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                
-                                <td><a class="btn btn-info " href="ppl_informe.php">Informe(IEII)</a></td>
-                                <td>    
-                                    <a href="prontuario_index.php?id=<?php echo $ppl['id']; ?>" data-toggle="modal" data-backdrop="false" class="btn btn-info btn-sm" type="button" title="ver">
-                                        <i class="fa-solid fa-eye" style="color: #000000;"></i>
-                                    </a>
-                                </td>
-                                
-                                    <!-- <div class="btn-group">
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($ppl['id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars($ppl['nombres'] . ' ' . $ppl['apellidos'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars($ppl['dni'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars($ppl['direccion'], ENT_QUOTES, 'UTF-8'); ?></td>
+
+                                        <td>
+                                            <a class="btn btn-info" href='ppl_informe.php?id=<?php echo $ppl['id']; ?>'>Informe(IEII)</a>
+                                        <td>
+                                            <a href="prontuario_index.php?id=<?php echo $ppl['id']; ?>" data-toggle="modal" data-backdrop="false" class="btn btn-info btn-sm" type="button" title="ver">
+                                                <i class="fa-solid fa-eye" style="color: #000000;"></i>
+                                            </a>
+                                        </td>
+
+                                        <!-- <div class="btn-group">
                                         <a href="profe_edit.php?id_usuario=<?php echo htmlspecialchars($ppl['id_usuario'], ENT_QUOTES, 'UTF-8'); ?>" 
                                         class="btn btn-warning btn-sm" role="button">
                                         <i class="fas fa-edit"></i></a>
@@ -69,14 +70,14 @@ if (isset($_GET['txtID'])) {
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                     </div> -->
-                                </td>
-                            </tr>
-                <?php
-                    }
-                } catch (PDOException $e) {
-                    error_log("Error al obtener los pples: " . $e->getMessage());
-                }
-                ?>
+                                        </td>
+                                    </tr>
+                            <?php
+                                }
+                            } catch (PDOException $e) {
+                                error_log("Error al obtener los pples: " . $e->getMessage());
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>

@@ -41,7 +41,7 @@ if ($result && $result->num_rows > 0) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Servicio Penitenciario Proviancial San Juan</title>
+  <title>Servicio Penitenciario Provincial San Juan</title>
   <link rel="shortcut icon" href="../../img/LOGO.ico" type="image/x-icon" />
   <!--font awesome con CDN para iconos-->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
@@ -170,15 +170,15 @@ if ($result && $result->num_rows > 0) {
               <a class="nav-link " href="ppl_index.php">PPL</a>
             </li>
             <?php
-              if ($_SESSION['id_rol'] === 1) {
-                ?>
-                <li class="nav-item  pr-3">
-              <a class="nav-link " href="admin_index.php">Admininstrador</a>
-            </li>
-            <?php      
-              } 
+            if ($_SESSION['id_rol'] === 1) {
             ?>
-            
+              <li class="nav-item  pr-3">
+                <a class="nav-link " href="admin_index.php">Admininstrador</a>
+              </li>
+            <?php
+            }
+            ?>
+
           </ul>
           <!-- ------------------------------------------------------- -->
           <form class="form-inline d-flex justify-content-end">
@@ -194,16 +194,16 @@ if ($result && $result->num_rows > 0) {
                         "Usuario Desconocido"
                       <?php endif; ?>
                       <span>
-                      <?php if (isset($_SESSION['nombres'])) : ?>
-                        <?php echo $_SESSION['nombres']; ?>
-                      <?php endif; ?>
-                    </span>
+                        <?php if (isset($_SESSION['nombres'])) : ?>
+                          <?php echo $_SESSION['nombres']; ?>
+                        <?php endif; ?>
+                      </span>
                     </span>
                   </a>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                      <li><a class="dropdown-item" href="#"> <i class="fas fa-cog pe-2"></i>Configuración</a></li>
-                      <li><a class="dropdown-item" href="javascript:cerrar()"> <i class="fa fa-power-off pe-2"></i>Cerrar Sesión</a></li>
-                    </ul>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="#"> <i class="fas fa-cog pe-2"></i>Configuración</a></li>
+                    <li><a class="dropdown-item" href="javascript:cerrar()"> <i class="fa fa-power-off pe-2"></i>Cerrar Sesión</a></li>
+                  </ul>
                 </li>
             </div>
             </ul>
