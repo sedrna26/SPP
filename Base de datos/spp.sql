@@ -125772,6 +125772,7 @@ CREATE TABLE `datos_anexos` (
 
 CREATE TABLE `delitos` (
   `id_delito` int(11) NOT NULL,
+  `id_delito` int(11) NOT NULL,
   `id_tipo_delito` int(11) DEFAULT NULL,
   `nombre` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -125780,6 +125781,7 @@ CREATE TABLE `delitos` (
 -- Volcado de datos para la tabla `delitos`
 --
 
+INSERT INTO `delitos` (`id_delito`, `id_tipo_delito`, `nombre`) VALUES
 INSERT INTO `delitos` (`id_delito`, `id_tipo_delito`, `nombre`) VALUES
 (1, 1, 'DELITO CONTRA LA VIDA'),
 (2, 1, 'LESIONES'),
@@ -128642,6 +128644,7 @@ CREATE TABLE `situacionlegal` (
   `motivo_t` varchar(100) DEFAULT NULL,
   `situacionlegal` varchar(15) NOT NULL,
   `causas` int(11) NOT NULL,
+  `causas` int(11) NOT NULL,
   `id_juzgado` int(11) NOT NULL,
   `en_prejucio` varchar(100) DEFAULT NULL,
   `condena` varchar(100) NOT NULL,
@@ -128664,6 +128667,7 @@ CREATE TABLE `situacionlegal` (
 
 CREATE TABLE `tiposdelito` (
   `id_tipo_delito` int(11) NOT NULL,
+  `id_tipo_delito` int(11) NOT NULL,
   `nombre` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -128671,6 +128675,7 @@ CREATE TABLE `tiposdelito` (
 -- Volcado de datos para la tabla `tiposdelito`
 --
 
+INSERT INTO `tiposdelito` (`id_tipo_delito`, `nombre`) VALUES
 INSERT INTO `tiposdelito` (`id_tipo_delito`, `nombre`) VALUES
 (1, 'DELITO CONTRA LAS PERSONAS'),
 (2, 'DELITO CONTRA EL HONOR'),
@@ -128751,6 +128756,7 @@ ALTER TABLE `datos_anexos`
 -- Indices de la tabla `delitos`
 --
 ALTER TABLE `delitos`
+  ADD PRIMARY KEY (`id_delito`),
   ADD PRIMARY KEY (`id_delito`),
   ADD KEY `id_tipo_delito` (`id_tipo_delito`);
 
@@ -128941,11 +128947,75 @@ ALTER TABLE `ppl_situacion_sociofamiliar`
   ADD KEY `idppl` (`idppl`);
 
 --
+-- Indices de la tabla `ppl_causas`
+--
+ALTER TABLE `ppl_causas`
+  ADD PRIMARY KEY (`id_ppl_causa`),
+  ADD KEY `id_ppl` (`id_ppl`),
+  ADD KEY `id_causa` (`id_causa`);
+
+--
+-- Indices de la tabla `ppl_familiar_info`
+--
+ALTER TABLE `ppl_familiar_info`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
+-- Indices de la tabla `ppl_hermanos`
+--
+ALTER TABLE `ppl_hermanos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
+-- Indices de la tabla `ppl_hijos`
+--
+ALTER TABLE `ppl_hijos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
+-- Indices de la tabla `ppl_otros_visitantes`
+--
+ALTER TABLE `ppl_otros_visitantes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
+-- Indices de la tabla `ppl_padres`
+--
+ALTER TABLE `ppl_padres`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
+-- Indices de la tabla `ppl_pareja`
+--
+ALTER TABLE `ppl_pareja`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
+-- Indices de la tabla `ppl_situacion_sociofamiliar`
+--
+ALTER TABLE `ppl_situacion_sociofamiliar`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idppl` (`idppl`);
+
+--
 -- Indices de la tabla `provincias`
 --
 ALTER TABLE `provincias`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_pais` (`id_pais`);
+
+--
+-- Indices de la tabla `registro_acceso`
+--
+ALTER TABLE `registro_acceso`
+  ADD PRIMARY KEY (`id_acceso`),
+  ADD KEY `id_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `rol`
@@ -128961,11 +129031,14 @@ ALTER TABLE `situacionlegal`
   ADD KEY `ppl` (`id_ppl`),
   ADD KEY `juzgado` (`id_juzgado`),
   ADD KEY `causas` (`causas`);
+  ADD KEY `juzgado` (`id_juzgado`),
+  ADD KEY `causas` (`causas`);
 
 --
 -- Indices de la tabla `tiposdelito`
 --
 ALTER TABLE `tiposdelito`
+  ADD PRIMARY KEY (`id_tipo_delito`);
   ADD PRIMARY KEY (`id_tipo_delito`);
 
 --
@@ -129014,6 +129087,7 @@ ALTER TABLE `datos_anexos`
 -- AUTO_INCREMENT de la tabla `delitos`
 --
 ALTER TABLE `delitos`
+  MODIFY `id_delito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
   MODIFY `id_delito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
@@ -129173,6 +129247,12 @@ ALTER TABLE `provincias`
   MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2228;
 
 --
+-- AUTO_INCREMENT de la tabla `registro_acceso`
+--
+ALTER TABLE `registro_acceso`
+  MODIFY `id_acceso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `rol`
 --
 ALTER TABLE `rol`
@@ -129188,6 +129268,7 @@ ALTER TABLE `situacionlegal`
 -- AUTO_INCREMENT de la tabla `tiposdelito`
 --
 ALTER TABLE `tiposdelito`
+  MODIFY `id_tipo_delito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
   MODIFY `id_tipo_delito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
@@ -129216,6 +129297,7 @@ ALTER TABLE `clasificacion`
 -- Filtros para la tabla `delitos`
 --
 ALTER TABLE `delitos`
+  ADD CONSTRAINT `delitos_ibfk_1` FOREIGN KEY (`id_tipo_delito`) REFERENCES `tiposdelito` (`id_tipo_delito`);
   ADD CONSTRAINT `delitos_ibfk_1` FOREIGN KEY (`id_tipo_delito`) REFERENCES `tiposdelito` (`id_tipo_delito`);
 
 --
@@ -129351,16 +129433,73 @@ ALTER TABLE `ppl_situacion_sociofamiliar`
   ADD CONSTRAINT `ppl_situacion_sociofamiliar_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
 
 --
+-- Filtros para la tabla `ppl_causas`
+--
+ALTER TABLE `ppl_causas`
+  ADD CONSTRAINT `ppl_causas_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`),
+  ADD CONSTRAINT `ppl_causas_ibfk_2` FOREIGN KEY (`id_causa`) REFERENCES `delitos` (`id_delito`);
+
+--
+-- Filtros para la tabla `ppl_familiar_info`
+--
+ALTER TABLE `ppl_familiar_info`
+  ADD CONSTRAINT `ppl_familiar_info_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `ppl_hermanos`
+--
+ALTER TABLE `ppl_hermanos`
+  ADD CONSTRAINT `ppl_hermanos_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `ppl_hijos`
+--
+ALTER TABLE `ppl_hijos`
+  ADD CONSTRAINT `ppl_hijos_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `ppl_otros_visitantes`
+--
+ALTER TABLE `ppl_otros_visitantes`
+  ADD CONSTRAINT `ppl_otros_visitantes_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `ppl_padres`
+--
+ALTER TABLE `ppl_padres`
+  ADD CONSTRAINT `ppl_padres_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `ppl_pareja`
+--
+ALTER TABLE `ppl_pareja`
+  ADD CONSTRAINT `ppl_pareja_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
+-- Filtros para la tabla `ppl_situacion_sociofamiliar`
+--
+ALTER TABLE `ppl_situacion_sociofamiliar`
+  ADD CONSTRAINT `ppl_situacion_sociofamiliar_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+
+--
 -- Filtros para la tabla `provincias`
 --
 ALTER TABLE `provincias`
   ADD CONSTRAINT `fk_provincias_pais` FOREIGN KEY (`id_pais`) REFERENCES `paises` (`id`);
 
 --
+-- Filtros para la tabla `registro_acceso`
+--
+ALTER TABLE `registro_acceso`
+  ADD CONSTRAINT `registro_acceso_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE;
+
+--
 -- Filtros para la tabla `situacionlegal`
 --
 ALTER TABLE `situacionlegal`
   ADD CONSTRAINT `fk_situacion_legal_juzgado` FOREIGN KEY (`id_juzgado`) REFERENCES `juzgado` (`id`),
+  ADD CONSTRAINT `fk_situacion_legal_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`),
+  ADD CONSTRAINT `situacionlegal_ibfk_1` FOREIGN KEY (`causas`) REFERENCES `ppl_causas` (`id_ppl_causa`);
   ADD CONSTRAINT `fk_situacion_legal_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`),
   ADD CONSTRAINT `situacionlegal_ibfk_1` FOREIGN KEY (`causas`) REFERENCES `ppl_causas` (`id_ppl_causa`);
 

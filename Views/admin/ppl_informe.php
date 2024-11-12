@@ -36,6 +36,12 @@
                             include 'persona_lista(IA).php';
                         } else {
                         }
+                        //en esta ventana solo se puede listar el primer formulario
+                        //dentro del archivo persona_lista.php se encuntra el boton persona_edita.php y se activa segun el rol
+                        if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                            include 'persona_lista(IA).php';
+                        } else {
+                        }
                         ?>
                     </div>
                     <!-- ---------------------------------------------- -->
@@ -43,6 +49,11 @@
                         <?php
                         if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
                             include 'socio-familiar_lista.php';
+                        } else {
+                            include 'app.php';
+                        }
+                        if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                            include 'socio-familiar_crea.php';
                         } else {
                             include 'app.php';
                         }
