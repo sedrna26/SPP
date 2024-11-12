@@ -1,8 +1,6 @@
 <?php
-// Incluir el archivo de conexión
-require_once BASE_PATH . '/conn/connection.php';
+// require_once BASE_PATH . '/conn/connection.php';
 
-// Obtener el ID del PPL de la URL
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -73,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin-left: 5px;
         }
 
-        .btn {
+        /* .btn {
             padding: 10px 15px;
             background-color: #212529;
             color: white;
@@ -84,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .btn:hover {
             background-color: #45a049;
-        }
+        } */
 
         #titulo {
             padding-bottom: 1rem;
@@ -175,7 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
 
-        <button type="submit" class="btn">Guardar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
     </form>
 
     <script>

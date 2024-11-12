@@ -1,8 +1,6 @@
 <?php
 
 
-// Incluir el archivo de conexión
-require_once BASE_PATH . '/conn/connection.php';
 
 // Obtener el ID del PPL de la URL
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -80,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 4px;
         }
 
-        .btn {
+        /* .btn {
             padding: 10px 15px;
             background-color: #212529;
             color: white;
@@ -91,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .btn:hover {
             background-color: #45a049;
-        }
+        } */
 
         .familiar-container {
             border-left: 3px solid #212529;
@@ -117,6 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
+<?php echo "ID traido desde ppl_informe.php=".$idppl."(eliminar despues)";?>
     <form method="POST">
         <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
 
@@ -188,7 +187,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
 
-        <button type="submit" class="btn">Guardar Información</button>
+        <button type="submit" class="btn btn-primary">Guardar Información</button>
     </form>
 
     <script>
