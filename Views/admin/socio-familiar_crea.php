@@ -286,6 +286,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </select>
                 <input type="text" name="padre_instruccion" placeholder="Grado de instrucción/profesión/oficio"
                     required>
+            <div id="padre_details" class="familiar-container">
+                <input type="text" name="padre_apellido" placeholder="Apellido" required>
+                <input type="text" name="padre_nombre" placeholder="Nombre" required>
+                <input type="number" name="padre_edad" placeholder="Edad" required>
+                <input type="text" name="padre_nacionalidad" placeholder="Nacionalidad" required>
+                <select name="padre_estado_civil" required>
+                    <option value="">Estado Civil</option>
+                    <option value="Soltero">Soltero</option>
+                    <option value="Casado">Casado</option>
+                    <option value="Divorciado">Divorciado</option>
+                    <option value="Viudo">Viudo</option>
+                    <option value="Union Convivencial">Unión Convivencial</option>
+                </select>
+                <input type="text" name="padre_instruccion" placeholder="Grado de instrucción/profesión/oficio"
+                    required>
             </div>
         </div>
 
@@ -363,6 +378,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option value="1">Sí</option>
                     </select>
                 </div>
+
+                <div id="hijos_section" class="hidden">
+                    <div class="form-group">
+                        <label>Número de hijos:</label>
+                        <select name="num_hijos" id="num_hijos">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                    </div>
+                    <div id="hijos_container"></div>
+
+                    <div class="form-group">
+                        <label>¿Tiene hijos fallecidos?</label>
+                        <select name="hijos_fallecidos">
+                            <option value="0">No</option>
+                            <option value="1">Sí</option>
+                        </select>
+                    </div>
 
                 <div id="hijos_section" class="hidden">
                     <div class="form-group">
@@ -476,6 +520,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </select>
                     </div>
                 </div>
+            </div>
+
+            <div id="otrosVisitantes" class="hidden">
+                <div class="familiar-container">
+                    <div class="form-group">
+                        <label>Apellido:</label>
+                        <input type="text" name="otro_apellido[]" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre:</label>
+                        <input type="text" name="otro_nombre[]" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Número de teléfono:</label>
+                        <input type="tel" name="otro_telefono[]" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Domicilio:</label>
+                        <input type="text" name="otro_domicilio[]" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Vínculo Filial:</label>
+                        <input type="text" name="otro_vinculo[]" class="form-control">
+                    </div>
             </div>
 
             <div id="otrosVisitantes" class="hidden">

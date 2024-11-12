@@ -27,15 +27,19 @@ if ($_POST) {
 
         if ($stmt->rowCount() > 0) {
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            // Verificación de la contraseña
             if (password_verify($contrasena, $usuario['contrasena'])) {
                 $_SESSION['id_usuario'] = $usuario['id_usuario'];
                 $_SESSION['nombres'] = $usuario['nombres'];
                 $_SESSION['apellidos'] = $usuario['apellidos'];
                 $_SESSION['id_rol'] = $usuario['id_rol'];
-
-                // Redirigir según el rol
+            
+              
+                $sqlInsertRegistro = "INSERT INTO registro_acceso (id_usuario, hora_inicio) VALUES (:id_usuario, NOW())";
+                $stmtInsertRegistro = $db->prepare($sqlInsertRegistro);
+                $stmtInsertRegistro->bindParam(':id_usuario', $usuario['id_usuario'], PDO::PARAM_INT);
+                $stmtInsertRegistro->execute();
+            
+               
                 if ($usuario['id_rol'] == 1) {
                     header('Location: admin/index.php');
                     exit;
@@ -43,9 +47,8 @@ if ($_POST) {
                     header('Location: admin/index.php');
                     exit;
                 }
-            } else {
-                $_SESSION['message'] = "Credenciales incorrectas";
             }
+            
         } else {
             $_SESSION['message'] = "Usuario no encontrado";
         }
@@ -84,9 +87,9 @@ if ($_POST) {
         </div>
         <div class="text-center fs-1 fw-bold">Bienvenid@</div>
         <p>Admin
-             demadmin
+            demadmin
             Clave:demian1234
-           
+
             Correccional
             maol4192
             Clave:123</p>
