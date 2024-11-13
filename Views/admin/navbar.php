@@ -1,16 +1,19 @@
 <?php
-require '../../conn/connection.php';
-
+ob_start(); 
 session_start();
+require '../../conn/connection.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Verificar si el usuario está autenticado
+
 if (!isset($_SESSION['id_usuario'])) {
   header('Location: home.php');
   exit;
 }
-$id_rol = $_SESSION['id_rol']; // Supongo que id_rol está almacenado en la sesión
+$id_rol = $_SESSION['id_rol'];
 
-// Consulta para obtener el nombre del rol
+
 $query = "SELECT nombre_rol FROM rol WHERE id_rol = ?";
 $stmt = $conexion->prepare($query);
 
@@ -29,10 +32,6 @@ if ($result && $result->num_rows > 0) {
   $nombre_rol = "Usuario Desconocido";
 }
 
-// Desactivar la caché
-// header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-// header("Cache-Control: post-check=0, pre-check=0", false);
-// header("Pragma: no-cache");
 ?>
 
 <!DOCTYPE html>
@@ -178,7 +177,9 @@ if ($result && $result->num_rows > 0) {
             <?php
             }
             ?>
-
+            <li class="nav-item  pr-3">
+              <a class="nav-link " href="auditoria.php">Auditoria</a>
+            </li>
           </ul>
           <!-- ------------------------------------------------------- -->
           <form class="form-inline d-flex justify-content-end">
@@ -213,3 +214,4 @@ if ($result && $result->num_rows > 0) {
       </div>
     </nav>
   </div>
+  <? ob_end_flush();?>

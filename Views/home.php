@@ -1,11 +1,7 @@
 <?php
 require '../conn/connection.php';
-session_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
-// Redirigir si ya está autenticado
+
 if (isset($_SESSION['id_usuario'])) {
     header('Location: admin/index.php');
     exit;
