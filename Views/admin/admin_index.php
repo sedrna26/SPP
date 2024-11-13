@@ -1,31 +1,61 @@
-<?php
-//nombre de usuario:demadmin
-//Clave:demian1234
+<?php 
+require 'navbar.php'; 
 require '../../conn/connection.php';
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
-//-------------BORRADO Usuario (Actualización a inactivo)------------------ 
+function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles) {
+    try {
+        $sql = "INSERT INTO auditoria (id_usuario, accion, detalles, tabla_afectada, registro_id, fecha) 
+                VALUES (:id_usuario, :accion, :detalles, :tabla_afectada, :registro_id, NOW())";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':id_usuario', $_SESSION['id_usuario']);
+        $stmt->bindParam(':accion', $accion);
+        $stmt->bindParam(':detalles', $detalles);
+        $stmt->bindParam(':tabla_afectada', $tabla_afectada);
+        $stmt->bindParam(':registro_id', $registro_id);
+        $stmt->execute();
+    } catch (PDOException $e) {
+        echo "Error en el registro de auditoría: " . $e->getMessage();
+    }
+}
+
+//------------- BORRADO Usuario (Actualización a inactivo) ------------------ 
 if (isset($_GET['txtID'])) {
-    $txtID = $_GET['txtID']; // Obtiene el ID del usuario a eliminar
-    $sentencia = $db->prepare("UPDATE usuarios SET activo = '0' WHERE id_usuario = :id_usuario");
-    $sentencia->bindParam(':id_usuario', $txtID);
+    $txtID = $_GET['txtID'];
 
-    if ($sentencia->execute()) {
-        $mensaje = "Registro Eliminado con Éxito";
+    // Obtener el nombre y rol del usuario afectado
+    $usuarioStmt = $db->prepare("SELECT nombre_usuario, id_rol FROM usuarios WHERE id_usuario = :id_usuario");
+    $usuarioStmt->bindParam(':id_usuario', $txtID);
+    $usuarioStmt->execute();
+    $usuario = $usuarioStmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($usuario) {
+        $nombreUsuario = $usuario['nombre_usuario'];
+        $rolUsuario = $usuario['id_rol'];
+
+        $sentencia = $db->prepare("UPDATE usuarios SET activo = '0' WHERE id_usuario = :id_usuario");
+        $sentencia->bindParam(':id_usuario', $txtID);
+
+        if ($sentencia->execute()) {
+            $accion = 'eliminar';
+            $tabla_afectada = 'usuarios';
+            $descripcion = "Se actualizó el campo activo a 0 para el usuario ID: $txtID, Nombre: $nombreUsuario, Rol: $rolUsuario";
+            
+            // Registrar la acción de auditoría
+            registrarAuditoria($db, $accion, $tabla_afectada, $txtID, $descripcion);
+            $mensaje = "Registro Eliminado con Éxito";
+        } else {
+            $mensaje = "Error al eliminar el usuario.";
+        }
     } else {
-        $mensaje = "Error al eliminar el usuario.";
+        $mensaje = "Usuario no encontrado.";
     }
 
-    header("Location:admin_index.php?mensaje=" . urlencode($mensaje));
+    header("Location: admin_index.php?mensaje=" . urlencode($mensaje));
     exit();
 }
-?>
-<!-- ------------------------------------------ -->
-<?php
+
+//-------------------------------------- CREACIÓN DE NUEVO USUARIO ---------------------------------------
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Recolecta datos del formulario
     $nombre_usuario = $_POST['nombre_usuario'];
     $contrasena = $_POST['contrasena'];
     $dni = $_POST['dni'];
@@ -35,9 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $direccion = $_POST['direccion'];
     $genero = $_POST['genero'];
     $estadocivil = $_POST['estadocivil'];
-    $id_rol = $_POST['permiso']; // Mapeado del select de roles
-
-    // Hashear la contraseña
+    $id_rol = $_POST['permiso'];
     $hashed_password = password_hash($contrasena, PASSWORD_BCRYPT);
 
     // Calcular la edad a partir de la fecha de nacimiento
@@ -47,7 +75,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $error = "";
     try {
-        // Verificar si el DNI ya existe
         $sql_check_dni = "SELECT COUNT(*) FROM persona WHERE dni = :dni";
         $stmt_check_dni = $db->prepare($sql_check_dni);
         $stmt_check_dni->bindParam(':dni', $dni);
@@ -61,10 +88,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: " . $redirect_url);
             exit();
         } else {
-            // Iniciar transacción
             $db->beginTransaction();
 
-            // Insertar en la tabla persona
             $sql_persona = "INSERT INTO persona (dni, nombres, apellidos, fechanac, direccion, genero, estadocivil, edad) 
                             VALUES (:dni, :nombres, :apellidos, :fechanac, :direccion, :genero, :estadocivil, :edad)";
             $stmt_persona = $db->prepare($sql_persona);
@@ -78,10 +103,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt_persona->bindParam(':edad', $edad, PDO::PARAM_INT);
             $stmt_persona->execute();
 
-            // Obtener el ID de la persona recién creada
             $id_persona = $db->lastInsertId();
 
-            // Insertar el nuevo usuario en la base de datos
             $sql_usuario = "INSERT INTO usuarios (nombre_usuario, contrasena, id_persona, id_rol) 
                             VALUES (:nombre_usuario, :contrasena, :id_persona, :id_rol)";
             $stmt_usuario = $db->prepare($sql_usuario);
@@ -91,14 +114,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt_usuario->bindParam(':id_rol', $id_rol);
             $stmt_usuario->execute();
 
-            // Confirmar la transacción
+            $id_usuario = $db->lastInsertId();
+
+            $rolStmt = $db->prepare("SELECT nombre_rol FROM rol WHERE id_rol = :id_rol");
+            $rolStmt->bindParam(':id_rol', $id_rol);
+            $rolStmt->execute();
+            $rol = $rolStmt->fetch(PDO::FETCH_ASSOC)['nombre_rol'];
+
             $db->commit();
-            header("Location: admin_index.php?mensaje=" . urlencode("Administrador o usuario creado con éxito."));
+
+            $accion = 'Inserción';
+            $tabla_afectada = 'usuarios';
+            $descripcion = "Nuevo usuario creado con el ID de persona: $id_persona, ID de usuario: $id_usuario, Nombre de usuario: $nombre_usuario, Rol: $rol";
+
+            registrarAuditoria($db, $accion, $tabla_afectada, $id_usuario, $descripcion);
+
+            header("Location: admin_index.php?mensaje=" . urlencode("Usuario creado con éxito."));
             exit();
         }
     } catch (PDOException $e) {
-        // Revertir la transacción en caso de error
-        $db->rollBack();
+        if ($db->inTransaction()) {
+            $db->rollBack();
+        }
+
         $error = "Error en la base de datos: " . $e->getMessage();
         $redirect_url = "admin_index.php?error=" . urlencode($error);
         header("Location: " . $redirect_url);
@@ -106,9 +144,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-<!-- ------------------------------ -->
-<?php require 'navbar.php'; ?>
-<!-- --------------------------------------- -->
 <section class="content mt-3">
     <link rel="shortcut icon" href="/img/LOGO.ico" type="image/x-icon" />
     <div class="row">
