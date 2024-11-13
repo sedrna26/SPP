@@ -2,8 +2,14 @@
 require 'navbar.php'; 
 require '../../conn/connection.php'; 
 
-// Consulta para obtener todos los registros de la tabla auditoria
-$query = "SELECT a.*, u.nombre_usuario AS nombre_usuario_afecto, r.nombre_rol AS rol_afecto, u2.nombre_usuario AS nombre_usuario_registro, r2.nombre_rol AS rol_registro 
+// Consulta para obtener todos los registros de la tabla auditoria, separando fecha y hora
+$query = "SELECT a.*, 
+                 u.nombre_usuario AS nombre_usuario_afecto, 
+                 r.nombre_rol AS rol_afecto, 
+                 u2.nombre_usuario AS nombre_usuario_registro, 
+                 r2.nombre_rol AS rol_registro,
+                 DATE_FORMAT(a.fecha, '%Y-%m-%d') AS fecha_solo, 
+                 DATE_FORMAT(a.fecha, '%H:%i:%s') AS hora_solo
           FROM auditoria a
           LEFT JOIN usuarios u ON a.id_usuario = u.id_usuario
           LEFT JOIN rol r ON u.id_rol = r.id_rol
@@ -29,33 +35,40 @@ $auditoria = $statement->fetchAll(PDO::FETCH_ASSOC);
                                     <thead class="thead-dark">
                                         <tr>
                                             <th>ID Auditoría</th>
+                                            <!-- <th>ID Registro</th> -->
                                             <th>Registro Afectado</th>
                                             <th>Quién lo Afectó</th>
+                                            <!-- <th>ID Usuario</th>
+                                            <th>Nombre de Usuario</th>
+                                            <th>Rol</th> -->
                                             <th>Acción</th>
-                                            <th>ID Registro</th>
                                             <th>Fecha</th>
+                                            <th>Hora</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($auditoria as $registro): ?>
                                             <tr>
                                                 <td><?php echo htmlspecialchars($registro['id_auditoria']); ?></td>
-                                                <!-- Registro Afectado: Muestra id_registro, nombre_usuario y rol -->
+                                                <!-- <td><?php echo htmlspecialchars($registro['registro_id']); ?></td> -->
+                                               
                                                 <td>
-                                                    ID: <?php echo htmlspecialchars($registro['registro_id']); ?><br>
+                                                    ID_Registro: <?php echo htmlspecialchars($registro['registro_id']); ?><br>
                                                     Usuario: <?php echo htmlspecialchars($registro['nombre_usuario_registro']); ?><br>
                                                     Rol: <?php echo htmlspecialchars($registro['rol_registro']); ?>
                                                 </td>
-                                                <!-- Quién lo Afectó: Muestra nombre_usuario, rol y id_usuario -->
-                                                <td>
+                                               
+                                                <td> 
+                                                    ID Usuario: <?php echo htmlspecialchars($registro['id_usuario']); ?><br>
                                                     Usuario: <?php echo htmlspecialchars($registro['nombre_usuario_afecto']); ?><br>
                                                     Rol: <?php echo htmlspecialchars($registro['rol_afecto']); ?><br>
-                                                    ID Usuario: <?php echo htmlspecialchars($registro['id_usuario']); ?>
                                                 </td>
-                                               
+                                                <!-- <td><?php echo htmlspecialchars($registro['id_usuario']); ?></td>
+                                                <td><?php echo htmlspecialchars($registro['nombre_usuario_afecto']); ?></td>
+                                                <td><?php echo htmlspecialchars($registro['rol_afecto']); ?></td> -->
                                                 <td><?php echo htmlspecialchars($registro['accion']); ?></td>
-                                                <td><?php echo htmlspecialchars($registro['registro_id']); ?></td>
-                                                <td><?php echo htmlspecialchars($registro['fecha']); ?></td>
+                                                <td><?php echo htmlspecialchars($registro['fecha_solo']); ?></td>
+                                                <td><?php echo htmlspecialchars($registro['hora_solo']); ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
