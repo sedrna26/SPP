@@ -1,16 +1,19 @@
 <?php
-require '../../conn/connection.php';
-
+ob_start(); 
 session_start();
+require '../../conn/connection.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Verificar si el usuario está autenticado
+
 if (!isset($_SESSION['id_usuario'])) {
   header('Location: home.php');
   exit;
 }
-$id_rol = $_SESSION['id_rol']; // Supongo que id_rol está almacenado en la sesión
+$id_rol = $_SESSION['id_rol'];
 
-// Consulta para obtener el nombre del rol
+
 $query = "SELECT nombre_rol FROM rol WHERE id_rol = ?";
 $stmt = $conexion->prepare($query);
 
@@ -29,10 +32,6 @@ if ($result && $result->num_rows > 0) {
   $nombre_rol = "Usuario Desconocido";
 }
 
-// Desactivar la caché
-// header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-// header("Cache-Control: post-check=0, pre-check=0", false);
-// header("Pragma: no-cache");
 ?>
 
 <!DOCTYPE html>
@@ -96,7 +95,7 @@ if ($result && $result->num_rows > 0) {
 <body>
   <style>
     body {
-      background: linear-gradient(135deg, #f2d022, #f2d022);
+      background: #cccccc;
     }
   </style>
 
@@ -151,13 +150,13 @@ if ($result && $result->num_rows > 0) {
   <?php } ?>
   <!-- ------------------------------------- -->
   <div style="height:60px">
-    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark  ">
+    <nav class="navbar navbar-expand-lg fixed-top " style="background-color: #f9e612;">
       <div class="container-fluid ml-2 ">
         <a href="index.php" class="navbar-brand mb-0 pr-4 ">
-          <img class="d-line-block align-top " src="../../img/LOGO3.ico" width="100px" style="margin-right:0px">
+          <img class="d-line-block align-top " src="../../img/LOGO2.ico" width="100px" style="margin-right:0px">
         </a>
         <!-- Toggle Btn-->
-        <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" class="navbar-toggler shadow-none border-0 bg-dark mr-3" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" class="navbar-toggler shadow-none  mr-3" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <!-- ------------------------------------------------------- -->
@@ -167,18 +166,20 @@ if ($result && $result->num_rows > 0) {
           <ul class="navbar-nav mr-auto ">
             <!-- --------------------------- -->
             <li class="nav-item  pr-3">
-              <a class="nav-link " href="ppl_index.php">PPL</a>
+              <a class="nav-link " href="ppl_index.php"><b>PPL</b></a>
             </li>
             <?php
             if ($_SESSION['id_rol'] === 1) {
             ?>
               <li class="nav-item  pr-3">
-                <a class="nav-link " href="admin_index.php">Admininstrador</a>
+                <a class="nav-link " href="admin_index.php"><b>Admininstrador</b></a>
               </li>
             <?php
             }
             ?>
-
+            <li class="nav-item  pr-3">
+              <a class="nav-link " href="auditoria.php"><b>Auditoria</b></a>
+            </li>
           </ul>
           <!-- ------------------------------------------------------- -->
           <form class="form-inline d-flex justify-content-end">
@@ -188,16 +189,19 @@ if ($result && $result->num_rows > 0) {
                   <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-user pr-2"></i>
                     <span class="mr-3">
+                      <b>
                       <?php if (isset($nombre_rol)) : ?>
                         <?php echo $nombre_rol; ?>
                       <?php else : ?>
                         "Usuario Desconocido"
                       <?php endif; ?>
+                      </b>
                       <span>
                         <?php if (isset($_SESSION['nombres'])) : ?>
                           <?php echo $_SESSION['nombres']; ?>
                         <?php endif; ?>
                       </span>
+                      
                     </span>
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -213,3 +217,4 @@ if ($result && $result->num_rows > 0) {
       </div>
     </nav>
   </div>
+  <? ob_end_flush();?>

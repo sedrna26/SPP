@@ -1,11 +1,7 @@
 <?php
 require '../conn/connection.php';
-session_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
-// Redirigir si ya está autenticado
+session_start();
 if (isset($_SESSION['id_usuario'])) {
     header('Location: admin/index.php');
     exit;
@@ -71,7 +67,13 @@ if ($_POST) {
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Roboto&display=swap');
 
         body {
-            background: linear-gradient(135deg, #fecb37, #d4b021);
+            background: #f9e612;
+            /* 
+            gris claro: #cccccc 
+            gris oscuro: #666666
+            amarillo: #f9e612
+
+            */
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -81,19 +83,25 @@ if ($_POST) {
 </head>
 
 <body class="container d-flex justify-content-center">
-    <div class="p-4 rounded-5 text-secondary shadow my-2" style="width: 25rem; background-color: #ced4da;">
+    <div class="p-4 rounded-5 text-secondary shadow my-2" style="width: 25rem; background-color: #cccccc;">
         <div class="d-flex justify-content-center">
             <img src="../img/LOGO.ico" alt="login-icon" style="height: 15rem" class="w-75" />
         </div>
-        <div class="text-center fs-1 fw-bold">Bienvenid@</div>
-        <p>Admin
-            demadmin
-            Clave:demian1234
-
-            Correccional
-            maol4192
-            Clave:123</p>
-
+        <div class="text-center fs-1 fw-bold">Bienvenid@</div>        
+            <div class="row">
+                <div class="col">
+                    <p class="py-0 my-0"><b>Admin</b></p>
+                    <p class="py-0 my-0">demadmin</p>
+                    <p class="py-0 my-0"><b>Clave</b></p>
+                    <p class="py-0 my-0">demian1234</p>
+                </div>
+                <div class="col">
+                    <p class="py-0 my-0"><b>Correccional</b></p>
+                    <p class="py-0 my-0">maol4192</p>
+                    <p class="py-0 my-0"><b>Clave</b></p>
+                    <p class="py-0 my-0">123</p>
+                </div>
+            </div>         
         <form method="post" class="form" action="">
             <div class="input-group mt-4">
                 <div class="input-group-text bg-info">

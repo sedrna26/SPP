@@ -2,9 +2,6 @@
 // Definir la ruta base del proyecto
 define('BASE_PATH', dirname(__DIR__, 2));
 
-// Incluir el archivo de conexión
-require_once BASE_PATH . '/conn/connection.php';
-
 // Obtener el ID del PPL de la URL
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -161,8 +158,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<head>
-
     <style>
         .form-section {
             margin: 20px 0;
@@ -195,18 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 4px;
         }
 
-        .btn {
-            padding: 10px 15px;
-            background-color: #212529;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        }
+        
 
         .familiar-container {
             border-left: 3px solid #212529;
@@ -229,10 +213,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding-bottom: 1rem;
         }
     </style>
-
-</head>
-
-<body>
+<?php echo "ID traido desde ppl_informe.php=".$idppl."(eliminar despues)";?>
     <form onsubmit="enviarFormulario(event)" id="familyDataForm" method="POST" novalidate>
         <input type="hidden" name="idppl" value="<?php echo htmlspecialchars($idppl); ?>">
         <!-- Familiares FF.AA y Detenidos -->
@@ -560,7 +541,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="motivo_no_dni" class="form-control">
             </div>
         </div>
-        <button type="submit" class="btn">Guardar Datos</button>
+        <button type="submit" class=" btn btn-primary">Guardar Datos</button>
     </form>
 
     <script>
@@ -749,4 +730,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         });
     </script>
-</body>
+    
