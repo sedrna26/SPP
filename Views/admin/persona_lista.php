@@ -1,6 +1,5 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/SPP-main/conn/connection.php';
-require '../../conn/connection.php';
+
 
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = (int)$_GET['id'];

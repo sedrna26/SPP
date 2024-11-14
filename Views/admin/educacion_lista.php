@@ -1,8 +1,5 @@
 <?php
 
-// Incluir el archivo de conexión
-require_once BASE_PATH . '/conn/connection.php';
-
 // Obtener el ID del PPL de la URL
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -12,7 +9,7 @@ $stmt->execute([$idppl]);
 $educacion = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+
 
 <head>
     <meta charset="UTF-8">

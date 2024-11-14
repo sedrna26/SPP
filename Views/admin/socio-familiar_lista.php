@@ -1,11 +1,7 @@
 <?php
-// Definir la ruta base del proyecto
-define('BASE_PATH', dirname(__DIR__, 2));
 
-// Incluir el archivo de conexión
-require_once BASE_PATH . '/conn/connection.php';
 
-// Obtener el ID del PPL de la URL
+// Obtener el ID del PPsL de la URL
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($idppl > 0) {
@@ -57,19 +53,19 @@ if ($idppl > 0) {
         <h3>Información Familiar General</h3>
         <?php if ($familiaresInfo): ?>
             <p>Familiares FF.AA: <?= $familiaresInfo['familiares_ffaa'] ? 'Sí' : 'No'; ?></p>
-            <p>Detalles FF.AA: <?= htmlspecialchars($familiaresInfo['ffaa_detalles']); ?></p>
+            <p>Detalles FF.AA: <?= $familiaresInfo['ffaa_detalles']; ?></p>
             <p>Familiares Detenidos: <?= $familiaresInfo['familiares_detenidos'] ? 'Sí' : 'No'; ?></p>
-            <p>Detalles Detenidos: <?= htmlspecialchars($familiaresInfo['detenidos_detalles']); ?></p>
-            <p>Teléfono Familiar: <?= htmlspecialchars($familiaresInfo['telefono_familiar']); ?></p>
+            <p>Detalles Detenidos: <?= $familiaresInfo['detenidos_detalles']; ?></p>
+            <p>Teléfono Familiar: <?= $familiaresInfo['telefono_familiar']; ?></p>
             <p>Posee DNI: <?= $familiaresInfo['posee_dni'] ? 'Sí' : 'No'; ?></p>
-            <p>Motivo No DNI: <?= htmlspecialchars($familiaresInfo['motivo_no_dni']); ?></p>
+            <p>Motivo No DNI: <?= $familiaresInfo['motivo_no_dni']; ?></p>
         <?php else: ?>
             <p>No hay información disponible.</p>
         <?php endif; ?>
 
         <h3>Situación Sociofamiliar</h3>
         <?php if ($situacionSociofamiliar): ?>
-            <p>Edad de Inicio Laboral: <?= htmlspecialchars($situacionSociofamiliar['edad_inicio_laboral']); ?></p>
+            <p>Edad de Inicio Laboral: <?= $situacionSociofamiliar['edad_inicio_laboral']; ?></p>
             <p>Situación Económica Precaria: <?= $situacionSociofamiliar['situacion_economica_precaria'] ? 'Sí' : 'No'; ?></p>
             <p>Mendicidad en la Calle: <?= $situacionSociofamiliar['mendicidad_calle'] ? 'Sí' : 'No'; ?></p>
         <?php else: ?>
@@ -80,12 +76,12 @@ if ($idppl > 0) {
         <?php if ($padres): ?>
             <?php foreach ($padres as $padre): ?>
                 <h4><?= $padre['tipo'] == 'PADRE' ? 'Padre' : 'Madre'; ?></h4>
-                <p>Nombre: <?= htmlspecialchars($padre['nombre']); ?></p>
-                <p>Apellido: <?= htmlspecialchars($padre['apellido']); ?></p>
-                <p>Edad: <?= htmlspecialchars($padre['edad']); ?></p>
-                <p>Nacionalidad: <?= htmlspecialchars($padre['nacionalidad']); ?></p>
-                <p>Estado Civil: <?= htmlspecialchars($padre['estado_civil']); ?></p>
-                <p>Grado de Instrucción: <?= htmlspecialchars($padre['instruccion']); ?></p>
+                <p>Nombre: <?= $padre['nombre']; ?></p>
+                <p>Apellido: <?= $padre['apellido']; ?></p>
+                <p>Edad: <?= $padre['edad']; ?></p>
+                <p>Nacionalidad: <?= $padre['nacionalidad']; ?></p>
+                <p>Estado Civil: <?= $padre['estado_civil']; ?></p>
+                <p>Grado de Instrucción: <?= $padre['instruccion']; ?></p>
                 <p>Visita: <?= $padre['visita'] ? 'Sí' : 'No'; ?></p>
                 <hr>
             <?php endforeach; ?>
@@ -96,9 +92,9 @@ if ($idppl > 0) {
         <h3>Hermanos</h3>
         <?php if ($hermanos): ?>
             <?php foreach ($hermanos as $hermano): ?>
-                <p>Nombre: <?= htmlspecialchars($hermano['nombre']); ?></p>
-                <p>Apellido: <?= htmlspecialchars($hermano['apellido']); ?></p>
-                <p>Edad: <?= htmlspecialchars($hermano['edad']); ?></p>
+                <p>Nombre: <?= $hermano['nombre']; ?></p>
+                <p>Apellido: <?= $hermano['apellido']; ?></p>
+                <p>Edad: <?= $hermano['edad']; ?></p>
                 <p>Visita: <?= $hermano['visita'] ? 'Sí' : 'No'; ?></p>
                 <hr>
             <?php endforeach; ?>
@@ -108,12 +104,12 @@ if ($idppl > 0) {
 
         <h3>Pareja</h3>
         <?php if ($pareja): ?>
-            <p>Nombre: <?= htmlspecialchars($pareja['nombre']); ?></p>
-            <p>Apellido: <?= htmlspecialchars($pareja['apellido']); ?></p>
-            <p>Edad: <?= htmlspecialchars($pareja['edad']); ?></p>
-            <p>Nacionalidad: <?= htmlspecialchars($pareja['nacionalidad']); ?></p>
-            <p>Grado de Instrucción: <?= htmlspecialchars($pareja['instruccion']); ?></p>
-            <p>Tipo de Unión: <?= htmlspecialchars($pareja['tipo_union']); ?></p>
+            <p>Nombre: <?= ($pareja['nombre']); ?></p>
+            <p>Apellido: <?= ($pareja['apellido']); ?></p>
+            <p>Edad: <?= ($pareja['edad']); ?></p>
+            <p>Nacionalidad: <?= ($pareja['nacionalidad']); ?></p>
+            <p>Grado de Instrucción: <?= ($pareja['instruccion']); ?></p>
+            <p>Tipo de Unión: <?= ($pareja['tipo_union']); ?></p>
             <p>Visita: <?= $pareja['visita'] ? 'Sí' : 'No'; ?></p>
         <?php else: ?>
             <p>No hay información disponible.</p>
@@ -122,9 +118,9 @@ if ($idppl > 0) {
         <h3>Hijos</h3>
         <?php if ($hijos): ?>
             <?php foreach ($hijos as $hijo): ?>
-                <p>Nombre: <?= htmlspecialchars($hijo['nombre']); ?></p>
-                <p>Apellido: <?= htmlspecialchars($hijo['apellido']); ?></p>
-                <p>Edad: <?= htmlspecialchars($hijo['edad']); ?></p>
+                <p>Nombre: <?= ($hijo['nombre']); ?></p>
+                <p>Apellido: <?= ($hijo['apellido']); ?></p>
+                <p>Edad: <?= ($hijo['edad']); ?></p>
                 <p>Fallecido: <?= $hijo['fallecido'] ? 'Sí' : 'No'; ?></p>
                 <p>Visita: <?= $hijo['visita'] ? 'Sí' : 'No'; ?></p>
                 <hr>
@@ -136,11 +132,11 @@ if ($idppl > 0) {
         <h3>Otros Visitantes</h3>
         <?php if ($otrosVisitantes): ?>
             <?php foreach ($otrosVisitantes as $visitante): ?>
-                <p>Nombre: <?= htmlspecialchars($visitante['nombre']); ?></p>
-                <p>Apellido: <?= htmlspecialchars($visitante['apellido']); ?></p>
-                <p>Teléfono: <?= htmlspecialchars($visitante['telefono']); ?></p>
-                <p>Domicilio: <?= htmlspecialchars($visitante['domicilio']); ?></p>
-                <p>Vínculo Filial: <?= htmlspecialchars($visitante['vinculo_filial']); ?></p>
+                <p>Nombre: <?= ($visitante['nombre']); ?></p>
+                <p>Apellido: <?= ($visitante['apellido']); ?></p>
+                <p>Teléfono: <?= ($visitante['telefono']); ?></p>
+                <p>Domicilio: <?= ($visitante['domicilio']); ?></p>
+                <p>Vínculo Filial: <?= ($visitante['vinculo_filial']); ?></p>
                 <hr>
             <?php endforeach; ?>
         <?php else: ?>

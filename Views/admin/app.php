@@ -1,5 +1,5 @@
 <?php
-require '../../conn/connection.php';
+// require '../../conn/connection.php';
 
 
 $sql = "CREATE TABLE IF NOT EXISTS body_marks (
