@@ -11,7 +11,7 @@
             }
         </style>
         <br/><br/>
-        <footer class="text-white bg-dark">    
+        <footer class=" "style="background-color: #f9e612;">    
                 <p>Derechos reservados &copy; 2024</p>        
         </footer>
     </body>
