@@ -5,7 +5,7 @@
 // Obtener el ID del PPL de la URL
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
     try {
         // Insertar datos de clasificación
         $stmt = $db->prepare("INSERT INTO clasificacion (id_ppl, clasificacion, sugerencia, 
@@ -115,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button name="guardar_9" type="button" class="btn btn-primary">Guardar</button>
     </form>
 
 </body>

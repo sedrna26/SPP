@@ -5,7 +5,7 @@
 // Obtener el ID del PPL de la URL
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
     try {
         $db->beginTransaction();
 
@@ -115,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-<?php echo "ID traido desde ppl_informe.php=".$idppl."(eliminar despues)";?>
+    <?php echo "ID traido desde ppl_informe.php=" . $idppl . "(eliminar despues)"; ?>
     <form method="POST">
         <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
 
@@ -187,7 +187,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary">Guardar Información</button>
+        <button name="guardar_4" type="button" class="btn btn-primary">Guardar Información</button>
     </form>
 
     <script>
