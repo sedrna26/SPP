@@ -1,8 +1,6 @@
 <?php 
 require 'navbar.php'; 
-require '../../conn/connection.php'; 
-
-// Consulta para obtener todos los registros de la tabla auditoria, separando fecha y hora
+require '../../conn/connection.php';
 $query = "SELECT a.*, 
                  u.nombre_usuario AS nombre_usuario_afecto, 
                  r.nombre_rol AS rol_afecto, 
