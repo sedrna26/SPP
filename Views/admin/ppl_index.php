@@ -39,7 +39,11 @@ if (isset($_GET['txtID'])) {
                         <tbody>
                             <?php
                             try {
-                                $query = "SELECT * FROM persona ";
+                                $query = "
+                                    SELECT `ppl`.*, `persona`.*
+FROM `ppl` 
+	LEFT JOIN `persona` ON `ppl`.`idpersona` = `persona`.`id`;
+                                ";
                                 $stmt = $db->prepare($query);
                                 $stmt->execute();
                                 $pples = $stmt->fetchAll(PDO::FETCH_ASSOC);
