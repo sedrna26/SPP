@@ -6,7 +6,7 @@ define('BASE_PATH', dirname(__DIR__, 2));
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 // Procesar el formulario cuando se envía
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
     try {
         $db->beginTransaction();
 
@@ -158,115 +158,115 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-    <style>
-        .form-section {
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+<style>
+    .form-section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
 
-        .hidden {
-            display: none;
-        }
+    .hidden {
+        display: none;
+    }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+    .form-group {
+        margin-bottom: 15px;
+    }
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
 
-        input[type="text"],
-        input[type="number"],
-        select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
+    input[type="text"],
+    input[type="number"],
+    select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
 
-        
 
-        .familiar-container {
-            border-left: 3px solid #212529;
-            padding-left: 15px;
-            margin-bottom: 20px;
-        }
 
-        .status-fallecido {
-            border-left-color: #212529;
-            background-color: #f9f9f9;
-        }
+    .familiar-container {
+        border-left: 3px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 20px;
+    }
 
-        .children-container {
-            margin-left: 20px;
-            padding: 10px;
-            border-left: 2px dashed #212529;
-        }
+    .status-fallecido {
+        border-left-color: #212529;
+        background-color: #f9f9f9;
+    }
 
-        #titulo {
-            padding-bottom: 1rem;
-        }
-    </style>
-<?php echo "ID traido desde ppl_informe.php=".$idppl."(eliminar despues)";?>
-    <form onsubmit="enviarFormulario(event)" id="familyDataForm" method="POST" novalidate>
-        <input type="hidden" name="idppl" value="<?php echo htmlspecialchars($idppl); ?>">
-        <!-- Familiares FF.AA y Detenidos -->
-        <div class="form-section">
-            <div class="form-group">
-                <label id="titulo">Familiares de FF.AA:</label>
-                <select name="familiares_ffaa" id="familiares_ffaa" required>
-                    <option value="0">No</option>
-                    <option value="1">Sí</option>
-                </select>
+    .children-container {
+        margin-left: 20px;
+        padding: 10px;
+        border-left: 2px dashed #212529;
+    }
 
-            </div>
-            <div id="ffaa_details" class="hidden">
-                <input type="text" name="ffaa_details" placeholder="Especifique familiares FF.AA" required>
-            </div>
-            <div class="form-group">
-                <label id="titulo">Familiares Detenidos:</label>
-                <select name="familiares_detenidos" id="familiares_detenidos" required>
-                    <option value="0">No</option>
-                    <option value="1">Sí</option>
-                </select>
+    #titulo {
+        padding-bottom: 1rem;
+    }
+</style>
+<?php echo "ID traido desde ppl_informe.php=" . $idppl . "(eliminar despues)"; ?>
+<form onsubmit="enviarFormulario(event)" id="familyDataForm" method="POST" novalidate>
+    <input type="hidden" name="idppl" value="<?php echo htmlspecialchars($idppl); ?>">
+    <!-- Familiares FF.AA y Detenidos -->
+    <div class="form-section">
+        <div class="form-group">
+            <label id="titulo">Familiares de FF.AA:</label>
+            <select name="familiares_ffaa" id="familiares_ffaa" required>
+                <option value="0">No</option>
+                <option value="1">Sí</option>
+            </select>
 
-            </div>
-            <div id="detenidos_details" class="hidden">
-                <input type="text" name="detenidos_details" placeholder="Especifique familiares detenidos" required>
-            </div>
         </div>
+        <div id="ffaa_details" class="hidden">
+            <input type="text" name="ffaa_details" placeholder="Especifique familiares FF.AA" required>
+        </div>
+        <div class="form-group">
+            <label id="titulo">Familiares Detenidos:</label>
+            <select name="familiares_detenidos" id="familiares_detenidos" required>
+                <option value="0">No</option>
+                <option value="1">Sí</option>
+            </select>
 
-        <!-- Datos del Padre -->
-        <div class="form-section">
-            <h3 id="titulo">Datos del Padre</h3>
-            <div class="form-group">
-                <label>Estado del padre:</label>
-                <select name="padre_vivo" id="padre_vivo" required>
-                    <option value="1">Vivo</option>
-                    <option value="0">Fallecido</option>
-                </select>
-            </div>
-            <div id="padre_details" class="familiar-container">
-                <input type="text" name="padre_apellido" placeholder="Apellido" required>
-                <input type="text" name="padre_nombre" placeholder="Nombre" required>
-                <input type="number" name="padre_edad" placeholder="Edad" required>
-                <input type="text" name="padre_nacionalidad" placeholder="Nacionalidad" required>
-                <select name="padre_estado_civil" required>
-                    <option value="">Estado Civil</option>
-                    <option value="Soltero">Soltero</option>
-                    <option value="Casado">Casado</option>
-                    <option value="Divorciado">Divorciado</option>
-                    <option value="Viudo">Viudo</option>
-                    <option value="Union Convivencial">Unión Convivencial</option>
-                </select>
-                <input type="text" name="padre_instruccion" placeholder="Grado de instrucción/profesión/oficio"
-                    required>
+        </div>
+        <div id="detenidos_details" class="hidden">
+            <input type="text" name="detenidos_details" placeholder="Especifique familiares detenidos" required>
+        </div>
+    </div>
+
+    <!-- Datos del Padre -->
+    <div class="form-section">
+        <h3 id="titulo">Datos del Padre</h3>
+        <div class="form-group">
+            <label>Estado del padre:</label>
+            <select name="padre_vivo" id="padre_vivo" required>
+                <option value="1">Vivo</option>
+                <option value="0">Fallecido</option>
+            </select>
+        </div>
+        <div id="padre_details" class="familiar-container">
+            <input type="text" name="padre_apellido" placeholder="Apellido" required>
+            <input type="text" name="padre_nombre" placeholder="Nombre" required>
+            <input type="number" name="padre_edad" placeholder="Edad" required>
+            <input type="text" name="padre_nacionalidad" placeholder="Nacionalidad" required>
+            <select name="padre_estado_civil" required>
+                <option value="">Estado Civil</option>
+                <option value="Soltero">Soltero</option>
+                <option value="Casado">Casado</option>
+                <option value="Divorciado">Divorciado</option>
+                <option value="Viudo">Viudo</option>
+                <option value="Union Convivencial">Unión Convivencial</option>
+            </select>
+            <input type="text" name="padre_instruccion" placeholder="Grado de instrucción/profesión/oficio"
+                required>
             <div id="padre_details" class="familiar-container">
                 <input type="text" name="padre_apellido" placeholder="Apellido" required>
                 <input type="text" name="padre_nombre" placeholder="Nombre" required>
@@ -495,239 +495,238 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label>Vínculo Filial:</label>
                         <input type="text" name="otro_vinculo[]" class="form-control">
                     </div>
-            </div>
+                </div>
 
-            <div id="otrosVisitantes" class="hidden">
-                <div class="familiar-container">
-                    <div class="form-group">
-                        <label>Apellido:</label>
-                        <input type="text" name="otro_apellido[]" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Nombre:</label>
-                        <input type="text" name="otro_nombre[]" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Número de teléfono:</label>
-                        <input type="tel" name="otro_telefono[]" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Domicilio:</label>
-                        <input type="text" name="otro_domicilio[]" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Vínculo Filial:</label>
-                        <input type="text" name="otro_vinculo[]" class="form-control">
+                <div id="otrosVisitantes" class="hidden">
+                    <div class="familiar-container">
+                        <div class="form-group">
+                            <label>Apellido:</label>
+                            <input type="text" name="otro_apellido[]" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Nombre:</label>
+                            <input type="text" name="otro_nombre[]" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Número de teléfono:</label>
+                            <input type="tel" name="otro_telefono[]" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Domicilio:</label>
+                            <input type="text" name="otro_domicilio[]" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Vínculo Filial:</label>
+                            <input type="text" name="otro_vinculo[]" class="form-control">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Datos Anexos -->
-        <div class="form-section">
-            <h3 id="titulo">Datos Anexos</h3>
+            <!-- Datos Anexos -->
+            <div class="form-section">
+                <h3 id="titulo">Datos Anexos</h3>
 
-            <div class="form-group">
-                <label>¿Posee su D.N.I?</label>
-                <select name="posee_dni" id="posee_dni">
-                    <option value="">Seleccionar</option>
-                    <option value="NO">NO</option>
-                    <option value="SI">SI</option>
-                </select>
+                <div class="form-group">
+                    <label>¿Posee su D.N.I?</label>
+                    <select name="posee_dni" id="posee_dni">
+                        <option value="">Seleccionar</option>
+                        <option value="NO">NO</option>
+                        <option value="SI">SI</option>
+                    </select>
+                </div>
+
+                <div id="motivo_dni" class="form-group hidden">
+                    <label>¿Por qué no?</label>
+                    <input type="text" name="motivo_no_dni" class="form-control">
+                </div>
             </div>
+            <button name="guardar_3" type="button" class=" btn btn-primary">Guardar Datos</button>
+</form>
 
-            <div id="motivo_dni" class="form-group hidden">
-                <label>¿Por qué no?</label>
-                <input type="text" name="motivo_no_dni" class="form-control">
-            </div>
-        </div>
-        <button type="submit" class=" btn btn-primary">Guardar Datos</button>
-    </form>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Manejar familiares FF.AA
+        document.getElementById('familiares_ffaa').addEventListener('change', function() {
+            document.getElementById('ffaa_details').classList.toggle('hidden', this.value === 'NO');
+        });
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Manejar familiares FF.AA
-            document.getElementById('familiares_ffaa').addEventListener('change', function() {
-                document.getElementById('ffaa_details').classList.toggle('hidden', this.value === 'NO');
-            });
+        // Manejar familiares detenidos
+        document.getElementById('familiares_detenidos').addEventListener('change', function() {
+            document.getElementById('detenidos_details').classList.toggle('hidden', this.value === 'NO');
+        });
 
-            // Manejar familiares detenidos
-            document.getElementById('familiares_detenidos').addEventListener('change', function() {
-                document.getElementById('detenidos_details').classList.toggle('hidden', this.value === 'NO');
-            });
+        // Manejar estado del padre
+        document.getElementById('padre_vivo').addEventListener('change', function() {
+            const detallesPadre = document.getElementById('padre_details');
+            detallesPadre.classList.toggle('status-fallecido', this.value === 'NO');
+        });
 
-            // Manejar estado del padre
-            document.getElementById('padre_vivo').addEventListener('change', function() {
-                const detallesPadre = document.getElementById('padre_details');
-                detallesPadre.classList.toggle('status-fallecido', this.value === 'NO');
-            });
+        // Manejar estado de la madre
+        document.getElementById('madre_viva').addEventListener('change', function() {
+            const detallesMadre = document.getElementById('madre_details');
+            detallesMadre.classList.toggle('status-fallecido', this.value === 'NO');
+        });
 
-            // Manejar estado de la madre
-            document.getElementById('madre_viva').addEventListener('change', function() {
-                const detallesMadre = document.getElementById('madre_details');
-                detallesMadre.classList.toggle('status-fallecido', this.value === 'NO');
-            });
+        // Manejar hermanos
+        document.getElementById('num_hermanos').addEventListener('change', function() {
+            const container = document.getElementById('hermanos_container');
+            container.innerHTML = '';
 
-            // Manejar hermanos
-            document.getElementById('num_hermanos').addEventListener('change', function() {
-                const container = document.getElementById('hermanos_container');
-                container.innerHTML = '';
-
-                const numHermanos = parseInt(this.value);
-                for (let i = 0; i < numHermanos; i++) {
-                    const hermanoDiv = document.createElement('div');
-                    hermanoDiv.className = 'familiar-container';
-                    hermanoDiv.innerHTML = `
+            const numHermanos = parseInt(this.value);
+            for (let i = 0; i < numHermanos; i++) {
+                const hermanoDiv = document.createElement('div');
+                hermanoDiv.className = 'familiar-container';
+                hermanoDiv.innerHTML = `
                         <h4>Hermano ${i + 1}</h4>
                         <input type="text" name="hermano_apellido_${i}" placeholder="Apellido" required>
                         <input type="text" name="hermano_nombre_${i}" placeholder="Nombre" required>
                         <input type="number" name="hermano_edad_${i}" placeholder="Edad" required>
                     `;
-                    container.appendChild(hermanoDiv);
-                }
-            });
+                container.appendChild(hermanoDiv);
+            }
+        });
 
-            // Manejar hijos
-            document.getElementById('tiene_hijos').addEventListener('change', function() {
-                document.getElementById('hijos_section').classList.toggle('hidden', this.value === 'NO');
-            });
+        // Manejar hijos
+        document.getElementById('tiene_hijos').addEventListener('change', function() {
+            document.getElementById('hijos_section').classList.toggle('hidden', this.value === 'NO');
+        });
 
-            document.getElementById('num_hijos').addEventListener('change', function() {
-                const container = document.getElementById('hijos_container');
-                container.innerHTML = '';
+        document.getElementById('num_hijos').addEventListener('change', function() {
+            const container = document.getElementById('hijos_container');
+            container.innerHTML = '';
 
-                const numHijos = parseInt(this.value);
-                for (let i = 0; i < numHijos; i++) {
-                    const hijoDiv = document.createElement('div');
-                    hijoDiv.className = 'familiar-container';
-                    hijoDiv.innerHTML = `
+            const numHijos = parseInt(this.value);
+            for (let i = 0; i < numHijos; i++) {
+                const hijoDiv = document.createElement('div');
+                hijoDiv.className = 'familiar-container';
+                hijoDiv.innerHTML = `
                         <h4>Hijo ${i + 1}</h4>
                         <input type="text" name="hijo_apellido_${i}" placeholder="Apellido" required>
                         <input type="text" name="hijo_nombre_${i}" placeholder="Nombre" required>
                         <input type="number" name="hijo_edad_${i}" placeholder="Edad" required>
                     `;
-                    container.appendChild(hijoDiv);
-                }
-            });
-        });
-        // Actualizar el script para manejar los nuevos selects
-        document.addEventListener('DOMContentLoaded', function() {
-            // Manejar otros visitantes
-            document.getElementById('visita_otros').addEventListener('change', function() {
-                document.getElementById('otrosVisitantes').classList.toggle('hidden', this.value === 'NO');
-            });
-
-            // Manejar motivo DNI
-            document.getElementById('posee_dni').addEventListener('change', function() {
-                document.getElementById('motivo_dni').classList.toggle('hidden', this.value === 'SI');
-            });
-        });
-        // Modificar el HTML para las secciones de visitas de hermanos e hijos
-        const visitaHermanosSelect = document.getElementById('visita_hermanos');
-        const visitaHijosSelect = document.getElementById('visita_hijos');
-
-        // Contenedores para las selecciones específicas
-        const visitaHermanosContainer = document.createElement('div');
-        visitaHermanosContainer.id = 'visita_hermanos_container';
-        visitaHermanosContainer.className = 'hidden familiar-container';
-        visitaHermanosSelect.parentNode.insertBefore(visitaHermanosContainer, visitaHermanosSelect.nextSibling);
-
-        const visitaHijosContainer = document.createElement('div');
-        visitaHijosContainer.id = 'visita_hijos_container';
-        visitaHijosContainer.className = 'hidden familiar-container';
-        visitaHijosSelect.parentNode.insertBefore(visitaHijosContainer, visitaHijosSelect.nextSibling);
-
-        // Event listeners para los selects de visitas
-        visitaHermanosSelect.addEventListener('change', function() {
-            visitaHermanosContainer.classList.toggle('hidden', this.value === 'NO');
-            if (this.value === 'SI') {
-                updateHermanosVisitaOptions();
+                container.appendChild(hijoDiv);
             }
         });
-
-        visitaHijosSelect.addEventListener('change', function() {
-            visitaHijosContainer.classList.toggle('hidden', this.value === 'NO');
-            if (this.value === 'SI') {
-                updateHijosVisitaOptions();
-            }
+    });
+    // Actualizar el script para manejar los nuevos selects
+    document.addEventListener('DOMContentLoaded', function() {
+        // Manejar otros visitantes
+        document.getElementById('visita_otros').addEventListener('change', function() {
+            document.getElementById('otrosVisitantes').classList.toggle('hidden', this.value === 'NO');
         });
 
-        // Función para actualizar las opciones de hermanos visitantes
-        function updateHermanosVisitaOptions() {
-            const container = document.getElementById('visita_hermanos_container');
-            container.innerHTML = '<h4>Seleccione los hermanos que ingresarán como visita:</h4>';
+        // Manejar motivo DNI
+        document.getElementById('posee_dni').addEventListener('change', function() {
+            document.getElementById('motivo_dni').classList.toggle('hidden', this.value === 'SI');
+        });
+    });
+    // Modificar el HTML para las secciones de visitas de hermanos e hijos
+    const visitaHermanosSelect = document.getElementById('visita_hermanos');
+    const visitaHijosSelect = document.getElementById('visita_hijos');
 
-            // Obtener todos los hermanos ingresados
-            const numHermanos = parseInt(document.getElementById('num_hermanos').value);
+    // Contenedores para las selecciones específicas
+    const visitaHermanosContainer = document.createElement('div');
+    visitaHermanosContainer.id = 'visita_hermanos_container';
+    visitaHermanosContainer.className = 'hidden familiar-container';
+    visitaHermanosSelect.parentNode.insertBefore(visitaHermanosContainer, visitaHermanosSelect.nextSibling);
 
-            for (let i = 0; i < numHermanos; i++) {
-                const hermanoApellido = document.querySelector(`input[name="hermano_apellido_${i}"]`)?.value || '';
-                const hermanoNombre = document.querySelector(`input[name="hermano_nombre_${i}"]`)?.value || '';
+    const visitaHijosContainer = document.createElement('div');
+    visitaHijosContainer.id = 'visita_hijos_container';
+    visitaHijosContainer.className = 'hidden familiar-container';
+    visitaHijosSelect.parentNode.insertBefore(visitaHijosContainer, visitaHijosSelect.nextSibling);
 
-                if (hermanoApellido || hermanoNombre) {
-                    const div = document.createElement('div');
-                    div.className = 'form-group';
-                    div.innerHTML = `
+    // Event listeners para los selects de visitas
+    visitaHermanosSelect.addEventListener('change', function() {
+        visitaHermanosContainer.classList.toggle('hidden', this.value === 'NO');
+        if (this.value === 'SI') {
+            updateHermanosVisitaOptions();
+        }
+    });
+
+    visitaHijosSelect.addEventListener('change', function() {
+        visitaHijosContainer.classList.toggle('hidden', this.value === 'NO');
+        if (this.value === 'SI') {
+            updateHijosVisitaOptions();
+        }
+    });
+
+    // Función para actualizar las opciones de hermanos visitantes
+    function updateHermanosVisitaOptions() {
+        const container = document.getElementById('visita_hermanos_container');
+        container.innerHTML = '<h4>Seleccione los hermanos que ingresarán como visita:</h4>';
+
+        // Obtener todos los hermanos ingresados
+        const numHermanos = parseInt(document.getElementById('num_hermanos').value);
+
+        for (let i = 0; i < numHermanos; i++) {
+            const hermanoApellido = document.querySelector(`input[name="hermano_apellido_${i}"]`)?.value || '';
+            const hermanoNombre = document.querySelector(`input[name="hermano_nombre_${i}"]`)?.value || '';
+
+            if (hermanoApellido || hermanoNombre) {
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                div.innerHTML = `
                 <select name="hermano_visita_${i}" class="form-control">
                     <option value="NO">${hermanoApellido} ${hermanoNombre} - NO</option>
                     <option value="SI">${hermanoApellido} ${hermanoNombre} - SI</option>
                 </select>
             `;
-                    container.appendChild(div);
-                }
+                container.appendChild(div);
             }
         }
+    }
 
-        // Función para actualizar las opciones de hijos visitantes
-        function updateHijosVisitaOptions() {
-            const container = document.getElementById('visita_hijos_container');
-            container.innerHTML = '<h4>Seleccione los hijos que ingresarán como visita:</h4>';
+    // Función para actualizar las opciones de hijos visitantes
+    function updateHijosVisitaOptions() {
+        const container = document.getElementById('visita_hijos_container');
+        container.innerHTML = '<h4>Seleccione los hijos que ingresarán como visita:</h4>';
 
-            // Obtener todos los hijos ingresados
-            const numHijos = parseInt(document.getElementById('num_hijos').value);
+        // Obtener todos los hijos ingresados
+        const numHijos = parseInt(document.getElementById('num_hijos').value);
 
-            for (let i = 0; i < numHijos; i++) {
-                const hijoApellido = document.querySelector(`input[name="hijo_apellido_${i}"]`)?.value || '';
-                const hijoNombre = document.querySelector(`input[name="hijo_nombre_${i}"]`)?.value || '';
+        for (let i = 0; i < numHijos; i++) {
+            const hijoApellido = document.querySelector(`input[name="hijo_apellido_${i}"]`)?.value || '';
+            const hijoNombre = document.querySelector(`input[name="hijo_nombre_${i}"]`)?.value || '';
 
-                if (hijoApellido || hijoNombre) {
-                    const div = document.createElement('div');
-                    div.className = 'form-group';
-                    div.innerHTML = `
+            if (hijoApellido || hijoNombre) {
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                div.innerHTML = `
                 <select name="hijo_visita_${i}" class="form-control">
                     <option value="NO">${hijoApellido} ${hijoNombre} - NO</option>
                     <option value="SI">${hijoApellido} ${hijoNombre} - SI</option>
                 </select>
             `;
-                    container.appendChild(div);
-                }
+                container.appendChild(div);
             }
         }
+    }
 
-        // Agregar listeners para actualizar las opciones cuando se modifiquen los datos de hermanos o hijos
-        document.getElementById('num_hermanos').addEventListener('change', function() {
-            if (visitaHermanosSelect.value === 'SI') {
-                setTimeout(updateHermanosVisitaOptions, 100); // Pequeño delay para permitir que se creen los inputs
-            }
-        });
+    // Agregar listeners para actualizar las opciones cuando se modifiquen los datos de hermanos o hijos
+    document.getElementById('num_hermanos').addEventListener('change', function() {
+        if (visitaHermanosSelect.value === 'SI') {
+            setTimeout(updateHermanosVisitaOptions, 100); // Pequeño delay para permitir que se creen los inputs
+        }
+    });
 
-        document.getElementById('num_hijos').addEventListener('change', function() {
-            if (visitaHijosSelect.value === 'SI') {
-                setTimeout(updateHijosVisitaOptions, 100); // Pequeño delay para permitir que se creen los inputs
-            }
-        });
+    document.getElementById('num_hijos').addEventListener('change', function() {
+        if (visitaHijosSelect.value === 'SI') {
+            setTimeout(updateHijosVisitaOptions, 100); // Pequeño delay para permitir que se creen los inputs
+        }
+    });
 
-        // Agregar listeners para los campos de nombre y apellido
-        document.getElementById('hermanos_container').addEventListener('input', function(e) {
-            if (visitaHermanosSelect.value === 'SI' && (e.target.name.startsWith('hermano_apellido_') || e.target.name.startsWith('hermano_nombre_'))) {
-                updateHermanosVisitaOptions();
-            }
-        });
+    // Agregar listeners para los campos de nombre y apellido
+    document.getElementById('hermanos_container').addEventListener('input', function(e) {
+        if (visitaHermanosSelect.value === 'SI' && (e.target.name.startsWith('hermano_apellido_') || e.target.name.startsWith('hermano_nombre_'))) {
+            updateHermanosVisitaOptions();
+        }
+    });
 
-        document.getElementById('hijos_container').addEventListener('input', function(e) {
-            if (visitaHijosSelect.value === 'SI' && (e.target.name.startsWith('hijo_apellido_') || e.target.name.startsWith('hijo_nombre_'))) {
-                updateHijosVisitaOptions();
-            }
-        });
-    </script>
-    
+    document.getElementById('hijos_container').addEventListener('input', function(e) {
+        if (visitaHijosSelect.value === 'SI' && (e.target.name.startsWith('hijo_apellido_') || e.target.name.startsWith('hijo_nombre_'))) {
+            updateHijosVisitaOptions();
+        }
+    });
+</script>
