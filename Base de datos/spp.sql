@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 12-11-2024 a las 09:13:01
+-- Servidor: localhost
+-- Tiempo de generación: 13-11-2024 a las 20:15:26
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -42,6 +42,22 @@ CREATE TABLE `asistencia_espiritual` (
 
 INSERT INTO `asistencia_espiritual` (`id_asistencia`, `id_ppl`, `practica_culto`, `culto`, `desea_participar`, `eleccion_actividad`) VALUES
 (0, 3, 1, 'Catolico', 0, '');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `auditoria`
+--
+
+CREATE TABLE `auditoria` (
+  `id_auditoria` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `accion` varchar(50) NOT NULL,
+  `tabla_afectada` varchar(50) NOT NULL,
+  `registro_id` int(11) NOT NULL,
+  `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
+  `detalles` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -126366,7 +126382,16 @@ CREATE TABLE `persona` (
 INSERT INTO `persona` (`id`, `dni`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `educacion`) VALUES
 (1, '44123890', 'Castro', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL),
 (2, '44123891', 'Demian', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL),
-(3, '40470766', 'Rodriguez', 'Horacio Andres', '1997-11-26', 26, 'Tucuman Sur 2000', 'Masculino', 'Soltero', NULL);
+(3, '40470766', 'Rodriguez', 'Horacio Andres', '1997-11-26', 26, 'Tucuman Sur 2000', 'Masculino', 'Soltero', NULL),
+(4, '45476132', 'Bueno', 'Maxi Agustin', '2000-01-23', 24, 'libertador 534', 'Masculino', 'Soltero', NULL),
+(5, '44406135', 'Castro', 'Ismael ', '2000-01-23', 24, '9 de julio', 'Masculino', 'Soltero', NULL),
+(8, '44123892', 'Castro', 'Camila', '2000-01-23', 24, '9 de julio y san juan', 'Femenino', 'Soltero', NULL),
+(9, '34234120', 'Castro', 'Maxi Agustin', '2002-02-23', 22, '9 de julio', 'Masculino', 'Soltero', NULL),
+(10, '45475124', 'Castro', 'Demian', '2000-02-23', 24, '9 de julio y san juan', 'Masculino', 'Soltero', NULL),
+(11, '45479130', 'Rodriguez', 'Juan', '2000-02-23', 24, 'pppp', 'Otro', 'Soltero', NULL),
+(12, '45476191', 'Castro', 'Marcos', '2024-11-15', 0, 'libertador 534', 'Masculino', 'Soltero', NULL),
+(13, '45476139', 'Castro', 'Juan', '1984-01-23', 40, '9 de julio', 'Femenino', 'Divorciado', NULL),
+(14, '32342167', 'Castro', 'Camila', '1999-03-23', 25, '9 de julio', 'Femenino', 'Soltero', NULL);
 
 -- --------------------------------------------------------
 
@@ -128606,7 +128631,9 @@ CREATE TABLE `registro_acceso` (
 --
 
 INSERT INTO `registro_acceso` (`id_acceso`, `id_usuario`, `hora_inicio`, `hora_cierre`) VALUES
-(0, 1, '2024-11-07 11:50:34', NULL);
+(1, 1, '2024-11-07 11:50:34', '2024-11-12 20:28:39'),
+(2, 1, '2024-11-12 20:30:23', NULL),
+(3, 1, '2024-11-13 14:47:32', NULL);
 
 -- --------------------------------------------------------
 
@@ -128709,11 +128736,27 @@ CREATE TABLE `usuarios` (
 
 INSERT INTO `usuarios` (`id_usuario`, `id_persona`, `id_rol`, `nombre_usuario`, `contrasena`, `fecha_creacion`, `activo`) VALUES
 (1, 1, 1, 'demadmin', '$2y$10$7zlO/gJEfkGfzOlc9WGchO4tRaI7N/55cX1C5eQq6PHJ3XHxd864S', '2024-09-29 18:15:24', 1),
-(2, 3, 2, 'horo3670', '$2y$10$8KOt0RcZi/Z.2DM.Vy/N4OGoX7jhQhQ/ylctvaFo0x0im9eVG2/4u', '2024-10-14 17:56:47', 0);
+(2, 3, 2, 'horo3670', '$2y$10$8KOt0RcZi/Z.2DM.Vy/N4OGoX7jhQhQ/ylctvaFo0x0im9eVG2/4u', '2024-10-14 17:56:47', 1),
+(3, 4, 2, 'mabu8333', '$2y$10$buXh8IvsIhUO/QGwsumY8uMz0iGxToTvko0X/diWkkZlty0CbResu', '2024-11-12 20:48:39', 0),
+(4, 5, 2, 'isca196', '$2y$10$cGhq5QXrwvwPNLoTCfGKxOTNbGeF8jJqF.JPCAcFmBvn1tLK9SOo.', '2024-11-12 20:51:04', 0),
+(7, 8, 2, 'caca9444', '$2y$10$Gbpm131Sd0RTq9VozNZT1uOU5iiz2xV81jpEXI3gTYrQq.NRVaHDO', '2024-11-13 15:44:36', 0),
+(8, 9, 2, 'maca716', '$2y$10$3ATJMTwEjGW3bU7/LNf1p.8xAG7aJsquFW7QNRy0JjvobRE42j8yO', '2024-11-13 15:45:47', 0),
+(9, 10, 3, 'deca7111', '$2y$10$CCxf1bMEGXlqFVvW.cZabO/O5y.63JyDuRJo7rjCEtTP/tbSTudvO', '2024-11-13 15:48:08', 0),
+(10, 11, 3, 'juro4955', '$2y$10$wtfM4DVSyyht/1XdcpNfTOiC/lDU7IOydsKjCaDMD6ujOhv03p7li', '2024-11-13 15:53:33', 0),
+(11, 12, 3, 'maca011', '$2y$10$EjJk.wAVN5Aj5nkhOvDuh.R2862JXuaAIO10AQG.7edqYtPNrO4A2', '2024-11-13 15:56:11', 1),
+(12, 13, 3, 'juca5632', '$2y$10$W6fZSJbR.cWa/O./mZWHWuQJ7sTfUUYdK4Cp7GvktkOXoL0SiFSou', '2024-11-13 15:58:05', 0),
+(13, 14, 3, 'caca7310', '$2y$10$PHZHAqe/sFxfJdmXc/65kukIck/a/PD.pvXcvTn6QrzyYVilFEFE.', '2024-11-13 16:05:34', 1);
 
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `auditoria`
+--
+ALTER TABLE `auditoria`
+  ADD PRIMARY KEY (`id_auditoria`),
+  ADD KEY `fk_auditoria_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `caracteristicas`
@@ -128948,6 +128991,12 @@ ALTER TABLE `provincias`
   ADD KEY `id_pais` (`id_pais`);
 
 --
+-- Indices de la tabla `registro_acceso`
+--
+ALTER TABLE `registro_acceso`
+  ADD PRIMARY KEY (`id_acceso`);
+
+--
 -- Indices de la tabla `rol`
 --
 ALTER TABLE `rol`
@@ -128979,6 +129028,12 @@ ALTER TABLE `usuarios`
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
+
+--
+-- AUTO_INCREMENT de la tabla `auditoria`
+--
+ALTER TABLE `auditoria`
+  MODIFY `id_auditoria` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `caracteristicas`
@@ -129110,7 +129165,7 @@ ALTER TABLE `paises`
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl`
@@ -129173,6 +129228,12 @@ ALTER TABLE `provincias`
   MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2228;
 
 --
+-- AUTO_INCREMENT de la tabla `registro_acceso`
+--
+ALTER TABLE `registro_acceso`
+  MODIFY `id_acceso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT de la tabla `rol`
 --
 ALTER TABLE `rol`
@@ -129194,11 +129255,17 @@ ALTER TABLE `tiposdelito`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `auditoria`
+--
+ALTER TABLE `auditoria`
+  ADD CONSTRAINT `fk_auditoria_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`);
 
 --
 -- Filtros para la tabla `ciudades`
