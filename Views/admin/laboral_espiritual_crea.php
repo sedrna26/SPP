@@ -1,7 +1,4 @@
 <?php
-
-
-
 // Obtener el ID del PPL de la URL
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -11,8 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
 
         // Insertar datos laborales
         $stmt = $db->prepare("INSERT INTO laboral (id_ppl, tiene_exp, experiencia, se_capacito, 
-            en_que_se_capacito, posee_certific, formac_interes, tiene_incl_lab, lugar_inclusion) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            en_que_se_capacito, posee_certific, formac_interes, tiene_incl_lab, lugar_inclusion,estado) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
 
         $stmt->execute([
             $_POST['id_ppl'],
@@ -23,20 +20,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
             isset($_POST['posee_certific']) ? 1 : 0,
             $_POST['formac_interes'],
             isset($_POST['tiene_incl_lab']) ? 1 : 0,
-            $_POST['lugar_inclusion']
+            $_POST['lugar_inclusion'],
+            'Activo'
         ]);
 
         // Insertar datos espirituales
         $stmt = $db->prepare("INSERT INTO asistencia_espiritual (id_ppl, practica_culto, culto, 
-            desea_participar, eleccion_actividad) 
-            VALUES (?, ?, ?, ?, ?)");
+            desea_participar, eleccion_actividad,estado) 
+            VALUES (?, ?, ?, ?, ?,?)");
 
         $stmt->execute([
             $_POST['id_ppl'],
             isset($_POST['practica_culto']) ? 1 : 0,
             $_POST['culto'],
             isset($_POST['desea_participar']) ? 1 : 0,
-            $_POST['eleccion_actividad']
+            $_POST['eleccion_actividad'],
+            'Activo'
         ]);
         $db->commit();
         echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
@@ -46,7 +45,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
 }
 ?>
 
-<head>
     <style>
         .form-section {
             margin: 20px 0;
@@ -112,10 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
             padding-bottom: 1rem;
         }
     </style>
-</head>
 
-<body>
-    <?php echo "ID traido desde ppl_informe.php=" . $idppl . "(eliminar despues)"; ?>
     <form method="POST">
         <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
 
@@ -248,4 +243,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
             });
         });
     </script>
-</body>

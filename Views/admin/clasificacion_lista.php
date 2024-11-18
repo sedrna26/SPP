@@ -17,11 +17,7 @@ $clasificacion = $stmt->fetch(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clasificación del PPL</title>
     <style>
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        
 
         h3 {
             margin-top: 30px;

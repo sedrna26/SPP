@@ -302,6 +302,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </script>
 
 <section class="container mt-3">
+    
     <div class="card rounded-2 border-0">
         <div class="card-header bg-dark text-white pb-0">
             <h5 class="d-inline-block ">Nuevo Informe de Evaluación Integral Interdisciplinario (IEII)</h5>
@@ -316,17 +317,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label for="dni">DNI:</label>
                     <input type="number" class="form-control" id="dni" name="dni" required>
                 </div>
-
-                <div class="form-group">
-                    <label for="nombres">Nombres:</label>
-                    <input type="text" class="form-control" id="nombres" name="nombres" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
-                </div>
-
-                <div class="form-group">
-                    <label for="apellidos">Apellidos:</label>
-                    <input type="text" class="form-control" id="apellidos" name="apellidos" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
-                </div>
-
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="nombres">Nombres:</label>
+                            <input type="text" class="form-control" id="nombres" name="nombres" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="apellidos">Apellidos:</label>
+                            <input type="text" class="form-control" id="apellidos" name="apellidos" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
+                        </div>
+                    </div>
+                </div>    
                 <!-- Selección de Ubicación -->
                 <div class="form-group">
                     <label style="color: red;" for="direccionp" class="form-label">Seleccionar Ubicación</label>
@@ -426,36 +430,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="fechanac">Fecha de Nacimiento:</label>
-                    <input type="date" class="form-control" id="fechanac" name="fechanac" required onchange="calcularEdad()">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="fechanac">Fecha de Nacimiento:</label>
+                            <input type="date" class="form-control" id="fechanac" name="fechanac" required onchange="calcularEdad()">
+                        </div>
+                    </div>
+                    <div class="col">                        
+                        <div class="form-group">
+                            <label for="edad">Edad:</label>
+                            <input type="number" class="form-control" id="edad" name="edad" min="18" max="70" required readonly>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="genero">Género:</label>
+                            <select class="form-control" id="genero" name="genero" required>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col">
+                    <div class="form-group">
+                        <label for="estadocivil">Estado Civil:</label>
+                        <select class="form-control" id="estadocivil" name="estadocivil" required>
+                            <option value="Soltero">Soltero</option>
+                            <option value="Casado">Casado</option>
+                            <option value="Divorciado">Divorciado</option>
+                            <option value="Viudo">Viudo</option>
+                        </select>
+                    </div>
+
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="edad">Edad:</label>
-                    <input type="number" class="form-control" id="edad" name="edad" min="18" max="70" required readonly>
-                </div>
-
-                <div class="form-group">
-                    <label for="genero">Género:</label>
-                    <select class="form-control" id="genero" name="genero" required>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Femenino">Femenino</option>
-                        <option value="Otro">Otro</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="estadocivil">Estado Civil:</label>
-                    <select class="form-control" id="estadocivil" name="estadocivil" required>
-                        <option value="Soltero">Soltero</option>
-                        <option value="Casado">Casado</option>
-                        <option value="Divorciado">Divorciado</option>
-                        <option value="Viudo">Viudo</option>
-                    </select>
-                </div>
-
-
                 <!-- Sección PPL -->
                 <div>
                     <h4 class="mt-4">Datos de PPL</h4>
@@ -465,19 +475,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="text" class="form-control" id="apodo" name="apodo" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
                     </div>
 
-                    <div class="mb-3">
-                        <label for="profesion" class="form-label">Profesión</label>
-                        <input type="text" class="form-control" id="profesion" name="profesion" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="profesion" class="form-label">Profesión</label>
+                                <input type="text" class="form-control" id="profesion" name="profesion" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="trabaja" class="form-label">¿Trabajaba en el momento de la detención?</label>
+                                <select class="form-control" id="trabaja" name="trabaja" required>
+                                    <option value="Si">Sí</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="mb-3">
-                        <label for="trabaja" class="form-label">¿Trabajaba en el momento de la detención?</label>
-                        <select class="form-control" id="trabaja" name="trabaja" required>
-                            <option value="Si">Sí</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
+                    
 
+                    
+                                
                     <div class="mb-3">
                         <label for="foto" class="form-label">Foto</label>
                         <input type="file" class="form-control" id="foto" name="foto" accept="image/*" onchange="previewImage(event)" required>

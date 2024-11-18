@@ -41,8 +41,8 @@ if (isset($_GET['txtID'])) {
                             try {
                                 $query = "
                                     SELECT `ppl`.*, `persona`.*
-FROM `ppl` 
-	LEFT JOIN `persona` ON `ppl`.`idpersona` = `persona`.`id`;
+                                    FROM `ppl` 
+	                                LEFT JOIN `persona` ON `ppl`.`idpersona` = `persona`.`id`;
                                 ";
                                 $stmt = $db->prepare($query);
                                 $stmt->execute();
