@@ -8,31 +8,7 @@ $stmt = $db->prepare("SELECT * FROM educacion WHERE id_ppl = ?");
 $stmt->execute([$idppl]);
 $educacion = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
-<!DOCTYPE html>
-
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Información Educativa del PPL</title>
-    <style>
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        h3 {
-            margin-top: 30px;
-        }
-
-        p {
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
-
-<body>
+    
     <div class="container">
         <h3>Información Educativa</h3>
         <?php if ($educacion): ?>
@@ -51,6 +27,3 @@ $educacion = $stmt->fetch(PDO::FETCH_ASSOC);
             <p>No hay información educativa disponible.</p>
         <?php endif; ?>
     </div>
-</body>
-
-</html>

@@ -8,16 +8,17 @@ $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
     try {
         // Insertar datos de clasificación
-        $stmt = $db->prepare("INSERT INTO clasificacion (id_ppl, clasificacion, sugerencia, 
+        $stmt = $db->prepare("INSERT INTO clasificacion (id_ppl, clasificacion, sugerencia,estado, 
             sector_nro, pabellon_nro) 
-            VALUES (?, ?, ?, ?, ?)");
+            VALUES (?, ?, ?, ?, ?,?)");
 
         $stmt->execute([
             $_POST['id_ppl'],
             $_POST['clasificacion'],
             $_POST['sugerencia'],
             $_POST['sector_nro'],
-            $_POST['pabellon_nro']
+            $_POST['pabellon_nro'],
+            'Activo'
         ]);
 
         echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
@@ -27,7 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
 }
 ?>
 
-<head>
     <style>
         .form-section {
             margin: 20px 0;
@@ -55,27 +55,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-
-        /* .btn {
-            padding: 10px 15px;
-            background-color: #212529;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        } */
-
         #titulo {
             padding-bottom: 1rem;
         }
     </style>
-</head>
-
-<body>
     <form method="POST">
         <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
 
@@ -117,5 +100,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
 
         <button name="guardar_9" type="button" class="btn btn-primary">Guardar</button>
     </form>
-
-</body>

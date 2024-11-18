@@ -67,11 +67,8 @@ try {
 } catch (PDOException $e) {
     echo "Error en la consulta: " . $e->getMessage();
 }
-
-
 ?>
-
-
+<!-- --------------------------- -->
 <style>
     .form-group {
         margin-bottom:
@@ -91,6 +88,27 @@ try {
         margin-bottom: 0;
         line-height: 1.5;
         flex-grow: 1;
+    }
+    .form-container {
+        margin: 20px;
+    }
+    .foto {
+        width: 250px;
+        height: 250px;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #ddd;
+    }
+    .line {
+        display: inline-block;
+        width: 150px;
+        border-bottom: 1px solid #000;
+        margin-left: 5px;
+    }
+    .section-title {
+        font-weight: bold;
     }
 </style>
 <!-- ----------------------------------- -->
@@ -125,56 +143,28 @@ try {
     <!-- ----------------------------------------- -->
     <div class="card">
         <div class="card-body">
+            <div class="container mb-4">    
+                <div class="row mt-2">
+                    <div class="col-md-7">          
             <h4>Datos Personales</h4>
-
-            <div class="form-group">
-                <label for="dni">DNI:</label>
-                <p class="form-control-static" id="dni"><?php echo !empty($persona['dni']) ? htmlspecialchars($persona['dni'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?></p>
-            </div>
-
-            <div class="form-group">
-                <label for="nombres">Nombres:</label>
-                <p class="form-control-static" id="nombres"><?php echo !empty($persona['nombres']) ? htmlspecialchars($persona['nombres'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
-            </div>
-
-            <div class="form-group">
-                <label for="apellidos">Apellidos:</label>
-                <p class="form-control-static" id="apellidos"><?php echo !empty($persona['apellidos']) ? htmlspecialchars($persona['apellidos'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
-            </div>
-
-            <div class="form-group">
-                <label for="fechaNacimiento">Fecha de Nacimiento:</label>
-                <p class="form-control-static" id="fechaNacimiento">
-                    <?php
-                    if (!empty($persona['fechaNacimiento'])) {
-                        // Convertimos la fecha al formato deseado
-                        echo date('d-m-Y', strtotime($persona['fechaNacimiento']));
-                    } else {
-                        echo 'No hay dato';
-                    }
-                    ?>
-                </p>
-            </div>
-
-            <div class="form-group">
-                <label for="edad">Edad:</label>
-                <p class="form-control-static" id="edad"><?php echo !empty($persona['edad']) ? htmlspecialchars($persona['edad'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
-            </div>
-
-            <div class="form-group">
-                <label for="genero">Género:</label>
-                <p class="form-control-static" id="genero"><?php echo !empty($persona['genero']) ? htmlspecialchars($persona['genero'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
-            </div>
-
-            <div class="form-group">
-                <label for="estadocivil">Estado Civil:</label>
-                <p class="form-control-static" id="estadocivil"><?php echo !empty($persona['estadocivil']) ? htmlspecialchars($persona['estadocivil'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
-            </div>
-
-            <div class="form-group">
-                <label for="direccion">Dirección completa:</label>
-                <p class="form-control-static" id="direccion">
-                    <?php
+            <p class="mt-4">
+                <label class="h6 ">D.N.I.:</label> <?php echo !empty($persona['dni']) ? htmlspecialchars($persona['dni'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?>
+                <label class="h6 ml-5"> Nombres:</label> <?php echo !empty($persona['nombres']) ? htmlspecialchars($persona['nombres'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
+                <label class="h6 ml-5">Apellidos:</label> <?php echo !empty($persona['apellidos']) ? htmlspecialchars($persona['apellidos'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
+            </p>
+            <p>
+                <label class="h6 " >Fecha de Nacimiento:</label> <?php
+                        if (!empty($persona['fechaNacimiento'])) {
+                            // Convertimos la fecha al formato deseado
+                            echo date('d-m-Y', strtotime($persona['fechaNacimiento']));
+                        }else{echo 'No hay dato'; }?>
+                <label class="h6 ml-5">Edad:</label> <?php echo !empty($persona['edad']) ? htmlspecialchars($persona['edad'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
+            </p>           
+            <p>
+                <label class="h6 " >Género:</label> <?php echo !empty($persona['genero']) ? htmlspecialchars($persona['genero'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
+                <label class="h6 ml-5" >Estado Civil:</label> <?php echo !empty($persona['estadocivil']) ? htmlspecialchars($persona['estadocivil'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
+            </p> 
+                <label class="h6 " >Dirección completa:</label> <?php
                     if (!empty($persona['direccion'])) {
                         echo htmlspecialchars(
                             (!empty($persona['pais']) ? $persona['pais'] . ', ' : '') . // País
@@ -189,9 +179,8 @@ try {
                         echo 'No hay dato';
                     }
                     ?>
-                </p>
-            </div>
-
+            </p>
+            <!-- --------------------------- -->
             <h4 class="mt-4">Información de PPL</h4>
 
             <div class="form-group">
@@ -209,16 +198,7 @@ try {
                 <p class="form-control-static" id="profesion"><?php echo !empty($ppl['profesion']) ? htmlspecialchars($ppl['profesion'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
             </div>
 
-            <div class="form-group">
-                <label for="foto">Foto:</label>
-                <p class="form-control-static" id="foto">
-                    <?php if (!empty($ppl['foto'])): ?>
-                        <img src="imagenes_p<?php echo !empty($ppl['foto']) ? htmlspecialchars($ppl['foto'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>" alt="Foto de la persona" style="max-width: 200px; max-height: 200px;">
-                    <?php else: ?>
-                        No se encontró foto.
-                    <?php endif; ?>
-                </p>
-            </div>
+            
 
             <div class="form-group">
                 <label for="huella">Huella:</label>
@@ -356,4 +336,19 @@ try {
         <p>No se encontraron datos de situación legal para este ID.</p>
     <?php endif; ?>
     </div>
+    <div class="col-md-4 text-center ">
+        <div class="foto">
+            <p class="form-control-static" id="foto">
+                    <?php if (!empty($ppl['foto'])): ?>
+                        <img src="imagenes_p<?php echo !empty($ppl['foto']) ? htmlspecialchars($ppl['foto'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>" alt="Foto de la persona" style="max-width: 200px; max-height: 200px;">
+                    <?php else: ?>
+                        No se encontró foto.
+                    <?php endif; ?>
+                </p>
+        </div>
+    </div>
 </div>
+</div>
+</div>
+</div>
+            

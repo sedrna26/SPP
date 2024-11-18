@@ -16,20 +16,7 @@ if ($idppl > 0) {
     $asistenciaEspiritual = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laboral y Espiritual</title>
     <style>
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
         h3 {
             margin-top: 30px;
         }
@@ -38,10 +25,8 @@ if ($idppl > 0) {
             margin-bottom: 10px;
         }
     </style>
-</head>
 
-<body>
-    <div class="container">
+    <div class="container mt-3">
         <h3>Informe Laboral</h3>
         <?php if ($laboral): ?>
             <p>Tiene Experiencia Previa: <?= $laboral['tiene_exp'] ? 'Sí' : 'No'; ?></p>
@@ -65,6 +50,3 @@ if ($idppl > 0) {
             <p>No hay información de asistencia espiritual disponible.</p>
         <?php endif; ?>
     </div>
-</body>
-
-</html>
