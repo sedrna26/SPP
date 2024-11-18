@@ -8,8 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Insertar datos de educación
         $stmt = $db->prepare("INSERT INTO educacion (id_ppl, sabe_leer_escrib, primaria, 
             secundaria, tiene_educ_formal, `educ-formal`, tiene_educ_no_formal, 
-            `educ-no-formal`, quiere_deporte, `sec-deporte`, quiere_act_artistica, `act-artistica`) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            `educ-no-formal`, quiere_deporte, `sec-deporte`, quiere_act_artistica, `act-artistica`, estado) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         $stmt->execute([
             $_POST['id_ppl'],
@@ -23,7 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             isset($_POST['quiere_deporte']) ? 1 : 0,
             $_POST['sec-deporte'] ?? '',
             isset($_POST['quiere_act_artistica']) ? 1 : 0,
-            $_POST['act-artistica'] ?? ''
+            $_POST['act-artistica'] ?? '',
+            'Activo'  // Añadido estado por defecto
         ]);
 
         echo "<div class='alert alert-success'>Datos educativos guardados correctamente</div>";

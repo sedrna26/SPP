@@ -8,12 +8,13 @@ $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
     try {
         // Insertar datos de clasificación
-        $stmt = $db->prepare("INSERT INTO observaciones (id_ppl, observacion) 
-            VALUES (?, ?)");
+        $stmt = $db->prepare("INSERT INTO observaciones (id_ppl, observacion,estado) 
+            VALUES (?, ?,?)");
 
         $stmt->execute([
             $_POST['id_ppl'],
-            $_POST['observacion']
+            $_POST['observacion'],
+            'Activo'
         ]);
 
         echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
@@ -22,8 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
     }
 }
 ?>
-
-<head>
     <style>
         .form-section {
             margin: 20px 0;
@@ -41,29 +40,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
             margin-bottom: 5px;
             font-weight: bold;
         }
-
-
-
-        /* .btn {
-            padding: 10px 15px;
-            background-color: #212529;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        } */
-
         #titulo {
             padding-bottom: 1rem;
         }
     </style>
-</head>
-
-<body>
     <form method="POST">
         <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
 
@@ -84,5 +64,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
 
         <button name="guardar_8" type="button" class="btn btn-primary">Guardar</button>
     </form>
-
-</body>
