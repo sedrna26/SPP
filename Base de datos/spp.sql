@@ -128675,7 +128675,7 @@ CREATE TABLE `situacionlegal` (
   `categoria` varchar(20) NOT NULL,
   `reingreso_falta` tinyint(1) DEFAULT NULL,
   `causas_pend` varchar(100) DEFAULT NULL,
-  `causa_niño` tinyint(1) NOT NULL,
+  `causa_nino` tinyint(1) NOT NULL,
   `cumplio_medida` tinyint(1) NOT NULL,
   `asistio_rehabi` tinyint(1) NOT NULL,
   `tiene_defensor` tinyint(1) NOT NULL,
