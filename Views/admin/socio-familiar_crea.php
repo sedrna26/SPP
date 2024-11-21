@@ -238,7 +238,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
         padding-bottom: 1rem;
     }
 </style>
-<?php echo "ID traido desde ppl_informe.php=" . $idppl . "(eliminar despues)"; ?>
+
 <form onsubmit="enviarFormulario(event)" id="familyDataForm" method="POST" novalidate>
     <input type="hidden" name="idppl" value="<?php echo htmlspecialchars($idppl); ?>">
     <!-- Familiares FF.AA y Detenidos -->
