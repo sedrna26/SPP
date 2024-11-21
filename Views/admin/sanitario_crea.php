@@ -1,5 +1,4 @@
 <?php
-
 function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles)
 {
     try {
@@ -16,20 +15,14 @@ function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detall
         echo "Error en el registro de auditoría: " . $e->getMessage();
     }
 }
-
-// Obtener el ID del paciente desde la URL
 $id_ppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
-
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
     try {
         $db->beginTransaction();
-
-        // Insertar datos médicos
         $stmt = $db->prepare("INSERT INTO datos_medicos (id_ppl, hipertension, diabetes, enfermedad_corazon, asma, 
             epilepsia, alergia, es_celiaco, bulimia_anorexia, medicacion, metabolismo, embarazo, hepatitis, 
             mononucleosis, otras_enfermedades, peso_actual, talla, imc, diagnostico, tipificacion_dieta) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
         $stmt->execute([
             $_POST['id_ppl'],
             isset($_POST['hipertension']) ? 1 : 0,
@@ -52,23 +45,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
             $_POST['diagnostico'],
             $_POST['tipificacion_dieta']
         ]);
-
         $db->commit();
-
-        // Registrar acción en la auditoría
         $accion = 'Agregar Datos Médicos';
         $tabla_afectada = 'datos_medicos';
         $detalles = "Se insertaron los datos médicos para el paciente con ID: $id_ppl";
         registrarAuditoria($db, $accion, $tabla_afectada, $id_ppl, $detalles);
-
         echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
     } catch (PDOException $e) {
         echo "<div class='alert alert-danger'>Error al guardar los datos: " . $e->getMessage() . "</div>";
     }
 }
 ?>
-
-<head>
     <style>
         .form-section {
             margin: 20px 0;
@@ -80,17 +67,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
         .hidden {
             display: none;
         }
-
         .form-group {
             margin-bottom: 15px;
         }
-
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
         }
-
         input[type="text"],
         textarea {
             width: 100%;
@@ -99,49 +83,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-
-        /* .btn {
-            padding: 10px 15px;
-            background-color: #212529;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        } */
-
         .familiar-container {
             border-left: 3px solid #212529;
             padding-left: 15px;
             margin-bottom: 20px;
         }
-
         .status-fallecido {
             border-left-color: #212529;
             background-color: #f9f9f9;
         }
-
         .children-container {
             margin-left: 20px;
             padding: 10px;
             border-left: 2px dashed #212529;
         }
-
         #titulo {
             padding-bottom: 1rem;
         }
     </style>
-</head>
 
-<body>
-    <?php echo "ID del paciente: " . $id_ppl; ?>
     <form method="POST">
         <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($id_ppl); ?>">
 
-        <!-- Sección de Datos Médicos -->
         <div class="form-section">
             <h3 id="titulo">Datos Médicos</h3>
 
@@ -278,9 +241,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
                 <input type="text" name="tipificacion_dieta">
             </div>
         </div>
-
-
-
+        
         <button name="guardar" type="submit" class="btn btn-primary">Guardar Información</button>
     </form>
 

@@ -68,8 +68,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
     }
 }
 ?>
-
-<head>
     <style>
         .form-section {
             margin: 20px 0;
@@ -100,20 +98,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-
-        /* .btn {
-            padding: 10px 15px;
-            background-color: #212529;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        } */
-
         .familiar-container {
             border-left: 3px solid #212529;
             padding-left: 15px;
@@ -135,10 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
             padding-bottom: 1rem;
         }
     </style>
-</head>
 
-<body>
-    <?php echo "ID traido desde ppl_informe.php=" . $idppl . "(eliminar despues)"; ?>
     <form method="POST">
         <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
 
@@ -271,4 +252,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
             });
         });
     </script>
-</body>

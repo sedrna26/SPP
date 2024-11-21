@@ -78,20 +78,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-
-        /* .btn {
-            padding: 10px 15px;
-            background-color: #212529;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        } */
-
         #titulo {
             padding-bottom: 1rem;
         }
