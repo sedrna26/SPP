@@ -24,6 +24,7 @@
         }
     </style>
 <!-- ------------------------------------ -->
+<?php $dni = isset($_GET['dni']) ? $_GET['dni'] : '';?>
 <section class="container mt-3">
             <div class="card rounded-2 border-0">
                 <div class="card-header bg-dark text-white pb-0">
@@ -76,7 +77,13 @@
                     <tbody>
                         <?php
                         try {
-                            $query = "SELECT * FROM persona ";
+                            $query = "SELECT ppl.*, per.*
+                                FROM ppl AS ppl
+                                LEFT JOIN 
+                                persona AS per 
+                                ON ppl.idpersona = per.id
+                                WHERE per.dni = $dni;
+                                ";
                             $stmt = $db->prepare($query);
                             $stmt->execute();
                             $pples = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -87,7 +94,9 @@
                             <td>15/04/2020</td>
                             <td>15/04/2050</td>  
                             <td>Cargo/Delito</td>                     
-                            <td><a class="btn btn-info " href="ppl_informe.php">Informe(IEII)</a></td>                    
+                            <td>
+                                <a class="btn btn-info" href='ppl_informe.php?id=<?php echo $ppl['id']; ?>'>Informe(IEII)</a>
+                            <td>                    
                         </tr>
                         <?php
                             }
