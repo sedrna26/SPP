@@ -1,11 +1,26 @@
 <?php require 'navbar.php'; ?>
 
 <?php
-
-if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $id = (int)$_GET['id'];
+if (isset($_GET['dni']) && ctype_digit($_GET['dni'])) {
+    $dni = $_GET['dni'];
+    $stmt = $conexion->prepare("SELECT ppl.*, per.*
+        FROM ppl AS ppl
+        LEFT JOIN persona AS per 
+        ON ppl.idpersona = per.id
+        WHERE per.dni = ?
+    ");
+    $stmt->bind_param("i", $dni);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $pplget = $result->fetch_assoc();
+    if ($pplget) {
+        $id = $pplget['idpersona'];
+    } else {
+        echo "No se encontró ningún resultado para el DNI proporcionado.";
+    }
+    $stmt->close();
 } else {
-    die("ID inválido.");
+    echo "DNI no válido.";
 }
 
 try {
@@ -150,14 +165,14 @@ try {
                                 ?>
                             </span>
 
-                            <label class="h6 ml-5">Apodo:</label>
+                            <!-- <label class="h6 ml-5">Apodo:</label>
                             <span>
                                 <?php
                                 echo !empty($ppl['apodo']) ?
                                     htmlspecialchars($ppl['apodo'], ENT_QUOTES, 'UTF-8') :
                                     'No hay dato';
                                 ?>
-                            </span>
+                            </span> -->
 
                         </p>
                         <p>
@@ -189,7 +204,7 @@ try {
                             </span>
                         </p>
                         <p>
-                            <label class="h6 ">Departamento / Localidad:</label> Almagro
+                            <label class="h6 ">Departamento / Localidad:</label>
                             <span>
                                 <?php
                                 echo !empty($persona['localidad']) ?
@@ -222,7 +237,7 @@ try {
                 </div>
             </div>
             <!-- ------------------------- -->
-            <table id="example" class="table table-striped table-sm" style="width:100%">
+            <table id="" class="table table-striped table-sm" >
                 <thead class="thead-dark">
                     <tr>
                         <th>#</th>
