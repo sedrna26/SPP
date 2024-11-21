@@ -1,18 +1,34 @@
 <?php
 // require_once BASE_PATH . '/conn/connection.php';
 
+function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles)
+{
+    try {
+        $sql = "INSERT INTO auditoria (id_usuario, accion, detalles, tabla_afectada, registro_id, fecha) 
+                VALUES (:id_usuario, :accion, :detalles, :tabla_afectada, :registro_id, NOW())";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':id_usuario', $_SESSION['id_usuario']);
+        $stmt->bindParam(':accion', $accion);
+        $stmt->bindParam(':detalles', $detalles);
+        $stmt->bindParam(':tabla_afectada', $tabla_afectada);
+        $stmt->bindParam(':registro_id', $registro_id);
+        $stmt->execute();
+    } catch (PDOException $e) {
+        echo "Error en el registro de auditoría: " . $e->getMessage();
+    }
+}
+
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
-        // Insertar datos de educación
         $stmt = $db->prepare("INSERT INTO educacion (id_ppl, sabe_leer_escrib, primaria, 
             secundaria, tiene_educ_formal, `educ-formal`, tiene_educ_no_formal, 
-            `educ-no-formal`, quiere_deporte, `sec-deporte`, quiere_act_artistica, `act-artistica`, estado) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            `educ-no-formal`, quiere_deporte, `sec-deporte`, quiere_act_artistica, `act-artistica`) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         $stmt->execute([
-            $_POST['id_ppl'],
+            $idppl,
             isset($_POST['sabe_leer_escrib']) ? 1 : 0,
             $_POST['primaria'],
             $_POST['secundaria'],
@@ -23,11 +39,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             isset($_POST['quiere_deporte']) ? 1 : 0,
             $_POST['sec-deporte'] ?? '',
             isset($_POST['quiere_act_artistica']) ? 1 : 0,
-            $_POST['act-artistica'] ?? '',
-            'Activo'  // Añadido estado por defecto
+            $_POST['act-artistica'] ?? ''
         ]);
 
         echo "<div class='alert alert-success'>Datos educativos guardados correctamente</div>";
+
+        // Registrar acción en la auditoría
+        $accion = 'Agregar Educación';
+        $tabla_afectada = 'educación';
+        $detalles = "Se insertó una nueva educación para el PPL con ID: $idppl";
+        registrarAuditoria($db, $accion, $tabla_afectada, $idppl, $detalles);
     } catch (PDOException $e) {
         echo "<div class='alert alert-danger'>Error al guardar los datos: " . $e->getMessage() . "</div>";
     }
