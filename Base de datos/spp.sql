@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-11-2024 a las 22:08:01
--- Versión del servidor: 10.4.28-MariaDB
--- Versión de PHP: 8.2.4
+-- Tiempo de generación: 21-11-2024 a las 04:51:06
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -61,7 +61,10 @@ INSERT INTO `auditoria` (`id_auditoria`, `id_usuario`, `accion`, `tabla_afectada
 (1, 1, 'eliminar', 'usuarios', 13, '2024-11-14 14:12:53', 'Se actualizó el campo activo a 0 para el usuario ID: 13, Nombre: caca7310, Rol: 3'),
 (2, 1, 'eliminar', 'usuarios', 11, '2024-11-14 22:11:11', 'Se actualizó el campo activo a 0 para el usuario ID: 11, Nombre: maca011, Rol: 3'),
 (3, 1, 'eliminar', 'usuarios', 2, '2024-11-14 22:54:44', 'Se actualizó el campo activo a 0 para el usuario ID: 2, Nombre: horo3670, Rol: 2'),
-(4, 1, 'eliminar', 'usuarios', 1, '2024-11-14 23:16:06', 'Se actualizó el campo activo a 0 para el usuario ID: 1, Nombre: demadmin, Rol: 1');
+(4, 1, 'eliminar', 'usuarios', 1, '2024-11-14 23:16:06', 'Se actualizó el campo activo a 0 para el usuario ID: 1, Nombre: demadmin, Rol: 1'),
+(5, 1, 'Agregar Educación', 'educación', 3, '2024-11-20 00:27:54', 'Se insertó una nueva educación para el PPL con ID: 3'),
+(6, 1, 'Agregar Info Familiar', 'ppl_familiar_info, ppl_situacion_sociofamiliar, pp', 3, '2024-11-20 00:30:02', 'Se insertó una nueva Informacion Familiar para el PPL con ID: 3'),
+(7, 1, 'Editar PPL - Persona', 'persona;ppl', 3, '2024-11-21 03:23:02', 'Se edito el PPL con ID: 3');
 
 -- --------------------------------------------------------
 
@@ -125761,21 +125764,6 @@ CREATE TABLE `clasificacion` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `datosantropometri`
---
-
-CREATE TABLE `datosantropometri` (
-  `id` int(11) NOT NULL,
-  `peso_actual` decimal(5,2) DEFAULT NULL,
-  `talla` decimal(5,2) DEFAULT NULL,
-  `imc` decimal(4,2) DEFAULT NULL,
-  `diagnostico` text DEFAULT NULL,
-  `tipificacion_dieta` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `datos_anexos`
 --
 
@@ -125784,6 +125772,45 @@ CREATE TABLE `datos_anexos` (
   `posee_dni` tinyint(1) NOT NULL,
   `porque` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `datos_medicos`
+--
+
+CREATE TABLE `datos_medicos` (
+  `id` int(11) NOT NULL,
+  `id_ppl` int(11) NOT NULL,
+  `hipertension` tinyint(1) NOT NULL DEFAULT 0,
+  `diabetes` tinyint(1) NOT NULL DEFAULT 0,
+  `enfermedad_corazon` tinyint(1) NOT NULL DEFAULT 0,
+  `enfermedad_corazon_cual` varchar(255) DEFAULT NULL,
+  `asma` tinyint(1) NOT NULL DEFAULT 0,
+  `epilepsia` tinyint(1) NOT NULL DEFAULT 0,
+  `alergia` tinyint(1) NOT NULL DEFAULT 0,
+  `alergia_especifique` varchar(255) DEFAULT NULL,
+  `es_celiaco` tinyint(1) NOT NULL DEFAULT 0,
+  `bulimia_anorexia` tinyint(1) NOT NULL DEFAULT 0,
+  `medicacion` varchar(255) DEFAULT NULL,
+  `metabolismo` tinyint(1) NOT NULL DEFAULT 0,
+  `embarazo` tinyint(1) NOT NULL DEFAULT 0,
+  `hepatitis` tinyint(1) NOT NULL DEFAULT 0,
+  `mononucleosis` tinyint(1) NOT NULL DEFAULT 0,
+  `otras_enfermedades` varchar(255) DEFAULT NULL,
+  `peso_actual` decimal(10,2) NOT NULL,
+  `talla` decimal(10,2) NOT NULL,
+  `imc` decimal(10,2) NOT NULL,
+  `diagnostico` varchar(255) DEFAULT NULL,
+  `tipificacion_dieta` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `datos_medicos`
+--
+
+INSERT INTO `datos_medicos` (`id`, `id_ppl`, `hipertension`, `diabetes`, `enfermedad_corazon`, `enfermedad_corazon_cual`, `asma`, `epilepsia`, `alergia`, `alergia_especifique`, `es_celiaco`, `bulimia_anorexia`, `medicacion`, `metabolismo`, `embarazo`, `hepatitis`, `mononucleosis`, `otras_enfermedades`, `peso_actual`, `talla`, `imc`, `diagnostico`, `tipificacion_dieta`) VALUES
+(2, 3, 1, 1, 1, NULL, 1, 1, 1, NULL, 1, 1, 'ASDASDSAD', 1, 0, 1, 1, 'ASDASDSAD', 120.00, 190.00, 33.24, 'ASDASD', 'ASDASD');
 
 -- --------------------------------------------------------
 
@@ -125911,17 +125938,12 @@ CREATE TABLE `educacion` (
   `estado` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Estructura de tabla para la tabla `enfermedades`
+-- Volcado de datos para la tabla `educacion`
 --
 
-CREATE TABLE `enfermedades` (
-  `id` int(11) NOT NULL,
-  `enfermedad` varchar(255) NOT NULL,
-  `padecio` tinyint(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `educacion` (`id`, `id_ppl`, `sabe_leer_escrib`, `primaria`, `secundaria`, `tiene_educ_formal`, `educ-formal`, `tiene_educ_no_formal`, `educ-no-formal`, `quiere_deporte`, `sec-deporte`, `quiere_act_artistica`, `act-artistica`, `estado`) VALUES
+(4, 3, 1, 'Completa', 'Completa', 0, '', 0, '', 0, '', 0, '', '');
 
 -- --------------------------------------------------------
 
@@ -126027,23 +126049,6 @@ CREATE TABLE `informe_psiquiatrico` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `informe_sanitario`
---
-
-CREATE TABLE `informe_sanitario` (
-  `id` int(11) NOT NULL,
-  `id_ppl` int(11) NOT NULL,
-  `estado_gral` varchar(200) DEFAULT NULL,
-  `fecha` date DEFAULT NULL,
-  `id_medicamento` int(11) NOT NULL,
-  `id_enfermedades` int(11) NOT NULL,
-  `id_datos_antrop` int(11) NOT NULL,
-  `marcas_partic` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `juzgado`
 --
 
@@ -126107,8 +126112,11 @@ CREATE TABLE `marcas_cuerpo` (
 --
 
 INSERT INTO `marcas_cuerpo` (`id`, `idppl`, `x`, `y`, `description`, `categoria`, `estado`, `created_at`) VALUES
-(1, 3, 449.4, 178.2, 's', 'cuerpo', 'Activo', '2024-11-18 20:47:07'),
-(2, 3, 443.4, 115.2, 'd', 'cuerpo', 'Activo', '2024-11-18 21:05:47');
+(1, 3, 449.4, 178.2, 's', 'cuerpo', 'Inactivo', '2024-11-18 20:47:07'),
+(2, 3, 443.4, 115.2, 'd', 'cuerpo', 'Inactivo', '2024-11-18 21:05:47'),
+(3, 3, 447.778, 55.6667, 'Cicatriz Queloide', 'cuerpo', 'Activo', '2024-11-20 00:31:25'),
+(4, 3, 418.778, 297.889, 'Tatuaje tamaño aprox: 25cm', 'cuerpo', 'Activo', '2024-11-20 00:31:41'),
+(5, 3, 145.778, 48.8889, 'Puntos de opereacion reciente', 'cuerpo', 'Activo', '2024-11-20 00:31:57');
 
 -- --------------------------------------------------------
 
@@ -126408,7 +126416,7 @@ CREATE TABLE `persona` (
 INSERT INTO `persona` (`id`, `dni`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `educacion`) VALUES
 (1, '44123890', 'Castro', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL),
 (2, '44123891', 'Demian', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL),
-(3, '40470766', 'Rodriguez', 'Horacio Andres', '1997-11-26', 26, 'Tucuman Sur 2000', 'Masculino', 'Soltero', NULL),
+(3, '40470766', 'Rodriguez', 'Horacio Andres', '1999-11-26', 26, 'Tucuman Sur 2000', 'Masculino', 'Soltero', NULL),
 (4, '45476132', 'Bueno', 'Maxi Agustin', '2000-01-23', 24, 'libertador 534', 'Masculino', 'Soltero', NULL),
 (5, '44406135', 'Castro', 'Ismael ', '2000-01-23', 24, '9 de julio', 'Masculino', 'Soltero', NULL),
 (8, '44123892', 'Castro', 'Camila', '2000-01-23', 24, '9 de julio y san juan', 'Femenino', 'Soltero', NULL),
@@ -126475,6 +126483,13 @@ CREATE TABLE `ppl_familiar_info` (
   `estado` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `ppl_familiar_info`
+--
+
+INSERT INTO `ppl_familiar_info` (`id`, `idppl`, `familiares_ffaa`, `ffaa_detalles`, `familiares_detenidos`, `detenidos_detalles`, `telefono_familiar`, `posee_dni`, `motivo_no_dni`, `estado`) VALUES
+(37, 3, 1, 'Marcos Alfonso (PRIMO)', 0, '', '2644587496', 0, 'Retenido en comisaria 3ra', '');
+
 -- --------------------------------------------------------
 
 --
@@ -126496,7 +126511,8 @@ CREATE TABLE `ppl_hermanos` (
 --
 
 INSERT INTO `ppl_hermanos` (`id`, `idppl`, `apellido`, `nombre`, `edad`, `visita`, `estado`) VALUES
-(1, 2, 'Nuñez', 'Herman', 22, 1, 'Activo');
+(1, 2, 'Nuñez', 'Herman', 22, 1, 'Activo'),
+(2, 3, 'Rodriguez', 'Agustin', 25, 1, '');
 
 -- --------------------------------------------------------
 
@@ -126559,7 +126575,9 @@ CREATE TABLE `ppl_padres` (
 
 INSERT INTO `ppl_padres` (`id`, `idppl`, `tipo`, `vivo`, `apellido`, `nombre`, `edad`, `nacionalidad`, `estado_civil`, `instruccion`, `visita`, `estado`) VALUES
 (1, 1, 'PADRE', 1, 'Marcos ', 'Gonzalez', 44, 'Bolivia', 'Soltero', 'Albañil', 0, 'Activo'),
-(2, 1, 'MADRE', 0, 'Saez', 'Mirta', 67, 'Argentina', 'Viuda', 'Ama de Casa', 0, 'Activo');
+(2, 1, 'MADRE', 0, 'Saez', 'Mirta', 67, 'Argentina', 'Viuda', 'Ama de Casa', 0, 'Activo'),
+(9, 3, 'PADRE', 0, 'Rodriguez', 'Horacio', 79, 'Argentina', 'Casado', 'Carpintero', 1, ''),
+(10, 3, 'MADRE', 0, 'Rosas', 'Albertina', 78, 'Uruguaya', 'Casada', 'Ama de casa', 0, '');
 
 -- --------------------------------------------------------
 
@@ -126607,7 +126625,8 @@ CREATE TABLE `ppl_situacion_sociofamiliar` (
 --
 
 INSERT INTO `ppl_situacion_sociofamiliar` (`id`, `idppl`, `edad_inicio_laboral`, `situacion_economica_precaria`, `mendicidad_calle`, `estado`) VALUES
-(3, 3, NULL, 0, 0, 'Activo');
+(3, 3, NULL, 0, 0, 'Activo'),
+(8, 3, 12, 0, 0, '');
 
 -- --------------------------------------------------------
 
@@ -128699,7 +128718,7 @@ CREATE TABLE `situacionlegal` (
   `categoria` varchar(20) NOT NULL,
   `reingreso_falta` tinyint(1) DEFAULT NULL,
   `causas_pend` varchar(100) DEFAULT NULL,
-  `causa_niño` tinyint(1) NOT NULL,
+  `causa_nino` tinyint(1) NOT NULL,
   `cumplio_medida` tinyint(1) NOT NULL,
   `asistio_rehabi` tinyint(1) NOT NULL,
   `tiene_defensor` tinyint(1) NOT NULL,
@@ -128803,16 +128822,17 @@ ALTER TABLE `clasificacion`
   ADD KEY `id_ppl` (`id_ppl`);
 
 --
--- Indices de la tabla `datosantropometri`
---
-ALTER TABLE `datosantropometri`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indices de la tabla `datos_anexos`
 --
 ALTER TABLE `datos_anexos`
   ADD PRIMARY KEY (`id_datos_anex`);
+
+--
+-- Indices de la tabla `datos_medicos`
+--
+ALTER TABLE `datos_medicos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_ppl` (`id_ppl`);
 
 --
 -- Indices de la tabla `delitos`
@@ -128836,12 +128856,6 @@ ALTER TABLE `domicilio`
 ALTER TABLE `educacion`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_ppl` (`id_ppl`);
-
---
--- Indices de la tabla `enfermedades`
---
-ALTER TABLE `enfermedades`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `entrevista`
@@ -128883,17 +128897,6 @@ ALTER TABLE `informe_psicologico`
 ALTER TABLE `informe_psiquiatrico`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_ppl` (`id_ppl`);
-
---
--- Indices de la tabla `informe_sanitario`
---
-ALTER TABLE `informe_sanitario`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_ppl` (`id_ppl`),
-  ADD KEY `id_medicamento` (`id_medicamento`),
-  ADD KEY `id_enfermedades` (`id_enfermedades`),
-  ADD KEY `id_datos_antrop` (`id_datos_antrop`),
-  ADD KEY `marcas_partic` (`marcas_partic`);
 
 --
 -- Indices de la tabla `juzgado`
@@ -129064,7 +129067,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `auditoria`
 --
 ALTER TABLE `auditoria`
-  MODIFY `id_auditoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_auditoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `caracteristicas`
@@ -129085,16 +129088,16 @@ ALTER TABLE `clasificacion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT de la tabla `datosantropometri`
---
-ALTER TABLE `datosantropometri`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `datos_anexos`
 --
 ALTER TABLE `datos_anexos`
   MODIFY `id_datos_anex` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `datos_medicos`
+--
+ALTER TABLE `datos_medicos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `delitos`
@@ -129112,13 +129115,7 @@ ALTER TABLE `domicilio`
 -- AUTO_INCREMENT de la tabla `educacion`
 --
 ALTER TABLE `educacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT de la tabla `enfermedades`
---
-ALTER TABLE `enfermedades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `entrevista`
@@ -129151,12 +129148,6 @@ ALTER TABLE `informe_psiquiatrico`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `informe_sanitario`
---
-ALTER TABLE `informe_sanitario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `juzgado`
 --
 ALTER TABLE `juzgado`
@@ -129172,7 +129163,7 @@ ALTER TABLE `laboral`
 -- AUTO_INCREMENT de la tabla `marcas_cuerpo`
 --
 ALTER TABLE `marcas_cuerpo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `medicamentos`
@@ -129220,13 +129211,13 @@ ALTER TABLE `ppl_causas`
 -- AUTO_INCREMENT de la tabla `ppl_familiar_info`
 --
 ALTER TABLE `ppl_familiar_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl_hermanos`
 --
 ALTER TABLE `ppl_hermanos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl_hijos`
@@ -129244,7 +129235,7 @@ ALTER TABLE `ppl_otros_visitantes`
 -- AUTO_INCREMENT de la tabla `ppl_padres`
 --
 ALTER TABLE `ppl_padres`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl_pareja`
@@ -129256,7 +129247,7 @@ ALTER TABLE `ppl_pareja`
 -- AUTO_INCREMENT de la tabla `ppl_situacion_sociofamiliar`
 --
 ALTER TABLE `ppl_situacion_sociofamiliar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `provincias`
@@ -129317,6 +129308,12 @@ ALTER TABLE `clasificacion`
   ADD CONSTRAINT `fk_clasificacion_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
 
 --
+-- Filtros para la tabla `datos_medicos`
+--
+ALTER TABLE `datos_medicos`
+  ADD CONSTRAINT `datos_medicos_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
+
+--
 -- Filtros para la tabla `delitos`
 --
 ALTER TABLE `delitos`
@@ -129365,15 +129362,6 @@ ALTER TABLE `informe_psicologico`
 --
 ALTER TABLE `informe_psiquiatrico`
   ADD CONSTRAINT `fk_psiquiatrico_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
-
---
--- Filtros para la tabla `informe_sanitario`
---
-ALTER TABLE `informe_sanitario`
-  ADD CONSTRAINT `fk_informe_sanitario_datos_antrop` FOREIGN KEY (`id_datos_antrop`) REFERENCES `datosantropometri` (`id`),
-  ADD CONSTRAINT `fk_informe_sanitario_enfermedades` FOREIGN KEY (`id_enfermedades`) REFERENCES `enfermedades` (`id`),
-  ADD CONSTRAINT `fk_informe_sanitario_medicamento` FOREIGN KEY (`id_medicamento`) REFERENCES `medicamentos` (`id`),
-  ADD CONSTRAINT `fk_informe_sanitario_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
 
 --
 -- Filtros para la tabla `laboral`

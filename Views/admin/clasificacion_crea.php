@@ -2,32 +2,55 @@
 // Incluir el archivo de conexión
 // require_once BASE_PATH . '/conn/connection.php';
 
+function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles)
+{
+    try {
+        $sql = "INSERT INTO auditoria (id_usuario, accion, detalles, tabla_afectada, registro_id, fecha) 
+                VALUES (:id_usuario, :accion, :detalles, :tabla_afectada, :registro_id, NOW())";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':id_usuario', $_SESSION['id_usuario']);
+        $stmt->bindParam(':accion', $accion);
+        $stmt->bindParam(':detalles', $detalles);
+        $stmt->bindParam(':tabla_afectada', $tabla_afectada);
+        $stmt->bindParam(':registro_id', $registro_id);
+        $stmt->execute();
+    } catch (PDOException $e) {
+        echo "Error en el registro de auditoría: " . $e->getMessage();
+    }
+}
+
 // Obtener el ID del PPL de la URL
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
     try {
         // Insertar datos de clasificación
-        $stmt = $db->prepare("INSERT INTO clasificacion (id_ppl, clasificacion, sugerencia,estado, 
+        $stmt = $db->prepare("INSERT INTO clasificacion (id_ppl, clasificacion, sugerencia, 
             sector_nro, pabellon_nro) 
-            VALUES (?, ?, ?, ?, ?,?)");
+            VALUES (?, ?, ?, ?, ?)");
 
         $stmt->execute([
             $_POST['id_ppl'],
             $_POST['clasificacion'],
             $_POST['sugerencia'],
             $_POST['sector_nro'],
-            $_POST['pabellon_nro'],
-            'Activo'
+            $_POST['pabellon_nro']
         ]);
 
         echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
     } catch (PDOException $e) {
         echo "<div class='alert alert-danger'>Error al guardar los datos: " . $e->getMessage() . "</div>";
     }
+
+    // Registrar acción en la auditoría
+    $accion = 'Agregar Clasificacion';
+    $tabla_afectada = 'clasificacion';
+    $detalles = "Se insertó una nueva clasificacion para el PPL con ID: $idppl";
+    registrarAuditoria($db, $accion, $tabla_afectada, $idppl, $detalles);
 }
 ?>
 
+<head>
     <style>
         .form-section {
             margin: 20px 0;
@@ -55,10 +78,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+
+        /* .btn {
+            padding: 10px 15px;
+            background-color: #212529;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        } */
+
         #titulo {
             padding-bottom: 1rem;
         }
     </style>
+</head>
+
+<body>
     <form method="POST">
         <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
 
@@ -98,5 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
             </div>
         </div>
 
-        <button name="guardar_9" type="button" class="btn btn-primary">Guardar</button>
+        <button name="guardar_9" type="submit" class="btn btn-primary">Guardar</button>
     </form>
+
+</body>

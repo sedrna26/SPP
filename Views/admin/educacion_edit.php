@@ -1,6 +1,23 @@
-<?php 
+<?php
 //require '../../conn/connection.php'; 
 require 'navbar.php';
+
+function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles)
+{
+    try {
+        $sql = "INSERT INTO auditoria (id_usuario, accion, detalles, tabla_afectada, registro_id, fecha) 
+                VALUES (:id_usuario, :accion, :detalles, :tabla_afectada, :registro_id, NOW())";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':id_usuario', $_SESSION['id_usuario']);
+        $stmt->bindParam(':accion', $accion);
+        $stmt->bindParam(':detalles', $detalles);
+        $stmt->bindParam(':tabla_afectada', $tabla_afectada);
+        $stmt->bindParam(':registro_id', $registro_id);
+        $stmt->execute();
+    } catch (PDOException $e) {
+        echo "Error en el registro de auditoría: " . $e->getMessage();
+    }
+}
 
 // Manejo de la actualización
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -24,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             oferta_educ = :oferta_educ
             WHERE id = :id";
 
-    
+
         $stmt = $db->prepare($updateQuery);
         $stmt->bindParam(':id', $id);
         $stmt->bindParam(':id_ppl', $id_ppl);
@@ -44,6 +61,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             echo "Error: No se pudo actualizar el registro de educación.";
         }
+        //Registrar en auditoria
+        $accion = 'Editar Educación';
+        $tabla_afectada = 'educación';
+        $detalles = "Se Edito una educación con ID: $idppl";
+        registrarAuditoria($db, $accion, $tabla_afectada, $dippl, $detalles);
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }

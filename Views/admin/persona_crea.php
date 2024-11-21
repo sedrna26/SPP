@@ -1,5 +1,23 @@
 <?php require 'navbar.php'; ?>
 <?php
+
+function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles)
+{
+    try {
+        $sql = "INSERT INTO auditoria (id_usuario, accion, detalles, tabla_afectada, registro_id, fecha) 
+                VALUES (:id_usuario, :accion, :detalles, :tabla_afectada, :registro_id, NOW())";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':id_usuario', $_SESSION['id_usuario']);
+        $stmt->bindParam(':accion', $accion);
+        $stmt->bindParam(':detalles', $detalles);
+        $stmt->bindParam(':tabla_afectada', $tabla_afectada);
+        $stmt->bindParam(':registro_id', $registro_id);
+        $stmt->execute();
+    } catch (PDOException $e) {
+        echo "Error en el registro de auditoría: " . $e->getMessage();
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Datos de la tabla persona
     $dni = $_POST['dni'];
@@ -31,7 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
 
         $idubicacionValue = $db->lastInsertId(); // Obtiene el ID de la nueva ubicación
-        echo "Inserción en ubicación exitosa.<br>";
     } else {
         // Si se seleccionó una ubicación existente
         // Procesa el id_direccion
@@ -57,8 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Obtiene el id de la persona insertada
     $idpersona = $db->lastInsertId();
 
-    echo "Inserción en persona exitosa.<br>";
-
     // Datos de la tabla PPL
     $apodo = $_POST['apodo'] ?? '';
     $trabaja = ($_POST['trabaja'] === 'Si') ? 1 : 0;
@@ -75,7 +90,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $check = getimagesize($fotoTmp);
     if ($check !== false) {
         if (move_uploaded_file($fotoTmp, $target_file)) {
-            echo "Imagen de persona subida correctamente.<br>";
         } else {
             die("Error al subir la imagen.");
         }
@@ -106,10 +120,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
 
     $id_ppl = $db->lastInsertId();
-    echo "Inserción en PPL exitosa.<br>";
 
     try {
-        $pdo = new PDO("mysql:host=localhost;dbname=sp;charset=utf8mb4", "root", "");
+        $pdo = new PDO("mysql:host=localhost;dbname=spp;charset=utf8mb4", "root", "");
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch (PDOException $e) {
         die("Error en la conexión: " . $e->getMessage());
@@ -177,6 +190,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Convertimos el array de causaIds en una cadena separada por comas
             $causasString = implode(',', $causaIds);
 
+            if ($_POST['id_juzgado'] === 'new') {
+                // Verificar que se han proporcionado los datos necesarios
+                if (isset($_POST['nombre']) && !empty($_POST['nombre']) && isset($_POST['nombrejuez']) && !empty($_POST['nombrejuez'])) {
+                    $nombre = $_POST['nombre'];
+                    $nombre_juez = $_POST['nombrejuez'];
+
+                    // Insertar el nuevo juzgado en la tabla 'juzgado'
+                    $stmtJuzgado = $pdo->prepare("INSERT INTO juzgado (nombre, nombre_juez) VALUES (:nombre, :nombre_juez)");
+                    $stmtJuzgado->bindParam(':nombre', $nombre);
+                    $stmtJuzgado->bindParam(':nombre_juez', $nombre_juez);
+                    $stmtJuzgado->execute();
+
+                    // Obtener el ID del nuevo juzgado insertado
+                    $id_juzgado = $pdo->lastInsertId();
+                } else {
+                    // Manejar el error si los datos no están completos
+                    die("Debe proporcionar el nombre del juzgado y el nombre del juez.");
+                }
+            } else {
+                // Si se selecciona un juzgado existente, usar ese ID
+                $id_juzgado = $_POST['id_juzgado'];
+            }
+
             // Insertar en la tabla situacionlegal, incluyendo las causas como una cadena de IDs
             $stmt = $pdo->prepare("INSERT INTO situacionlegal 
             (id_ppl, fecha_detencion, dependencia, motivo_t, situacionlegal, id_juzgado, en_prejucio, condena, categoria, reingreso_falta, causas_pend, cumplio_medida, causa_nino, asistio_rehabi, tiene_defensor, nombre_defensor, tiene_com_defensor, causas) 
@@ -192,12 +228,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Ejecutamos la inserción
             $stmt->execute();
-
-            echo "Datos insertados correctamente.";
         } catch (PDOException $e) {
             echo "Error en la inserción: " . $e->getMessage();
         }
     }
+
+    $accion = 'Agregar PPL';
+    $tabla_afectada = 'persona, ppl, situacion legal';
+    $detalles = "Se agrego un nuevo ppl con ID del PPL: $id_ppl, ID de la persona: $idpersona, 
+    Apodo: $apodo, Nombre: $nombres, Apellido: $apellidos";
+    registrarAuditoria($db, $accion, $tabla_afectada, $id_ppl, $detalles);
+
+    header("Location: ppl_index.php?mensaje=" . urlencode("PPL creado con éxito."));
+    exit();
 }
 ?>
 
@@ -208,101 +251,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 </style>
 
-
-
-<script>
-    function toggleNewLocation() {
-        const direccionp = document.getElementById('direccionp').value;
-        const newLocationSection = document.getElementById('newLocationSection');
-        if (direccionp === 'new') {
-            style = "color: green;"
-            newLocationSection.style.display = 'block';
-        } else {
-            newLocationSection.style.display = 'none';
-        }
-    }
-
-    function toggleNewjuez() {
-        const newjuezSection = document.getElementById('newjuezSection');
-        const selectedjuez = document.getElementById('id_juzgado').value;
-
-        if (selectedjuez === 'new') {
-            newjuezSection.style.display = 'block';
-        } else {
-            newjuezSection.style.display = 'none';
-        }
-
-        // Verificar si la sección se ha mostrado correctamente
-        console.log("Visibilidad de la sección después de mostrar: ", newjuezSection.style.display);
-    }
-
-    function previewImage(event) {
-        const input = event.target;
-        const imagePreview = document.getElementById('Foto');
-
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                imagePreview.src = e.target.result;
-            };
-
-            reader.readAsDataURL(input.files[0]); // Leer archivo como Data URL
-        }
-    }
-
-    function previewImage(event) {
-        const reader = new FileReader();
-        reader.onload = function() {
-            const output = document.getElementById('Foto');
-            output.src = reader.result;
-        }
-        reader.readAsDataURL(event.target.files[0]);
-    }
-
-    let selectedCausas = [];
-
-    function updateSelectedCausas() {
-        selectedCausas = [];
-        let checkboxes = document.querySelectorAll('input[name="causas[]"]:checked');
-        checkboxes.forEach(checkbox => {
-            selectedCausas.push(checkbox.nextElementSibling.innerText);
-        });
-
-        // Actualizar el texto con las causas seleccionadas
-        let selectedText = selectedCausas.join(', ') || 'Selecciona hasta 4 causas.';
-        document.getElementById('selected-causas-text').innerText = 'Causas seleccionadas: ' + selectedText;
-
-        // Si se seleccionan más de 4 causas, desmarcar la última
-        if (selectedCausas.length > 4) {
-            alert("Solo puedes seleccionar hasta 4 causas.");
-            checkboxes[checkboxes.length - 1].checked = false;
-            selectedCausas.pop();
-        }
-    }
-
-    // Esta función es para asegurarse de que no se seleccionen más de 4 causas.
-    function updateSelectedCausas() {
-        var checkboxes = document.querySelectorAll('input[name="causas[]"]:checked');
-        if (checkboxes.length > 4) {
-            alert('Solo puedes seleccionar hasta 4 causas.');
-            checkboxes[checkboxes.length - 1].checked = false;
-        }
-    }
-
-    // Función para mostrar u ocultar la sección de agregar nuevo delito
-    function toggleNewDelitoSection() {
-        const newDelitoSection = document.getElementById('newDelitoSection');
-        if (newDelitoSection.style.display === 'none') {
-            newDelitoSection.style.display = 'block';
-        } else {
-            newDelitoSection.style.display = 'none';
-        }
-    }
-</script>
-
 <section class="container mt-3">
-    
     <div class="card rounded-2 border-0">
         <div class="card-header bg-dark text-white pb-0">
             <h5 class="d-inline-block ">Nuevo Informe de Evaluación Integral Interdisciplinario (IEII)</h5>
@@ -317,25 +266,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label for="dni">DNI:</label>
                     <input type="number" class="form-control" id="dni" name="dni" required>
                 </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="nombres">Nombres:</label>
-                            <input type="text" class="form-control" id="nombres" name="nombres" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="apellidos">Apellidos:</label>
-                            <input type="text" class="form-control" id="apellidos" name="apellidos" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
-                        </div>
-                    </div>
-                </div>    
+
+                <div class="form-group">
+                    <label for="nombres">Nombres:</label>
+                    <input type="text" class="form-control" id="nombres" name="nombres" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
+                </div>
+
+                <div class="form-group">
+                    <label for="apellidos">Apellidos:</label>
+                    <input type="text" class="form-control" id="apellidos" name="apellidos" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
+                </div>
+
                 <!-- Selección de Ubicación -->
                 <div class="form-group">
-                    <label style="color: red;" for="direccionp" class="form-label">Seleccionar Ubicación</label>
-                    <select class="form-control" id="direccionp" name="direccionp" onchange="toggleNewLocation()" required>
-                        <option value="" style="color: red;">-- Seleccione una ubicación --</option>
+                    <label for="direccionp" class="form-label">Seleccionar Ubicación</label>
+                    <select class="form-select" id="direccionp" name="direccionp" onchange="toggleNewLocation()" required>
+                        <option value="">-- Seleccione una ubicación --</option>
                         <option style="color: green;" value="new">Agregar nueva ubicación</option>
                         <?php
                         // Código PHP para obtener las ubicaciones de la base de datos
@@ -367,7 +313,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="col-md-4">
                             <label for="pais" class="form-label">País</label>
                             <select class="form-control" id="pais" name="pais">
-                                <option value="" style="color: red;">-- Seleccione un País --</option> <!-- Opción predeterminada -->
+                                <option value="">-- Seleccione un País --</option> <!-- Opción predeterminada -->
                                 <?php
                                 // Código PHP para obtener solo los países seleccionados de la base de datos
                                 $resultado = $db->query("SELECT id, nombre FROM paises
@@ -383,7 +329,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="col-md-4">
                             <label for="provincia" class="form-label">Provincia</label>
                             <select class="form-control" id="provincia" name="provincia">
-                                <option value="" style="color: red;">-- Seleccione una Provincia --</option> <!-- Opción predeterminada -->
+                                <option value="">-- Seleccione una Provincia --</option> <!-- Opción predeterminada -->
                                 <?php
                                 // Código PHP para obtener las provincias de los países seleccionados
                                 $resultado = $db->query("SELECT provincias.id, provincias.nombre, paises.nombre AS pais_nombre
@@ -430,42 +376,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="fechanac">Fecha de Nacimiento:</label>
-                            <input type="date" class="form-control" id="fechanac" name="fechanac" required onchange="calcularEdad()">
-                        </div>
-                    </div>
-                    <div class="col">                        
-                        <div class="form-group">
-                            <label for="edad">Edad:</label>
-                            <input type="number" class="form-control" id="edad" name="edad" min="18" max="70" required readonly>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="genero">Género:</label>
-                            <select class="form-control" id="genero" name="genero" required>
-                                <option value="Masculino">Masculino</option>
-                                <option value="Femenino">Femenino</option>
-                                <option value="Otro">Otro</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col">
-                    <div class="form-group">
-                        <label for="estadocivil">Estado Civil:</label>
-                        <select class="form-control" id="estadocivil" name="estadocivil" required>
-                            <option value="Soltero">Soltero</option>
-                            <option value="Casado">Casado</option>
-                            <option value="Divorciado">Divorciado</option>
-                            <option value="Viudo">Viudo</option>
-                        </select>
-                    </div>
-
-                    </div>
+                <div class="form-group">
+                    <label for="fechanac">Fecha de Nacimiento:</label>
+                    <input type="date" class="form-control" id="fechanac" name="fechanac" required>
                 </div>
+
+                <div class="form-group">
+                    <label for="edad">Edad:</label>
+                    <input type="number" class="form-control" id="edad" name="edad"  required>
+                </div>
+
+                <div class="form-group">
+                    <label for="genero">Género:</label>
+                    <select class="form-control" id="genero" name="genero" required>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="estadocivil">Estado Civil:</label>
+                    <select class="form-control" id="estadocivil" name="estadocivil" required>
+                        <option value="Soltero">Soltero</option>
+                        <option value="Casado">Casado</option>
+                        <option value="Divorciado">Divorciado</option>
+                        <option value="Viudo">Viudo</option>
+                    </select>
+                </div>
+
+
                 <!-- Sección PPL -->
                 <div>
                     <h4 class="mt-4">Datos de PPL</h4>
@@ -475,29 +415,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="text" class="form-control" id="apodo" name="apodo" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
                     </div>
 
-                    <div class="row">
-                        <div class="col">
-                            <div class="mb-3">
-                                <label for="profesion" class="form-label">Profesión</label>
-                                <input type="text" class="form-control" id="profesion" name="profesion" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="mb-3">
-                                <label for="trabaja" class="form-label">¿Trabajaba en el momento de la detención?</label>
-                                <select class="form-control" id="trabaja" name="trabaja" required>
-                                    <option value="Si">Sí</option>
-                                    <option value="No">No</option>
-                                </select>
-                            </div>
-                        </div>
-
+                    <div class="mb-3">
+                        <label for="profesion" class="form-label">Profesión</label>
+                        <input type="text" class="form-control" id="profesion" name="profesion" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
                     </div>
 
-                    
+                    <div class="mb-3">
+                        <label for="trabaja" class="form-label">¿Trabajaba en el momento de la detención?:</label>
+                        <select class="form-select" id="trabaja" name="trabaja" required>
+                            <option value="Si">Sí</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
 
-                    
-                                
                     <div class="mb-3">
                         <label for="foto" class="form-label">Foto</label>
                         <input type="file" class="form-control" id="foto" name="foto" accept="image/*" onchange="previewImage(event)" required>
@@ -534,7 +464,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="form-group">
                         <label for="situacionlegal">Situación Legal:</label>
-                        <select class="form-control" id="situacionlegal" name="situacionlegal" required>
+                        <select class="form-select" id="situacionlegal" name="situacionlegal" required>
                             <option value="penado">Penado</option>
                             <option value="procesado">Procesado</option>
                         </select>
@@ -584,8 +514,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="tipodelito" class="form-label">Tipo de delito</label>
-                                <select class="form-control" id="tipodelito" name="tipodelito">
-                                    <option value="" style="color: red;">-- Seleccione el tipo de delito --</option> <!-- Opción predeterminada -->
+                                <select class="form-select" id="tipodelito" name="tipodelito">
+                                    <option value="">-- Seleccione el tipo de delito --</option> <!-- Opción predeterminada -->
                                     <?php
                                     // Código PHP para obtener los tipos de delito
                                     $resultado = $db->query("SELECT id_tipo_delito, nombre FROM tiposdelito
@@ -607,15 +537,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <br>
 
                     <div>
-                        <div class="form-group" id="abusoSection">
+                        <div class="form-group">
                             <label for="en_prejucio">En perjuicio de quien (si la causa es intrafamiliar):</label>
-                            <input type="text" class="form-control" id="en_prejucio" name="en_prejucio" onchange="toggleViolenciaSection()">
+                            <input type="text" class="form-control" id="en_prejucio" name="en_prejucio">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="id_juzgado">ID del Juzgado:</label>
-                        <select class="form-control" id="id_juzgado" name="id_juzgado" onchange="toggleNewjuez()" required>
+                        <label for="id_juzgado">Juzgado:</label>
+                        <select class="form-select" id="id_juzgado" name="id_juzgado" onchange="toggleNewjuez()" required>
                             <option value="">-- Seleccione un Juez --</option>
                             <option style="color: green;" value="new">Agregar nuevo juez</option>
                             <?php
@@ -650,7 +580,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="form-group">
                         <label for="categoria">Categoria:</label>
-                        <select class="form-control" id="categoria" name="categoria" required>
+                        <select class="form-select" id="categoria" name="categoria" required>
                             <option value="primario">Primario</option>
                             <option value="reiterante">Reiterante</option>
                         </select>
@@ -663,7 +593,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="form-group">
                         <label for="reingreso_falta">Reingreso en caso de quebrantamiento de beneficio y/o libertad:</label>
-                        <select class="form-control" id="reingreso_falta" name="reingreso_falta" required>
+                        <select class="form-select" id="reingreso_falta" name="reingreso_falta" required>
                             <option value="si">Sí</option>
                             <option value="no">No</option>
                         </select>
@@ -671,7 +601,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="form-group">
                         <label for="causa_nino">¿Causas judicializadas durante la niñez o adolescencia?:</label>
-                        <select class="form-control" id="causa_nino" name="causa_nino" required>
+                        <select class="form-select" id="causa_nino" name="causa_nino" required>
                             <option value="si">Sí</option>
                             <option value="no">No</option>
                         </select>
@@ -679,7 +609,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="form-group">
                         <label for="cumplio_medida">¿Cumplió medidas socioeducativas?:</label>
-                        <select class="form-control" id="cumplio_medida" name="cumplio_medida" required>
+                        <select class="form-select" id="cumplio_medida" name="cumplio_medida" required>
                             <option value="si">Sí</option>
                             <option value="no">No</option>
                         </select>
@@ -687,7 +617,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="form-group">
                         <label for="asistio_rehabi">Institucionalizaciones en centros de rehabilitación por conflictos con la ley:</label>
-                        <select class="form-control" id="asistio_rehabi" name="asistio_rehabi" required>
+                        <select class="form-select" id="asistio_rehabi" name="asistio_rehabi" required>
                             <option value="si">Sí</option>
                             <option value="no">No</option>
                         </select>
@@ -695,7 +625,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="form-group">
                         <label for="tiene_defensor">¿Cuenta con un defensor oficial?:</label>
-                        <select class="form-control" id="tiene_defensor" name="tiene_defensor" required>
+                        <select class="form-select" id="tiene_defensor" name="tiene_defensor" required>
                             <option value="si">Sí</option>
                             <option value="no">No</option>
                         </select>
@@ -708,7 +638,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="form-group hidden" id="tieneComDefensorDiv">
                         <label for="tiene_com_defensor">¿Tiene comunicación con él?:</label>
-                        <select class="form-control" id="tiene_com_defensor" name="tiene_com_defensor" required>
+                        <select class="form-select" id="tiene_com_defensor" name="tiene_com_defensor" required>
                             <option value="si">Sí</option>
                             <option value="no">No</option>
                         </select>
@@ -717,9 +647,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         </div>
-        <!-- <div class="d-flex justify-content-center mt-3">
-                    <button type="submit" class="btn btn-primary">Guardar Todos los datos</button>
-                    </div> -->
         <div class="d-flex justify-content-center mt-3">
             <button type="submit" class="btn btn-primary ms-2">Guardar </button>
         </div>
