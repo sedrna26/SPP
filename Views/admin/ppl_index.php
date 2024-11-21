@@ -39,10 +39,11 @@ if (isset($_GET['txtID'])) {
                         <tbody>
                             <?php
                             try {
-                                $query = "
-                                    SELECT `ppl`.*, `persona`.*
-                                    FROM `ppl` 
-	                                LEFT JOIN `persona` ON `ppl`.`idpersona` = `persona`.`id`;
+                                $query = "SELECT ppl.*, per.*
+                                FROM ppl AS ppl
+                                LEFT JOIN 
+                                persona AS per 
+                                ON ppl.idpersona = per.id;
                                 ";
                                 $stmt = $db->prepare($query);
                                 $stmt->execute();
@@ -58,7 +59,7 @@ if (isset($_GET['txtID'])) {
                                         <td>
                                             <a class="btn btn-info" href='ppl_informe.php?id=<?php echo $ppl['id']; ?>'>Informe(IEII)</a>
                                         <td>
-                                            <a href="prontuario_index.php?id=<?php echo $ppl['id']; ?>" data-toggle="modal" data-backdrop="false" class="btn btn-info btn-sm" type="button" title="ver">
+                                            <a href="prontuario_index.php?dni=<?php echo $ppl['dni']; ?>" data-toggle="modal" data-backdrop="false" class="btn btn-info btn-sm" type="button" title="ver">
                                                 <i class="fa-solid fa-eye" style="color: #000000;"></i>
                                             </a>
                                         </td>
