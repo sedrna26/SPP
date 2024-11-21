@@ -1,5 +1,5 @@
-<?php 
-require 'navbar.php'; 
+<?php
+require 'navbar.php';
 require '../../conn/connection.php';
 $query = "SELECT a.*, 
                  u.nombre_usuario AS nombre_usuario_afecto, 
@@ -49,17 +49,17 @@ $auditoria = $statement->fetchAll(PDO::FETCH_ASSOC);
                                             <tr>
                                                 <td><?php echo htmlspecialchars($registro['id_auditoria']); ?></td>
                                                 <!-- <td><?php echo htmlspecialchars($registro['registro_id']); ?></td> -->
-                                               
+
                                                 <td>
-                                                    ID_Registro: <?php echo htmlspecialchars($registro['registro_id']); ?><br>
-                                                    Usuario: <?php echo htmlspecialchars($registro['nombre_usuario_registro']); ?><br>
-                                                    Rol: <?php echo htmlspecialchars($registro['rol_registro']); ?>
+                                                    ID PPL: <?php echo htmlspecialchars($registro['registro_id'] ?? 'No hay dato'); ?><br>
+                                                    Usuario: <?php echo htmlspecialchars($registro['nombre_usuario_registro'] ?? 'No hay dato'); ?><br>
+                                                    Rol: <?php echo htmlspecialchars($registro['rol_registro'] ?? 'No hay dato'); ?>
                                                 </td>
-                                               
-                                                <td> 
-                                                    ID Usuario: <?php echo htmlspecialchars($registro['id_usuario']); ?><br>
-                                                    Usuario: <?php echo htmlspecialchars($registro['nombre_usuario_afecto']); ?><br>
-                                                    Rol: <?php echo htmlspecialchars($registro['rol_afecto']); ?><br>
+
+                                                <td>
+                                                    ID Usuario: <?php echo htmlspecialchars($registro['id_usuario'] ?? 'No hay dato'); ?><br>
+                                                    Usuario: <?php echo htmlspecialchars($registro['nombre_usuario_afecto'] ?? 'No hay dato'); ?><br>
+                                                    Rol: <?php echo htmlspecialchars($registro['rol_afecto'] ?? 'No hay dato'); ?><br>
                                                 </td>
                                                 <!-- <td><?php echo htmlspecialchars($registro['id_usuario']); ?></td>
                                                 <td><?php echo htmlspecialchars($registro['nombre_usuario_afecto']); ?></td>

@@ -1,4 +1,22 @@
 <?php
+
+function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles)
+{
+    try {
+        $sql = "INSERT INTO auditoria (id_usuario, accion, detalles, tabla_afectada, registro_id, fecha) 
+                VALUES (:id_usuario, :accion, :detalles, :tabla_afectada, :registro_id, NOW())";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':id_usuario', $_SESSION['id_usuario']);
+        $stmt->bindParam(':accion', $accion);
+        $stmt->bindParam(':detalles', $detalles);
+        $stmt->bindParam(':tabla_afectada', $tabla_afectada);
+        $stmt->bindParam(':registro_id', $registro_id);
+        $stmt->execute();
+    } catch (PDOException $e) {
+        echo "Error en el registro de auditoría: " . $e->getMessage();
+    }
+}
+
 // Obtener el ID del PPL de la URL
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -8,8 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
 
         // Insertar datos laborales
         $stmt = $db->prepare("INSERT INTO laboral (id_ppl, tiene_exp, experiencia, se_capacito, 
-            en_que_se_capacito, posee_certific, formac_interes, tiene_incl_lab, lugar_inclusion,estado) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
+            en_que_se_capacito, posee_certific, formac_interes, tiene_incl_lab, lugar_inclusion) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         $stmt->execute([
             $_POST['id_ppl'],
@@ -20,24 +38,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
             isset($_POST['posee_certific']) ? 1 : 0,
             $_POST['formac_interes'],
             isset($_POST['tiene_incl_lab']) ? 1 : 0,
-            $_POST['lugar_inclusion'],
-            'Activo'
+            $_POST['lugar_inclusion']
         ]);
 
         // Insertar datos espirituales
         $stmt = $db->prepare("INSERT INTO asistencia_espiritual (id_ppl, practica_culto, culto, 
-            desea_participar, eleccion_actividad,estado) 
-            VALUES (?, ?, ?, ?, ?,?)");
+            desea_participar, eleccion_actividad) 
+            VALUES (?, ?, ?, ?, ?)");
 
         $stmt->execute([
             $_POST['id_ppl'],
             isset($_POST['practica_culto']) ? 1 : 0,
             $_POST['culto'],
             isset($_POST['desea_participar']) ? 1 : 0,
-            $_POST['eleccion_actividad'],
-            'Activo'
+            $_POST['eleccion_actividad']
         ]);
         $db->commit();
+
+        // Registrar acción en la auditoría
+        $accion = 'Agregar Asistencia Espiritual y/o Laboral';
+        $tabla_afectada = 'asistencia_espiritual, laboral';
+        $detalles = "Se insertó una nueva asistencia_espiritual y laboral para el PPL con ID: $idppl";
+        registrarAuditoria($db, $accion, $tabla_afectada, $idppl, $detalles);
+
+
         echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
     } catch (PDOException $e) {
         echo "<div class='alert alert-danger'>Error al guardar los datos: " . $e->getMessage() . "</div>";
@@ -45,6 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
 }
 ?>
 
+<head>
     <style>
         .form-section {
             margin: 20px 0;
@@ -110,7 +135,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
             padding-bottom: 1rem;
         }
     </style>
+</head>
 
+<body>
+    <?php echo "ID traido desde ppl_informe.php=" . $idppl . "(eliminar despues)"; ?>
     <form method="POST">
         <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
 
@@ -182,7 +210,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
             </div>
         </div>
 
-        <button name="guardar_4" type="button" class="btn btn-primary">Guardar Información</button>
+        <button name="guardar_4" type="submit" class="btn btn-primary">Guardar Información</button>
     </form>
 
     <script>
@@ -243,3 +271,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
             });
         });
     </script>
+</body>
