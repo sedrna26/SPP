@@ -1,56 +1,71 @@
-<?php
+<?php 
 require '../conn/connection.php';
-
 session_start();
+
+// Redirigir si ya existe una sesión activa
 if (isset($_SESSION['id_usuario'])) {
     header('Location: admin/index.php');
     exit;
 }
 
 if ($_POST) {
-    $nombre_usuario = $_POST['nombre_usuario'];
+    $nombre_usuario = trim($_POST['nombre_usuario']); // Eliminar espacios en blanco
     $contrasena = $_POST['contrasena'];
 
     if (!empty($nombre_usuario) && !empty($contrasena)) {
-        $sql = "SELECT u.*, p.nombres, p.apellidos, r.nombre_rol 
-                FROM usuarios u
-                JOIN persona p ON u.id_persona = p.id
-                JOIN rol r ON u.id_rol = r.id_rol
-                WHERE u.nombre_usuario = :nombre_usuario";
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam(':nombre_usuario', $nombre_usuario, PDO::PARAM_STR);
-        $stmt->execute();
+        try {
+            $sql = " SELECT 
+                    u.*, 
+                    p.nombres, 
+                    p.apellidos, 
+                    r.nombre_rol 
+                FROM 
+                    usuarios u
+                JOIN 
+                    persona p ON u.id_persona = p.id
+                JOIN 
+                    rol r ON u.id_rol = r.id_rol
+                WHERE 
+                    u.nombre_usuario = :nombre_usuario 
+                    AND u.activo = 1";
 
-        if ($stmt->rowCount() > 0) {
-            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-            if (password_verify($contrasena, $usuario['contrasena'])) {
-                $_SESSION['id_usuario'] = $usuario['id_usuario'];
-                $_SESSION['nombres'] = $usuario['nombres'];
-                $_SESSION['apellidos'] = $usuario['apellidos'];
-                $_SESSION['id_rol'] = $usuario['id_rol'];
-            
-              
-                $sqlInsertRegistro = "INSERT INTO registro_acceso (id_usuario, hora_inicio) VALUES (:id_usuario, NOW())";
-                $stmtInsertRegistro = $db->prepare($sqlInsertRegistro);
-                $stmtInsertRegistro->bindParam(':id_usuario', $usuario['id_usuario'], PDO::PARAM_INT);
-                $stmtInsertRegistro->execute();
-            
-               
-                if ($usuario['id_rol'] == 1) {
-                    header('Location: admin/index.php');
+            $stmt = $db->prepare($sql);
+            $stmt->bindParam(':nombre_usuario', $nombre_usuario, PDO::PARAM_STR);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+                if (password_verify($contrasena, $usuario['contrasena'])) {
+                    $_SESSION['id_usuario'] = $usuario['id_usuario'];
+                    $_SESSION['nombres'] = $usuario['nombres'];
+                    $_SESSION['apellidos'] = $usuario['apellidos'];
+                    $_SESSION['id_rol'] = $usuario['id_rol'];
+                    $sqlInsertRegistro = " INSERT INTO registro_acceso (id_usuario, hora_inicio) 
+                        VALUES (:id_usuario, NOW())";
+                    $stmtInsertRegistro = $db->prepare($sqlInsertRegistro);
+                    $stmtInsertRegistro->bindParam(':id_usuario', $usuario['id_usuario'], PDO::PARAM_INT);
+                    $stmtInsertRegistro->execute();
+                    if ($usuario['id_rol'] == 1) {
+                        header('Location: admin/index.php');
+                    } else {
+                        header('Location: user/index.php');
+                    }
                     exit;
                 } else {
-                    header('Location: admin/index.php');
-                    exit;
+                    $_SESSION['message'] = "Contraseña incorrecta";
                 }
+            } else {
+                $_SESSION['message'] = "Usuario no encontrado";
             }
-            
-        } else {
-            $_SESSION['message'] = "Usuario no encontrado";
+        } catch (PDOException $e) {
+            $_SESSION['message'] = "Error de conexión: " . $e->getMessage();
         }
+    } else {
+        $_SESSION['message'] = "Por favor, complete todos los campos.";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
