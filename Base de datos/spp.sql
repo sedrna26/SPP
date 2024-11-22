@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-11-2024 a las 04:51:06
+-- Tiempo de generación: 22-11-2024 a las 19:18:32
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -64,7 +64,9 @@ INSERT INTO `auditoria` (`id_auditoria`, `id_usuario`, `accion`, `tabla_afectada
 (4, 1, 'eliminar', 'usuarios', 1, '2024-11-14 23:16:06', 'Se actualizó el campo activo a 0 para el usuario ID: 1, Nombre: demadmin, Rol: 1'),
 (5, 1, 'Agregar Educación', 'educación', 3, '2024-11-20 00:27:54', 'Se insertó una nueva educación para el PPL con ID: 3'),
 (6, 1, 'Agregar Info Familiar', 'ppl_familiar_info, ppl_situacion_sociofamiliar, pp', 3, '2024-11-20 00:30:02', 'Se insertó una nueva Informacion Familiar para el PPL con ID: 3'),
-(7, 1, 'Editar PPL - Persona', 'persona;ppl', 3, '2024-11-21 03:23:02', 'Se edito el PPL con ID: 3');
+(7, 1, 'Editar PPL - Persona', 'persona;ppl', 3, '2024-11-21 03:23:02', 'Se edito el PPL con ID: 3'),
+(8, 1, 'Editar PPL - Persona', 'persona;ppl', 3, '2024-11-21 19:11:40', 'Se edito el PPL con ID: 3'),
+(9, 1, 'Editar PPL - Persona', 'persona;ppl', 3, '2024-11-21 19:19:20', 'Se edito el PPL con ID: 3');
 
 -- --------------------------------------------------------
 
@@ -125908,12 +125910,20 @@ INSERT INTO `delitos` (`id_delito`, `id_tipo_delito`, `nombre`) VALUES
 
 CREATE TABLE `domicilio` (
   `id` int(11) NOT NULL,
+  `id_persona` int(11) NOT NULL,
   `id_pais` int(11) NOT NULL,
   `id_provincia` int(11) NOT NULL,
   `id_ciudad` int(11) NOT NULL,
   `localidad` varchar(100) DEFAULT NULL,
   `direccion` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `domicilio`
+--
+
+INSERT INTO `domicilio` (`id`, `id_persona`, `id_pais`, `id_provincia`, `id_ciudad`, `localidad`, `direccion`) VALUES
+(1, 1, 5, 2217, 790526, 'Villa Krause', 'Tucuman sur34');
 
 -- --------------------------------------------------------
 
@@ -126416,7 +126426,7 @@ CREATE TABLE `persona` (
 INSERT INTO `persona` (`id`, `dni`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `educacion`) VALUES
 (1, '44123890', 'Castro', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL),
 (2, '44123891', 'Demian', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL),
-(3, '40470766', 'Rodriguez', 'Horacio Andres', '1999-11-26', 26, 'Tucuman Sur 2000', 'Masculino', 'Soltero', NULL),
+(3, '40470766', 'Rodriguez', 'Horacio Andres', '1997-11-26', 26, 'Tucuman Sur 2000', 'Masculino', 'Soltero', NULL),
 (4, '45476132', 'Bueno', 'Maxi Agustin', '2000-01-23', 24, 'libertador 534', 'Masculino', 'Soltero', NULL),
 (5, '44406135', 'Castro', 'Ismael ', '2000-01-23', 24, '9 de julio', 'Masculino', 'Soltero', NULL),
 (8, '44123892', 'Castro', 'Camila', '2000-01-23', 24, '9 de julio y san juan', 'Femenino', 'Soltero', NULL),
@@ -128676,7 +128686,8 @@ INSERT INTO `registro_acceso` (`id_acceso`, `id_usuario`, `hora_inicio`, `hora_c
 (11, 1, '2024-11-14 10:06:29', NULL),
 (12, 1, '2024-11-14 12:22:15', NULL),
 (13, 1, '2024-11-14 18:24:09', NULL),
-(14, 1, '2024-11-14 19:54:14', NULL);
+(14, 1, '2024-11-14 19:54:14', NULL),
+(15, 1, '2024-11-21 10:18:49', NULL);
 
 -- --------------------------------------------------------
 
@@ -128848,7 +128859,8 @@ ALTER TABLE `domicilio`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_provincia` (`id_provincia`),
   ADD KEY `id_ciudad` (`id_ciudad`),
-  ADD KEY `idx_domicilio_localizacion` (`id_pais`,`id_provincia`,`id_ciudad`);
+  ADD KEY `idx_domicilio_localizacion` (`id_pais`,`id_provincia`,`id_ciudad`),
+  ADD KEY `id_persona` (`id_persona`);
 
 --
 -- Indices de la tabla `educacion`
@@ -129067,7 +129079,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `auditoria`
 --
 ALTER TABLE `auditoria`
-  MODIFY `id_auditoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_auditoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `caracteristicas`
@@ -129109,7 +129121,7 @@ ALTER TABLE `delitos`
 -- AUTO_INCREMENT de la tabla `domicilio`
 --
 ALTER TABLE `domicilio`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `educacion`
@@ -129259,7 +129271,7 @@ ALTER TABLE `provincias`
 -- AUTO_INCREMENT de la tabla `registro_acceso`
 --
 ALTER TABLE `registro_acceso`
-  MODIFY `id_acceso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_acceso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -129323,6 +129335,7 @@ ALTER TABLE `delitos`
 -- Filtros para la tabla `domicilio`
 --
 ALTER TABLE `domicilio`
+  ADD CONSTRAINT `domicilio_ibfk_1` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id`),
   ADD CONSTRAINT `fk_domicilio_ciudad` FOREIGN KEY (`id_ciudad`) REFERENCES `ciudades` (`id`),
   ADD CONSTRAINT `fk_domicilio_pais` FOREIGN KEY (`id_pais`) REFERENCES `paises` (`id`),
   ADD CONSTRAINT `fk_domicilio_provincia` FOREIGN KEY (`id_provincia`) REFERENCES `provincias` (`id`);
