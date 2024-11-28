@@ -27,39 +27,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $edad = $_POST['edad'];
     $genero = $_POST['genero'];
     $estadocivil = $_POST['estadocivil'];
-    $direccionp = $_POST['direccionp'];
+    $direccionp = $_POST['direccionp']; // Puede ser 'new' o un ID existente
 
-    // Manejar ubicación
+    // Inicializar variable para la dirección
     $idubicacionValue = $direccionp;
-    if ($direccionp === 'new') {
-        $pais = $_POST['pais'];
-        $provincia = $_POST['provincia'];
-        $ciudad = $_POST['ciudad'];
-        $localidad = $_POST['localidad'];
-        $direccion = $_POST['direccion'];
+    $direccion_completa = ""; // Aquí almacenaremos la dirección completa si es nueva
 
-        $sql_ubicacion = "INSERT INTO domicilio (id_pais, id_provincia, id_ciudad, localidad, direccion) 
-                          VALUES (:pais, :provincia, :ciudad, :localidad, :direccion)";
-        $stmt = $db->prepare($sql_ubicacion);
-        $stmt->bindParam(':pais', $pais);
-        $stmt->bindParam(':provincia', $provincia);
-        $stmt->bindParam(':ciudad', $ciudad);
-        $stmt->bindParam(':localidad', $localidad);
-        $stmt->bindParam(':direccion', $direccion);
-        $stmt->execute();
-
-        $idubicacionValue = $db->lastInsertId(); // Obtiene el ID de la nueva ubicación
-    } else {
-        // Si se seleccionó una ubicación existente
-        // Procesa el id_direccion
-        $id_direccion = $direccionp;
-
-        // Aquí puedes realizar otras acciones necesarias, como usar el ID para algo específico
-    }
-
-    // Inserción de datos en la tabla persona
-    $sql_persona = "INSERT INTO persona (dni, apellidos, nombres, fechanac, edad, genero, estadocivil, direccion) 
-            VALUES (:dni, :apellidos, :nombres, :fechanac, :edad, :genero, :estadocivil, :idubicacion)";
+    // Primero, insertamos la persona
+    $sql_persona = "INSERT INTO persona (dni, apellidos, nombres, fechanac, edad, genero, estadocivil) 
+                 VALUES (:dni, :apellidos, :nombres, :fechanac, :edad, :genero, :estadocivil)";
     $stmt = $db->prepare($sql_persona);
     $stmt->bindParam(':dni', $dni);
     $stmt->bindParam(':apellidos', $apellidos);
@@ -68,11 +44,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bindParam(':edad', $edad);
     $stmt->bindParam(':genero', $genero);
     $stmt->bindParam(':estadocivil', $estadocivil);
-    $stmt->bindParam(':idubicacion', $idubicacionValue);
     $stmt->execute();
 
-    // Obtiene el id de la persona insertada
-    $idpersona = $db->lastInsertId();
+    // Ahora obtenemos el ID de la persona insertada
+    $id_persona = $db->lastInsertId();
+
+    // Si la dirección es nueva, formamos la dirección completa y la insertamos en la tabla domicilio
+    if ($direccionp === 'new') {
+        // Obtener los datos de la nueva ubicación
+        $pais = $_POST['pais'];
+        $provincia = $_POST['provincia'];
+        $ciudad = $_POST['ciudad'];
+        $localidad = $_POST['localidad'];
+        $direccion = $_POST['direccion'];
+
+        // Formamos la dirección completa como un string
+        $direccion_completa = $pais . ', ' . $provincia . ', ' . $ciudad . ', ' . $localidad . ', ' . $direccion;
+
+        // Insertamos en la tabla domicilio
+        $sql_ubicacion = "INSERT INTO domicilio (id_pais, id_persona, id_provincia, id_ciudad, localidad, direccion) 
+                       VALUES (:pais, :id_persona, :provincia, :ciudad, :localidad, :direccion)";
+        $stmt = $db->prepare($sql_ubicacion);
+        $stmt->bindParam(':pais', $pais);
+        $stmt->bindParam(':provincia', $provincia);
+        $stmt->bindParam(':ciudad', $ciudad);
+        $stmt->bindParam(':localidad', $localidad);
+        $stmt->bindParam(':direccion', $direccion);
+        $stmt->bindParam(':id_persona', $id_persona); // Usamos el ID de la persona recién insertada
+        $stmt->execute();
+
+        // Si todo va bien, obtenemos el ID del domicilio insertado
+        $idubicacionValue = $db->lastInsertId(); // Obtiene el ID de la nueva ubicación
+    } else {
+        // Si se seleccionó una ubicación existente, solo asignamos el ID de ubicación
+        $idubicacionValue = $direccionp; // Usamos la dirección existente seleccionada
+    }
+
+    // Determinamos la dirección completa que se va a actualizar
+    $direccion_actualizada = $direccion_completa ? $direccion_completa : $direccionp;
+
+    // Ahora que tenemos el id_persona y el idubicacion, podemos actualizar la dirección en la tabla persona
+    $sql_actualiza_direccion = "UPDATE persona SET direccion = :direccion WHERE id = :id_persona";
+    $stmt = $db->prepare($sql_actualiza_direccion);
+    $stmt->bindParam(':direccion', $direccion_actualizada); // Pasamos la variable directamente
+    $stmt->bindParam(':id_persona', $id_persona); // Usamos el ID de la persona recién insertada
+    $stmt->execute();
+
+    // Ahora que tenemos el id_persona y el idubicacion, podemos hacer cualquier otra acción necesaria.
 
     // Datos de la tabla PPL
     $apodo = $_POST['apodo'] ?? '';
@@ -86,32 +104,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $target_file = $target_dir_foto . basename($foto);
     $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-    // Verificar si es una imagen
-    $check = getimagesize($fotoTmp);
-    if ($check !== false) {
-        if (move_uploaded_file($fotoTmp, $target_file)) {
-        } else {
-            die("Error al subir la imagen.");
-        }
-    } else {
-        die("El archivo no es una imagen válida.");
-    }
-
-    // Procesar huella (binario)
-    if (isset($_FILES['huella']) && $_FILES['huella']['error'] == 0) {
-        $huella = file_get_contents($_FILES['huella']['tmp_name']);
-    } else {
-        die("Error al cargar la huella.");
-    }
 
     // En este punto reutilizamos la misma foto de persona para PPL
     $pplFoto = $foto;  // Mismo nombre de archivo
 
     // Inserción de datos en la tabla PPL
     $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto) 
-                    VALUES (:idpersona, :apodo, :trabaja, :profesion, :huella, :foto)";
+                    VALUES (:id_persona, :apodo, :trabaja, :profesion, :huella, :foto)";
     $stmt = $db->prepare($sql_ppl);
-    $stmt->bindParam(':idpersona', $idpersona); // Usamos el idpersona generado
+    $stmt->bindParam(':id_persona', $id_persona); // Usamos el idpersona generado
     $stmt->bindParam(':apodo', $apodo);
     $stmt->bindParam(':trabaja', $trabaja);
     $stmt->bindParam(':profesion', $profesion);
@@ -120,6 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
 
     $id_ppl = $db->lastInsertId();
+
 
     try {
         $pdo = new PDO("mysql:host=localhost;dbname=spp;charset=utf8mb4", "root", "");
@@ -251,6 +253,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 </style>
 
+<script>
+    // Función para cargar las ciudades basadas en la provincia seleccionada
+    function loadCiudades() {
+        var provinciaId = document.getElementById('provincia').value;
+
+        if (provinciaId) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "getCiudades.php?provincia_id=" + provinciaId, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    document.getElementById('ciudad').innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        } else {
+            document.getElementById('ciudad').innerHTML = "<option value=''>-- Seleccione una Ciudad --</option>";
+        }
+    }
+
+    // Función para cargar las provincias basadas en el país seleccionado
+    function loadProvincias() {
+        var paisId = document.getElementById('pais').value;
+
+        if (paisId) {
+            // Realizamos una solicitud AJAX para obtener las provincias del país seleccionado
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "getProvincias.php?pais_id=" + paisId, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    document.getElementById('provincia').innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+    }
+</script>
+
 <section class="container mt-3">
     <div class="card rounded-2 border-0">
         <div class="card-header bg-dark text-white pb-0">
@@ -261,10 +300,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <form id="personaForm" action="" method="POST" enctype="multipart/form-data">
 
                 <h4>Datos de la Persona</h4>
+                <input type="hidden" name="id_persona" value="<?php echo $id_persona; ?>">
                 <!-- Formulario de Persona -->
                 <div class="form-group">
                     <label for="dni">DNI:</label>
-                    <input type="number" class="form-control" id="dni" name="dni" required>
+                    <input type="number" class="form-control" id="dni" name="dni">
                 </div>
 
                 <div class="form-group">
@@ -307,18 +347,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </select>
                 </div>
 
-                <!-- Sección para agregar nueva Ubicación -->
                 <div id="newLocationSection" style="display: none;">
                     <div class="row mb-3">
+                        <!-- Selección de País -->
                         <div class="col-md-4">
                             <label for="pais" class="form-label">País</label>
-                            <select class="form-control" id="pais" name="pais">
+                            <select class="form-select" id="pais" name="pais" onchange="loadProvincias()">
                                 <option value="">-- Seleccione un País --</option> <!-- Opción predeterminada -->
                                 <?php
                                 // Código PHP para obtener solo los países seleccionados de la base de datos
                                 $resultado = $db->query("SELECT id, nombre FROM paises
-                                 WHERE nombre IN ('Argentina', 'Chile', 'Uruguay', 'Paraguay', 'Bolivia')
-                                 ORDER BY nombre ASC;");
+                                ORDER BY nombre ASC;");
                                 while ($fila = $resultado->fetch(PDO::FETCH_ASSOC)) {
                                     echo "<option value='{$fila['id']}'>{$fila['nombre']}</option>";
                                 }
@@ -326,53 +365,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </select>
                         </div>
 
+                        <!-- Selección de Provincia -->
                         <div class="col-md-4">
                             <label for="provincia" class="form-label">Provincia</label>
-                            <select class="form-control" id="provincia" name="provincia">
+                            <select class="form-select" id="provincia" name="provincia" onchange="loadCiudades()">
                                 <option value="">-- Seleccione una Provincia --</option> <!-- Opción predeterminada -->
-                                <?php
-                                // Código PHP para obtener las provincias de los países seleccionados
-                                $resultado = $db->query("SELECT provincias.id, provincias.nombre, paises.nombre AS pais_nombre
-                                 FROM provincias
-                                 LEFT JOIN paises ON provincias.id_pais = paises.id
-                                 WHERE paises.nombre IN ('Argentina', 'Chile', 'Uruguay', 'Paraguay', 'Bolivia')
-                                 ORDER BY pais_nombre ASC, provincias.nombre ASC;");
-                                while ($fila = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                                    echo "<option value='{$fila['id']}'>{$fila['nombre']} - {$fila['pais_nombre']}</option>";
-                                }
-                                ?>
+                                <!-- Provincias se cargarán dinámicamente con AJAX -->
                             </select>
                         </div>
 
+                        <!-- Selección de Ciudad -->
                         <div class="col-md-4">
                             <label for="ciudad" class="form-label">Ciudad</label>
-                            <select class="form-control" id="ciudad" name="ciudad">
+                            <select class="form-select" id="ciudad" name="ciudad">
                                 <option value="">-- Seleccione una Ciudad --</option> <!-- Opción predeterminada -->
-                                <?php
-                                // Código PHP para obtener las ubicaciones de la base de datos
-                                $resultado = $db->query("SELECT ciudades.id, ciudades.nombre, provincias.nombre AS provincia_nombre, paises.nombre AS pais_nombre
-                                 FROM ciudades
-                                 LEFT JOIN provincias ON ciudades.id_prov = provincias.id
-                                 LEFT JOIN paises ON provincias.id_pais = paises.id
-                                 WHERE paises.nombre IN ('Argentina', 'Chile', 'Uruguay', 'Bolivia', 'Paraguay')
-                                 ORDER BY paises.nombre ASC, provincias.nombre ASC;");
-                                while ($fila = $resultado->fetch(PDO::FETCH_ASSOC)) {
-                                    echo "<option value='{$fila['id']}'>{$fila['nombre']} - {$fila['provincia_nombre']} ({$fila['pais_nombre']})</option>";
-                                }
-                                ?>
+                                <!-- Las ciudades se cargarán dinámicamente con AJAX -->
                             </select>
                         </div>
 
+                        <!-- Campo de Localidad -->
                         <div class="col-md-5">
                             <label for="localidad" class="form-label">Localidad</label>
                             <input type="text" class="form-control" id="localidad" name="localidad">
                         </div>
 
+                        <!-- Campo de Dirección -->
                         <div class="col-md-5">
                             <label for="direccion" class="form-label">Dirección</label>
                             <input type="text" class="form-control" id="direccion" name="direccion">
                         </div>
-
                     </div>
                 </div>
 
@@ -383,12 +404,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="form-group">
                     <label for="edad">Edad:</label>
-                    <input type="number" class="form-control" id="edad" name="edad"  required>
+                    <input type="number" class="form-control" id="edad" name="edad" required>
                 </div>
 
                 <div class="form-group">
                     <label for="genero">Género:</label>
-                    <select class="form-control" id="genero" name="genero" required>
+                    <select class="form-select" id="genero" name="genero" required>
                         <option value="Masculino">Masculino</option>
                         <option value="Femenino">Femenino</option>
                         <option value="Otro">Otro</option>
@@ -397,7 +418,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="form-group">
                     <label for="estadocivil">Estado Civil:</label>
-                    <select class="form-control" id="estadocivil" name="estadocivil" required>
+                    <select class="form-select" id="estadocivil" name="estadocivil" required>
                         <option value="Soltero">Soltero</option>
                         <option value="Casado">Casado</option>
                         <option value="Divorciado">Divorciado</option>
@@ -411,13 +432,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <h4 class="mt-4">Datos de PPL</h4>
 
                     <div class="mb-3">
-                        <label for="apodo" class="form-label">Apodo</label>
-                        <input type="text" class="form-control" id="apodo" name="apodo" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
-                    </div>
-
-                    <div class="mb-3">
                         <label for="profesion" class="form-label">Profesión</label>
-                        <input type="text" class="form-control" id="profesion" name="profesion" required pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
+                        <input type="text" class="form-control" id="profesion" name="profesion" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" title="Solo se permiten letras y espacios">
                     </div>
 
                     <div class="mb-3">
@@ -430,14 +446,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="mb-3">
                         <label for="foto" class="form-label">Foto</label>
-                        <input type="file" class="form-control" id="foto" name="foto" accept="image/*" onchange="previewImage(event)" required>
+                        <input type="file" class="form-control" id="foto" name="foto" accept="image/*" onchange="previewImage(event)">
                         <br>
                         <img id="Foto" class="form-control" style="max-width: 150px; height: 100px;" alt="Foto de PERSONA">
                     </div>
 
                     <div class="mb-3">
                         <label for="huella" class="form-label">Huella</label>
-                        <input type="file" class="form-control" id="huella" name="huella" required>
+                        <input type="file" class="form-control" id="huella" name="huella">
                     </div>
                 </div>
 
@@ -459,7 +475,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="form-group">
                         <label for="motivo_t">Motivo de traslado:</label>
-                        <input type="text" class="form-control" id="motivo_t" name="motivo_t" required>
+                        <input type="text" class="form-control" id="motivo_t" name="motivo_t">
                     </div>
 
                     <div class="form-group">
@@ -588,12 +604,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="form-group">
                         <label for="causas_pend">Causas pendientes de resolución:</label>
-                        <input type="text" class="form-control" id="causas_pend" name="causas_pend" required>
+                        <input type="text" class="form-control" id="causas_pend" name="causas_pend">
                     </div>
 
                     <div class="form-group">
                         <label for="reingreso_falta">Reingreso en caso de quebrantamiento de beneficio y/o libertad:</label>
-                        <select class="form-select" id="reingreso_falta" name="reingreso_falta" required>
+                        <select class="form-select" id="reingreso_falta" name="reingreso_falta">
                             <option value="si">Sí</option>
                             <option value="no">No</option>
                         </select>
@@ -638,7 +654,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="form-group hidden" id="tieneComDefensorDiv">
                         <label for="tiene_com_defensor">¿Tiene comunicación con él?:</label>
-                        <select class="form-select" id="tiene_com_defensor" name="tiene_com_defensor" required>
+                        <select class="form-select" id="tiene_com_defensor" name="tiene_com_defensor">
                             <option value="si">Sí</option>
                             <option value="no">No</option>
                         </select>
@@ -656,3 +672,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     </div>
 </section>
+<?php require 'footer.php'; ?>

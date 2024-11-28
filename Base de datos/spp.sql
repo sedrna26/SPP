@@ -128789,7 +128789,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `id_persona`, `id_rol`, `nombre_usuario`, `contrasena`, `fecha_creacion`, `activo`) VALUES
-(1, 1, 1, 'demadmin', '$2y$10$7zlO/gJEfkGfzOlc9WGchO4tRaI7N/55cX1C5eQq6PHJ3XHxd864S', '2024-09-29 18:15:24', 0),
+(1, 1, 1, 'demadmin', '$2y$10$7zlO/gJEfkGfzOlc9WGchO4tRaI7N/55cX1C5eQq6PHJ3XHxd864S', '2024-09-29 18:15:24', 1),
 (2, 3, 2, 'horo3670', '$2y$10$8KOt0RcZi/Z.2DM.Vy/N4OGoX7jhQhQ/ylctvaFo0x0im9eVG2/4u', '2024-10-14 17:56:47', 0),
 (3, 4, 2, 'mabu8333', '$2y$10$buXh8IvsIhUO/QGwsumY8uMz0iGxToTvko0X/diWkkZlty0CbResu', '2024-11-12 20:48:39', 0),
 (4, 5, 2, 'isca196', '$2y$10$cGhq5QXrwvwPNLoTCfGKxOTNbGeF8jJqF.JPCAcFmBvn1tLK9SOo.', '2024-11-12 20:51:04', 0),
