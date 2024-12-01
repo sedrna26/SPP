@@ -109,15 +109,6 @@ try {
 }
 // Función para validar y obtener la foto
 function obtenerUltimaFoto($dni, $db) {
-    $allowed_types = [
-        'image/jpeg',   // JPEG/JPG
-        'image/png',    // PNG
-        'image/svg+xml', // SVG
-        'image/x-icon', // ICO
-        'image/tga',    // TGA
-        'image/x-dds',  // DDS
-        'application/postscript' // AI
-    ];
     try {
         // Query para obtener la última foto
         $query = "SELECT ppl.foto, ppl.id as ppl_id, persona.id as persona_id, persona.dni 
@@ -132,22 +123,14 @@ function obtenerUltimaFoto($dni, $db) {
         $stmt->execute();
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        $rutaBase = '../../img_ppl/'; // Corregido la ruta base
+        $rutaBase = '../../img_ppl/';
         $fotoDefault = 'default.jpg';
         
         if ($resultado && !empty($resultado['foto'])) {
             $rutaFoto = $rutaBase . htmlspecialchars($resultado['foto'], ENT_QUOTES, 'UTF-8');
             
             if (file_exists($rutaFoto)) {
-                // Check MIME type of the file
-                $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                $mime_type = finfo_file($finfo, $rutaFoto);
-                finfo_close($finfo);
-                
-                // Validate MIME type
-                if (in_array($mime_type, $allowed_types)) {
-                    return $rutaFoto;
-                }
+                return $rutaFoto;
             }
         }
         
@@ -331,54 +314,74 @@ function obtenerUltimaFoto($dni, $db) {
                         <th>Nombre y Apellido</th>
                         <th>DNI</th>
                         <th>Domicilio</th>
-                        <th>Ver</th>
+                        <th>Fecha detención</th>
+                        <th>Inicio Condena</th>
+                        <th>Fin Condena</th>
+                        <th>Carga</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    try {
-                        $query = "SELECT ppl.*, per.*,
-                                pai.nombre as nombre_pais,
-                                ciu.nombre as nombre_ciudad,
-                                pro.nombre as nombre_provincia,
-                                dom.localidad as localidad_domicilio,
-                                dom.direccion as direccion_domicilio
-                                FROM ppl AS ppl
-                                LEFT JOIN persona AS per ON ppl.idpersona = per.id
-                                LEFT JOIN domicilio AS dom ON per.id = dom.id_persona
-                                LEFT JOIN paises AS pai ON dom.id_pais = pai.id
-                                LEFT JOIN ciudades AS ciu ON dom.id_ciudad = ciu.id
-                                LEFT JOIN provincias AS pro ON dom.id_provincia = pro.id
-                                WHERE per.dni = :dni";
-                        $stmt = $db->prepare($query);
-                        $stmt->bindParam(':dni', $dni, PDO::PARAM_STR);
-                        $stmt->execute();
-                        $pples = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        foreach ($pples as $ppl) {
-                    ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($ppl['id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($ppl['nombres'] . ' ' . $ppl['apellidos'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($ppl['dni'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td> 
-                                    <?php echo htmlspecialchars($ppl['nombre_pais'], ENT_QUOTES, 'UTF-8') . ", "; ?>
-                                    <?php echo htmlspecialchars($ppl['nombre_provincia'], ENT_QUOTES, 'UTF-8'). ", "; ?>
-                                    <?php echo htmlspecialchars($ppl['nombre_ciudad'], ENT_QUOTES, 'UTF-8'). ", "; ?>
-                                    <?php echo htmlspecialchars($ppl['localidad_domicilio'], ENT_QUOTES, 'UTF-8'). ", "; ?>
-                                    <?php echo htmlspecialchars($ppl['direccion_domicilio'], ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
-                                <td>
-                                    <a class="btn btn-info" href='ppl_informe.php?id=<?php echo $ppl['id']; ?>'>Informe(IEII)</a>
-                                </td>
-                                
-                            </tr>
-                    <?php
-                        }
-                    } catch (PDOException $e) {
-                        error_log("Error al obtener los pples: " . $e->getMessage());
-                    }
-                    ?>
-                </tbody>
+                            <?php
+                                try {
+                                    $query = "SELECT 
+                                        ppl.*,
+                                        per.*,
+                                        pai.nombre AS nombre_pais,
+                                        ciu.nombre AS nombre_ciudad,
+                                        pro.nombre AS nombre_provincia,
+                                        dom.localidad AS localidad_domicilio,
+                                        dom.direccion AS direccion_domicilio,
+                                        DATE_FORMAT(sl.fecha_detencion, '%d-%m-%Y') AS fecha_detencion,
+                                        DATE_FORMAT(fppl.inicio_condena, '%d-%m-%Y') AS inicio_condena,
+                                        COALESCE(DATE_FORMAT(fppl.fin_condena, '%d-%m-%Y'), '-') AS fin_condena
+                                    FROM 
+                                        ppl AS ppl
+                                    LEFT JOIN 
+                                        persona AS per ON ppl.idpersona = per.id
+                                    LEFT JOIN 
+                                        domicilio AS dom ON per.id = dom.id_persona
+                                    LEFT JOIN 
+                                        paises AS pai ON dom.id_pais = pai.id
+                                    LEFT JOIN 
+                                        ciudades AS ciu ON dom.id_ciudad = ciu.id
+                                    LEFT JOIN 
+                                        provincias AS pro ON dom.id_provincia = pro.id
+                                    LEFT JOIN
+                                        situacionlegal AS sl ON ppl.id = sl.id_ppl
+                                    LEFT JOIN
+                                        fechappl AS fppl ON ppl.id = fppl.idppl";
+                                    $stmt = $db->prepare($query);
+                                    $stmt->execute();
+                                    $pples = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                    foreach ($pples as $ppl) {
+                                ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($ppl['id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td><?php echo htmlspecialchars($ppl['nombres'] . ' ' . $ppl['apellidos'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td><?php echo htmlspecialchars($ppl['dni'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td>
+                                                <?php echo htmlspecialchars($ppl['nombre_pais'], ENT_QUOTES, 'UTF-8') . ","; ?>
+                                                <?php echo htmlspecialchars($ppl['nombre_provincia'], ENT_QUOTES, 'UTF-8'). ","; ?>
+                                                <?php echo htmlspecialchars($ppl['nombre_ciudad'], ENT_QUOTES, 'UTF-8'). ","; ?>
+                                                <?php echo htmlspecialchars($ppl['localidad_domicilio'], ENT_QUOTES, 'UTF-8'). ","; ?>
+                                                <?php echo htmlspecialchars($ppl['direccion_domicilio'], ENT_QUOTES, 'UTF-8'); ?>
+                                            </td>
+                                            <td><?php echo htmlspecialchars($ppl['fecha_detencion'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td><?php echo htmlspecialchars($ppl['inicio_condena'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td><?php echo htmlspecialchars($ppl['fin_condena'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td>
+                                                <a class="btn btn-info" href='ppl_informe.php?id=<?php echo $ppl['id']; ?>'>Informe(IEII)</a>
+                                            </td>
+                                            
+                                        </tr>
+                                <?php
+                                    }
+                                } catch (PDOException $e) {
+                                    error_log("Error al obtener los pples: " . $e->getMessage());
+                                }
+                                ?>
+                        </tbody>
             </table>
         </div>
     </div>
