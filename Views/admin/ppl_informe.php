@@ -52,99 +52,110 @@ $idppl = isset($_GET['id']) ? $_GET['id'] : '';
 
                     switch ($seccion) {
                         case 'datos-personales':
-                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2|| $_SESSION['id_rol'] === 3) {
+                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2 || $_SESSION['id_rol'] === 3) {
                                 include 'persona_lista.php';
                             }
                             break;
                         case 'educacion':
-                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) { 
-                                $sql_educappl = "SELECT estado FROM educacion WHERE id_ppl = $idppl";                                           
-                                $result_educappl = $conexion->query($sql_educappl);                            
-                                if ($result_educappl && $result_educappl->num_rows > 0) { 
+                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                                $sql_educappl = "SELECT estado FROM educacion WHERE id_ppl = $idppl";
+                                $result_educappl = $conexion->query($sql_educappl);
+                                if ($result_educappl && $result_educappl->num_rows > 0) {
                                     $educappl = $result_educappl->fetch_assoc();
-                            
+
                                     if ($educappl['estado'] === 'Activo') {
                                         include 'educacion_lista.php';
                                     } else {
                                         include 'educacion_crea.php';
                                     }
                                 } else {
-                                    include 'educacion_crea.php'; 
+                                    include 'educacion_crea.php';
                                 }
                             } else {
                                 include 'educacion_lista.php';
                             }
-                            
+
                             break;
 
                         case 'situacion-social':
-                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) { 
-                                $sql_sociofamilia = "SELECT estado FROM ppl_familiar_info WHERE idppl = $idppl";                                           
-                                $result_sociofamilia = $conexion->query($sql_sociofamilia);    
-                            
-                                if ($result_sociofamilia && $result_sociofamilia->num_rows > 0) { 
+                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                                $sql_sociofamilia = "SELECT estado FROM ppl_familiar_info WHERE idppl = $idppl";
+                                $result_sociofamilia = $conexion->query($sql_sociofamilia);
+
+                                if ($result_sociofamilia && $result_sociofamilia->num_rows > 0) {
                                     $sociofamilia = $result_sociofamilia->fetch_assoc();
-                            
+
                                     if ($sociofamilia['estado'] === 'Activo') {
                                         include 'socio-familiar_lista.php';
                                     } else {
                                         include 'socio-familiar_crea.php';
                                     }
                                 } else {
-                                    include 'socio-familiar_crea.php'; 
+                                    include 'socio-familiar_crea.php';
                                 }
                             } else {
                                 include 'socio-familiar_lista.php';
-                            }                            
+                            }
                             break;
                         case 'situacion-laboral':
-                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) { 
-                                $sql_laboral = "SELECT estado FROM laboral WHERE id_ppl = $idppl";                                           
-                                $result_laboral = $conexion->query($sql_laboral);                                    
-                                if ($result_laboral && $result_laboral->num_rows > 0) { 
-                                    $laboral = $result_laboral->fetch_assoc();                                    
+                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                                $sql_laboral = "SELECT estado FROM laboral WHERE id_ppl = $idppl";
+                                $result_laboral = $conexion->query($sql_laboral);
+                                if ($result_laboral && $result_laboral->num_rows > 0) {
+                                    $laboral = $result_laboral->fetch_assoc();
                                     if ($laboral['estado'] === 'Activo') {
                                         include 'laboral_espiritual_lista.php';
                                     } else {
                                         include 'laboral_espiritual_crea.php';
                                     }
                                 } else {
-                                    include 'laboral_espiritual_crea.php'; 
+                                    include 'laboral_espiritual_crea.php';
                                 }
                             } else {
                                 include 'laboral_espiritual_lista.php';
                             }
                             break;
                         case 'marcas':
-                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 3) {                                
+                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 3) {
                                 include 'marcas_cuerpo.php';
-                            }else{
+                            } else {
                                 include 'marcas_cuerpo_lista.php';
                             }
                             break;
 
                         case 'informe-sanitario':
                             if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 3) {
-                                include 'sanitario_crea.php';
-                            }else{
+                               
+                                $sql_sanitario = "SELECT id_ppl FROM datos_medicos WHERE id_ppl = $idppl AND peso_actual IS NOT NULL AND talla IS NOT NULL";
+                                $result_sanitario = $conexion->query($sql_sanitario);
 
+                                if ($result_sanitario && $result_sanitario->num_rows > 0) {
+                                  
+                                    include 'sanitario_lista.php';
+                                } else {
+                                    
+                                    include 'sanitario_crea.php';
+                                }
+                            } else {
+                               
+                                include 'sanitario_lista.php';
                             }
-
                             break;
 
+
                         case 'observaciones':
-                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) { 
-                                $sql_observaciones = "SELECT estado FROM observaciones WHERE id_ppl = $idppl";                                           
-                                $result_observaciones = $conexion->query($sql_observaciones);                                    
-                                if ($result_observaciones && $result_observaciones->num_rows > 0) { 
-                                    $observaciones = $result_observaciones->fetch_assoc();                                    
+                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                                $sql_observaciones = "SELECT estado FROM observaciones WHERE id_ppl = $idppl";
+                                $result_observaciones = $conexion->query($sql_observaciones);
+                                if ($result_observaciones && $result_observaciones->num_rows > 0) {
+                                    $observaciones = $result_observaciones->fetch_assoc();
                                     if ($observaciones['estado'] === 'Activo') {
                                         include 'observaciones_lista.php';
                                     } else {
                                         include 'observaciones_crea.php';
                                     }
                                 } else {
-                                    include 'observaciones_crea.php'; 
+                                    include 'observaciones_crea.php';
                                 }
                             } else {
                                 include 'observaciones_lista.php';
@@ -152,18 +163,18 @@ $idppl = isset($_GET['id']) ? $_GET['id'] : '';
                             break;
 
                         case 'clasificacion':
-                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) { 
-                                $sql_clasificacion = "SELECT estado FROM clasificacion WHERE id_ppl = $idppl";                                           
-                                $result_clasificacion = $conexion->query($sql_clasificacion);                                    
-                                if ($result_clasificacion && $result_clasificacion->num_rows > 0) { 
-                                    $clasificacion = $result_clasificacion->fetch_assoc();                                    
+                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                                $sql_clasificacion = "SELECT estado FROM clasificacion WHERE id_ppl = $idppl";
+                                $result_clasificacion = $conexion->query($sql_clasificacion);
+                                if ($result_clasificacion && $result_clasificacion->num_rows > 0) {
+                                    $clasificacion = $result_clasificacion->fetch_assoc();
                                     if ($clasificacion['estado'] === 'Activo') {
                                         include 'clasificacion_lista.php';
                                     } else {
                                         include 'clasificacion_crea.php';
                                     }
                                 } else {
-                                    include 'clasificacion_crea.php'; 
+                                    include 'clasificacion_crea.php';
                                 }
                             } else {
                                 include 'clasificacion_lista.php';
@@ -173,7 +184,7 @@ $idppl = isset($_GET['id']) ? $_GET['id'] : '';
 
 
                         default:
-                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2|| $_SESSION['id_rol'] === 3) {
+                            if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2 || $_SESSION['id_rol'] === 3) {
                                 include 'persona_lista.php';
                             }
                             break;
