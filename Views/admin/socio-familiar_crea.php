@@ -28,8 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
         $db->beginTransaction();
 
         // Insertar información familiar general en ppl_familiar_info
-        $stmt = $db->prepare("INSERT INTO ppl_familiar_info (idppl, familiares_ffaa, ffaa_detalles, familiares_detenidos, detenidos_detalles, telefono_familiar, posee_dni, motivo_no_dni) 
-                             VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $db->prepare("INSERT INTO ppl_familiar_info (idppl, familiares_ffaa, ffaa_detalles, familiares_detenidos, detenidos_detalles, telefono_familiar, posee_dni, motivo_no_dni,estado) 
+                             VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
         $stmt->execute([
             $idppl,
             isset($_POST['familiares_ffaa']) && $_POST['familiares_ffaa'] == '1' ? 1 : 0,
@@ -38,23 +38,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
             $_POST['detenidos_details'] ?? null,
             $_POST['telefono_familiar'] ?? null,
             $_POST['posee_dni'] === 'SI' ? 1 : 0,
-            $_POST['motivo_no_dni'] ?? null
+            $_POST['motivo_no_dni'] ?? null,
+            'Activo'
         ]);
 
         // Insertar situación sociofamiliar
-        $stmt = $db->prepare("INSERT INTO ppl_situacion_sociofamiliar (idppl, edad_inicio_laboral, situacion_economica_precaria, mendicidad_calle) 
-                             VALUES (?, ?, ?, ?)");
+        $stmt = $db->prepare("INSERT INTO ppl_situacion_sociofamiliar (idppl, edad_inicio_laboral, situacion_economica_precaria, mendicidad_calle,estado) 
+                             VALUES (?, ?, ?, ?,?)");
         $stmt->execute([
             $idppl,
             $_POST['edad_laboral'] ?? null,
             $_POST['situacion_economica'] === 'SI' ? 1 : 0,
-            $_POST['mendicidad'] === 'SI' ? 1 : 0
+            $_POST['mendicidad'] === 'SI' ? 1 : 0,
+            'Activo'
         ]);
 
         // Insertar datos del padre si está vivo
         if (!empty($_POST['padre_nombre']) && isset($_POST['padre_vivo'])) {
-            $stmt = $db->prepare("INSERT INTO ppl_padres (idppl, tipo, vivo, apellido, nombre, edad, nacionalidad, estado_civil, instruccion, visita) 
-                                VALUES (?, 'PADRE', ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $db->prepare("INSERT INTO ppl_padres (idppl, tipo, vivo, apellido, nombre, edad, nacionalidad, estado_civil, instruccion, visita,estado) 
+                                VALUES (?, 'PADRE', ?, ?, ?, ?, ?, ?, ?, ?,?)");
             $stmt->execute([
                 $idppl,
                 $_POST['padre_vivo'] === 'Vivo' ? 1 : 0,
@@ -64,14 +66,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
                 $_POST['padre_nacionalidad'] ?? null,
                 $_POST['padre_estado_civil'] ?? null,
                 $_POST['padre_instruccion'] ?? null,
-                $_POST['visita_padre'] === 'SI' ? 1 : 0
+                $_POST['visita_padre'] === 'SI' ? 1 : 0,
+                'Activo'
             ]);
         }
 
         // Insertar datos de la madre si está viva
         if (!empty($_POST['madre_nombre']) && isset($_POST['madre_viva'])) {
-            $stmt = $db->prepare("INSERT INTO ppl_padres (idppl, tipo, vivo, apellido, nombre, edad, nacionalidad, estado_civil, instruccion, visita) 
-                                VALUES (?, 'MADRE', ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $db->prepare("INSERT INTO ppl_padres (idppl, tipo, vivo, apellido, nombre, edad, nacionalidad, estado_civil, instruccion, visita,estado) 
+                                VALUES (?, 'MADRE', ?, ?, ?, ?, ?, ?, ?, ?,?)");
             $stmt->execute([
                 $idppl,
                 $_POST['padre_vivo'] === 'Vivo' ? 1 : 0,
@@ -81,14 +84,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
                 $_POST['madre_nacionalidad'] ?? null,
                 $_POST['madre_estado_civil'] ?? null,
                 $_POST['madre_instruccion'] ?? null,
-                $_POST['visita_madre'] === 'SI' ? 1 : 0
+                $_POST['visita_madre'] === 'SI' ? 1 : 0,
+                'Activo'
             ]);
         }
 
         // Insertar datos de hermanos
         if (isset($_POST['num_hermanos']) && intval($_POST['num_hermanos']) > 0) {
-            $stmt = $db->prepare("INSERT INTO ppl_hermanos (idppl, apellido, nombre, edad, visita) 
-                                VALUES (?, ?, ?, ?, ?)");
+            $stmt = $db->prepare("INSERT INTO ppl_hermanos (idppl, apellido, nombre, edad, visita,estado) 
+                                VALUES (?, ?, ?, ?, ?,?)");
 
             for ($i = 0; $i < intval($_POST['num_hermanos']); $i++) {
                 if (!empty($_POST["hermano_nombre_$i"])) {
@@ -97,7 +101,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
                         $_POST["hermano_apellido_$i"] ?? null,
                         $_POST["hermano_nombre_$i"],
                         $_POST["hermano_edad_$i"] ?? null,
-                        isset($_POST["hermano_visita_$i"]) && $_POST["hermano_visita_$i"] === 'SI' ? 1 : 0
+                        isset($_POST["hermano_visita_$i"]) && $_POST["hermano_visita_$i"] === 'SI' ? 1 : 0,
+                        'Activo'
                     ]);
                 }
             }
@@ -105,8 +110,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
 
         // Insertar datos de la pareja si existe
         if (!empty($_POST['pareja_nombre'])) {
-            $stmt = $db->prepare("INSERT INTO ppl_pareja (idppl, apellido, nombre, edad, nacionalidad, instruccion, tipo_union, visita) 
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $db->prepare("INSERT INTO ppl_pareja (idppl, apellido, nombre, edad, nacionalidad, instruccion, tipo_union, visita,estado) 
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
             $visita_pareja = ($_POST['visita_esposo'] === 'SI' || $_POST['visita_concubino'] === 'SI') ? 1 : 0;
             $stmt->execute([
                 $idppl,
@@ -116,7 +121,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
                 $_POST['pareja_nacionalidad'] ?? null,
                 $_POST['pareja_instruccion'] ?? null,
                 $_POST['pareja_tipo_union'] ?? null,
-                $visita_pareja
+                $visita_pareja,
+                'Activo'
             ]);
         }
 
@@ -125,10 +131,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
             isset($_POST['tiene_hijos']) && $_POST['tiene_hijos'] == '1' &&
             isset($_POST['num_hijos']) && intval($_POST['num_hijos']) > 0
         ) {
-
-            $stmt = $db->prepare("INSERT INTO ppl_hijos (idppl, apellido, nombre, edad, fallecido, visita) 
-                                VALUES (?, ?, ?, ?, ?, ?)");
-
+            $stmt = $db->prepare("INSERT INTO ppl_hijos (idppl, apellido, nombre, edad, fallecido, visita, estado) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)");
             for ($i = 0; $i < intval($_POST['num_hijos']); $i++) {
                 if (!empty($_POST["hijo_nombre_$i"])) {
                     $stmt->execute([
@@ -137,7 +141,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
                         $_POST["hijo_nombre_$i"],
                         $_POST["hijo_edad_$i"] ?? null,
                         isset($_POST["hijo_fallecido_$i"]) ? 1 : 0,
-                        isset($_POST["hijo_visita_$i"]) && $_POST["hijo_visita_$i"] === 'SI' ? 1 : 0
+                        isset($_POST["hijo_visita_$i"]) && $_POST["hijo_visita_$i"] === 'SI' ? 1 : 0,
+                        'Activo' // Aquí se agrega el valor predeterminado para estado
                     ]);
                 }
             }
@@ -148,10 +153,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
             isset($_POST['visita_otros']) && $_POST['visita_otros'] === 'SI' &&
             isset($_POST['otro_nombre']) && is_array($_POST['otro_nombre'])
         ) {
-
-            $stmt = $db->prepare("INSERT INTO ppl_otros_visitantes (idppl, apellido, nombre, telefono, domicilio, vinculo_filial) 
-                                VALUES (?, ?, ?, ?, ?, ?)");
-
+            $stmt = $db->prepare("INSERT INTO ppl_otros_visitantes (idppl, apellido, nombre, telefono, domicilio, vinculo_filial, estado) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?)");
             foreach ($_POST['otro_nombre'] as $key => $nombre) {
                 if (!empty($nombre)) {
                     $stmt->execute([
@@ -160,18 +163,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
                         $nombre,
                         $_POST['otro_telefono'][$key] ?? null,
                         $_POST['otro_domicilio'][$key] ?? null,
-                        $_POST['otro_vinculo'][$key] ?? null
+                        $_POST['otro_vinculo'][$key] ?? null,
+                        'Activo' // Aquí se agrega el valor predeterminado para estado
                     ]);
                 }
             }
         }
-
         $db->commit();
-
         // Registrar acción en la auditoría
         $accion = 'Agregar Info Familiar';
-        $tabla_afectada = 'ppl_familiar_info, ppl_situacion_sociofamiliar, ppl_padres, 
-        ppl_hermanos, ppl_pareja, ppl_hijos, ppl_otros_visitantes';
+        $tabla_afectada = substr('ppl_familiar_info, ppl_situacion_sociofamiliar, ppl_padres, ppl_hermanos, ppl_pareja, ppl_hijos, ppl_otros_visitantes', 0, 50);
         $detalles = "Se insertó una nueva Informacion Familiar para el PPL con ID: $idppl";
         registrarAuditoria($db, $accion, $tabla_afectada, $idppl, $detalles);
 
