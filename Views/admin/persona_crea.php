@@ -81,54 +81,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Replace the current photo handling section with:
     $foto = null;
-if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-    $foto_temp = $_FILES['foto']['tmp_name'];
-    
-    // Get the original file extension
-    $original_ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
-    
-    // Generate a short, unique filename
-    $foto_nombre = substr(hash('md5', uniqid('', true)), 0, 10) . '.' . $original_ext;
-    $foto_path = $upload_dir . '/' . $foto_nombre;
-    
-    // Verify it's actually an image
-    $allowed_types = [
-        'image/jpeg'   => ['jpg', 'jpeg'],
-        'image/png'    => ['png'],
-        'image/svg+xml'=> ['svg'],
-        'image/x-icon' => ['ico'],
-        'image/tga'    => ['tga'],
-        'image/x-dds'  => ['dds'],
-        'application/postscript' => ['ai']
-    ];
-    
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mime_type = finfo_file($finfo, $foto_temp);
-    finfo_close($finfo);
-    
-    // Check if the mime type is allowed and the file extension matches
-    if (isset($allowed_types[$mime_type]) && 
-        in_array($original_ext, $allowed_types[$mime_type])) {
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $foto_temp = $_FILES['foto']['tmp_name'];
         
-        // Additional checks for specific file types
-        switch ($mime_type) {
-            case 'application/postscript': // AI files
-                $file_contents = file_get_contents($foto_temp);
-                if (strpos($file_contents, '%PDF-') === false && 
-                    strpos($file_contents, '%!PS-Adobe-') === false) {
-                    echo "Archivo AI no válido.";
-                    exit;
-                }
-                break;
-            
-            case 'image/svg+xml':
-                $svg_contents = file_get_contents($foto_temp);
-                if (strpos($svg_contents, '<svg') === false) {
-                    echo "Archivo SVG no válido.";
-                    exit;
-                }
-                break;
-        }
+        // Get the original file extension
+        $original_ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+        
+        // Generate a short, unique filename
+        $foto_nombre = substr(hash('md5', uniqid('', true)), 0, 10) . '.' . $original_ext;
+        $foto_path = $upload_dir . '/' . $foto_nombre;
         
         // Move the uploaded file
         if (move_uploaded_file($foto_temp, $foto_path)) {
@@ -137,11 +98,7 @@ if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
             echo "Error al mover el archivo.";
             exit;
         }
-    } else {
-        echo "Tipo de archivo no permitido. Solo se permiten los siguientes formatos: JPEG/JPG, PNG, SVG, ICO, TGA, DDS, AI.";
-        exit;
     }
-}
 
 // Update the SQL query to use the new $foto variable
 $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto) 
@@ -232,6 +189,15 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
         } catch (PDOException $e) {
             echo "Error en la inserción: " . $e->getMessage();
         }
+        // ------------------------
+        $inicio_condena = $_POST['inicio_condena']; 
+        $sql_inicio_condena = "INSERT INTO fechappl (idppl, inicio_condena) VALUES (?, ?)"; 
+        $stmt = $db->prepare($sql_inicio_condena); 
+        $stmt->bindParam(1, $id_ppl); 
+        $stmt->bindParam(2, $inicio_condena); 
+        if ($stmt->execute()) 
+        { echo "Fecha de inicio de condena guardada exitosamente"; }else 
+        { echo "Error al guardar la fecha: " . implode(" ", $stmt->errorInfo()); }
     }
     $accion = 'Agregar PPL';
     $tabla_afectada = 'persona, ppl, situacion legal';
@@ -462,11 +428,23 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                                 <label for="fecha_detencion">Fecha de detención:</label>
                                 <input type="date" class="form-control" id="fecha_detencion" name="fecha_detencion" required>
                             </div>
-                            <script>
-                                const hoy = new Date().toISOString().split('T')[0];
-                                document.getElementById('fecha_detencion').value = hoy;
-                            </script>
                         </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="inicio_condena">Inicio de Condena:</label>
+                                <input type="date" class="form-control" id="inicio_condena" name="inicio_condena" required>
+                            </div>
+                        </div>
+                        <script>
+                                const fecha = new Date();
+                                const offset = fecha.getTimezoneOffset();
+                                fecha.setMinutes(fecha.getMinutes() - offset);
+                                const hoy = fecha.toISOString().split('T')[0];
+                                document.getElementById('fecha_detencion').value = hoy;
+                                document.getElementById('inicio_condena').value = hoy;                            
+                        </script>                        
+                    </div>   
+                    <div class="row">
                         <div class="col">
                             <div class="form-group">
                                 <label for="dependencia">Dependencia:</label>
@@ -488,7 +466,7 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </div> 
                     <!-- -------------------------------- -->
                     <div class="form-group">
                     <label for="buscar-causas">Buscar Causas:</label>
