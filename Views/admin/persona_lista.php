@@ -66,7 +66,37 @@ try {
 } catch (PDOException $e) {
     echo "Error en la consulta: " . $e->getMessage();
 }
-
+function obtenerUltimaFoto($id, $db) {
+    try {
+        // Query to get the latest photo using person ID
+        $query = "SELECT ppl.foto, ppl.id as ppl_id, persona.id as persona_id, persona.dni 
+                 FROM ppl 
+                 JOIN persona ON ppl.idpersona = persona.id 
+                 WHERE persona.id = :id 
+                 ORDER BY ppl.id DESC 
+                 LIMIT 1";
+                 
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $rutaBase = '../../img_ppl/';
+        $fotoDefault = 'default.jpg';
+        
+        if ($resultado && !empty($resultado['foto'])) {
+            $rutaFoto = $rutaBase . htmlspecialchars($resultado['foto'], ENT_QUOTES, 'UTF-8');
+            
+            if (file_exists($rutaFoto)) {
+                return $rutaFoto;
+            }
+        }
+        
+        return $rutaBase . $fotoDefault;
+    } catch (PDOException $e) {
+        return $rutaBase . $fotoDefault;
+    }
+}
 
 ?>
 
@@ -90,6 +120,30 @@ try {
         margin-bottom: 0;
         line-height: 1.5;
         flex-grow: 1;
+    }
+    .form-container {
+        margin: 20px;
+    }
+
+    .foto {
+        width: 250px;
+        height: 250px;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #ddd;
+    }
+
+    .line {
+        display: inline-block;
+        width: 150px;
+        border-bottom: 1px solid #000;
+        margin-left: 5px;
+    }
+
+    .section-title {
+        font-weight: bold;
     }
 </style>
 <!-- ----------------------------------- -->
@@ -125,232 +179,175 @@ try {
     <!-- ----------------------------------------- -->
     <div class="card">
         <div class="card-body">
-            <div>
                 <h4 class="card-title">Datos Personales</h4>
-
-                <div class="form-group">
-                    <label for="dni">DNI:</label>
-                    <p class="form-control-static" id="dni"><?php echo !empty($persona['dni']) ? htmlspecialchars($persona['dni'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?></p>
+                <div class="row mt-3"> 
+                    <div class="col-md-8">
+                        <div>
+                            <label class="h6">D.N.I.:</label>                        
+                            <?php echo !empty($persona['dni']) ? htmlspecialchars($persona['dni'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?>                        
+                        </div>
+                        <div>                            
+                            <label class="h6">Nombres:</label>
+                            <?php echo !empty($persona['nombres']) ? htmlspecialchars($persona['nombres'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
+                        </div>                
+                        <div>
+                            <label class="h6">Apellidos:</label>
+                            <?php echo !empty($persona['apellidos']) ? htmlspecialchars($persona['apellidos'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
+                        </div>                              
+                        <div>
+                            <label class="h6">Fecha de Nacimiento:</label>
+                            <?php if (!empty($persona['fechaNacimiento'])) {
+                                echo date('d-m-Y', strtotime($persona['fechaNacimiento']));
+                                } else {echo 'No hay dato';}?>
+                        </div>
+                        <div>
+                            <label class="h6">Edad:</label>
+                            <?php echo !empty($persona['edad']) ? htmlspecialchars($persona['edad'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
+                        </div>
+                        <div>
+                            <label class="h6">Género:</label>
+                            <?php echo !empty($persona['genero']) ? htmlspecialchars($persona['genero'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
+                        </div>
+                        <div>
+                            <label class="h6">Estado Civil:</label>
+                            <?php echo !empty($persona['estadocivil']) ? htmlspecialchars($persona['estadocivil'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
+                        </div>
+                        <div>
+                            <label class="h6">Dirección:</label>                   
+                            <?php if (!empty($persona['direccion'])) {
+                                echo htmlspecialchars(
+                                    (!empty($persona['pais']) ? $persona['pais'] . ', ' : '') . 
+                                        (!empty($persona['provincia']) ? $persona['provincia'] . ', ' : '') . 
+                                        (!empty($persona['ciudad']) ? $persona['ciudad'] . ', ' : '') . 
+                                        (!empty($persona['localidad']) ? $persona['localidad'] . ', ' : '') . 
+                                        (!empty($persona['direccion']) ? $persona['direccion'] : ''), 
+                                ENT_QUOTES, 'UTF-8');} else {echo 'No hay dato';}?>
+                        </div>                        
+                    </div>
+                    <div class="col-md-4 text-center">                            
+                        <div class="foto">
+                            <?php if (!isset($id)) {
+                                echo "<p>Error: DNI no definido</p>";
+                            } else { $rutaFoto = obtenerUltimaFoto($id, $db); ?>
+                                <img src="<?php echo htmlspecialchars($rutaFoto, ENT_QUOTES, 'UTF-8'); ?>" 
+                                    alt="<?php echo ($rutaFoto !== '../../img_ppl/default.jpg') ? 'Foto de la persona' : 'Foto no disponible'; ?>" 
+                                    style="max-width: 250px; max-height: 250px; object-fit: cover;">
+                            <?php } ?>
+                        </div>                    
+                    </div> 
+                </div>            
+            <!-- ------------------------- -->
+            <h4 class="mt-3">Información de PPL</h4>
+            <div class="row">
+                <div>
+                    <label class="h6 ">¿Trabajaba en el momento de la detención?:</label>
+                    <span class="fs-5"><?php echo isset($ppl['trabaja']) ? ($ppl['trabaja'] ? 'Sí' : 'No') : 'No hay dato';?></span>                    
                 </div>
-
-                <div class="form-group">
-                    <label for="nombres">Nombres:</label>
-                    <p class="form-control-static" id="nombres"><?php echo !empty($persona['nombres']) ? htmlspecialchars($persona['nombres'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="apellidos">Apellidos:</label>
-                    <p class="form-control-static" id="apellidos"><?php echo !empty($persona['apellidos']) ? htmlspecialchars($persona['apellidos'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="fechaNacimiento">Fecha de Nacimiento:</label>
-                    <p class="form-control-static" id="fechaNacimiento">
-                        <?php
-                        if (!empty($persona['fechaNacimiento'])) {
-                            echo date('d-m-Y', strtotime($persona['fechaNacimiento']));
-                        } else {
-                            echo 'No hay dato';
-                        }
-                        ?>
-                    </p>
-                </div>
-
-                <div class="form-group">
-                    <label for="edad">Edad:</label>
-                    <p class="form-control-static" id="edad"><?php echo !empty($persona['edad']) ? htmlspecialchars($persona['edad'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="genero">Género:</label>
-                    <p class="form-control-static" id="genero"><?php echo !empty($persona['genero']) ? htmlspecialchars($persona['genero'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="estadocivil">Estado Civil:</label>
-                    <p class="form-control-static" id="estadocivil"><?php echo !empty($persona['estadocivil']) ? htmlspecialchars($persona['estadocivil'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="direccion">Dirección completa:</label>
-                    <p class="form-control-static" id="direccion">
-                        <?php
-                        if (!empty($persona['direccion'])) {
-                            echo htmlspecialchars(
-                                (!empty($persona['pais']) ? $persona['pais'] . ', ' : '') . 
-                                    (!empty($persona['provincia']) ? $persona['provincia'] . ', ' : '') . 
-                                    (!empty($persona['ciudad']) ? $persona['ciudad'] . ', ' : '') . 
-                                    (!empty($persona['localidad']) ? $persona['localidad'] . ', ' : '') . 
-                                    (!empty($persona['direccion']) ? $persona['direccion'] : ''), 
-                                ENT_QUOTES,
-                                'UTF-8'
-                            );
-                        } else {
-                            echo 'No hay dato';
-                        }
-                        ?>
-                    </p>
-                </div>
-
-            </div>
-
-            <h4 class="mt-4">Información de PPL</h4>
-
-            <div class="form-group">
-                <label for="apodo">Apodo:</label>
-                <p class="form-control-static" id="apodo"><?php echo !empty($ppl['apodo']) ? htmlspecialchars($ppl['apodo'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
-            </div>
-
-            <div class="form-group">
-                <label for="trabaja">¿Trabajaba en el momento de la detención?:</label>
-                <p class="form-control-static" id="trabaja"><?php echo isset($ppl['trabaja']) ? ($ppl['trabaja'] ? 'Sí' : 'No') : 'No hay dato'; ?></p>
-            </div>
-
-            <div class="form-group">
-                <label for="profesion">Profesión:</label>
-                <p class="form-control-static" id="profesion"><?php echo !empty($ppl['profesion']) ? htmlspecialchars($ppl['profesion'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
-            </div>
-
-            <div class="form-group">
-                <label for="foto">Foto:</label>
-                <p class="form-control-static" id="foto">
-                    <?php if (!empty($ppl['foto'])): ?>
-                        <img src="imagenes_p<?php echo !empty($ppl['foto']) ? htmlspecialchars($ppl['foto'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>" alt="Foto de la persona" style="max-width: 200px; max-height: 200px;">
-                    <?php else: ?>
-                        No se encontró foto.
-                    <?php endif; ?>
-                </p>
-            </div>
-
-            <div class="form-group">
-                <label for="huella">Huella:</label>
-                <p class="form-control-static" id="huella">
+                <div>
+                    <label class="h6">Profesión:</label>
+                    <?php echo !empty($ppl['profesion']) ? htmlspecialchars($ppl['profesion'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?>                    
+                </div>      
+                <div>
+                    <label class="h6">Huella:</label>                
                     <?php if (!empty($ppl['huella'])): ?>
                         <img src="data:image/png;base64,<?php echo !empty($ppl['huella']) ? base64_encode($ppl['huella']) : 'No hay dato' ?>" alt="Huella" style="max-width: 200px; max-height: 200px;">
-                    <?php else: ?>
-                        No se encontró huella.
-                    <?php endif; ?>
-                </p>
-            </div>
-
-            <h4 class="mt-4">Situación Legal</h4>
-
-            <?php if ($situacion_legal): ?>
-
-                <div class="form-group">
-                    <label for="fecha_detencion">Fecha de detención:</label>
-                    <p class="form-control-static" id="fecha_detencion">
-                        <?php
-                        if (!empty($situacion_legal['fecha_detencion'])) {
-                            echo date('d-m-Y', strtotime($situacion_legal['fecha_detencion']));
-                        } else {
-                            echo 'No hay dato';
-                        }
-                        ?>
-                    </p>
+                    <?php else: ?> No se encontró huella. <?php endif; ?>
+                </div>          
+            </div>       
+            <!-- ------------------------- -->  
+            <h4 class="mt-3 mb-3">Situación Legal</h4>
+            <div class="row">
+                <div>
+                    <?php if ($situacion_legal): ?>                
+                    <label class="h6">Fecha de detención:</label>                    
+                    <?php if (!empty($situacion_legal['fecha_detencion'])) {
+                        echo date('d-m-Y', strtotime($situacion_legal['fecha_detencion']));
+                    } else { echo 'No hay dato'; } ?>
                 </div>
-                <div class="form-group">
-                    <label for="dependencia">Dependencia:</label>
-                    <p class="form-control-static" id="dependencia"><?php echo !empty($situacion_legal['dependencia']) ? htmlspecialchars($situacion_legal['dependencia'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
+                <div>
+                    <label class="h6">Dependencia:</label>
+                    <?php echo !empty($situacion_legal['dependencia']) ? htmlspecialchars($situacion_legal['dependencia'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
                 </div>
-
-                <div class="form-group">
-                    <label for="motivo_t">Motivo de traslado:</label>
-                    <p class="form-control-static" id="motivo_t"><?php echo !empty($situacion_legal['motivo_t']) ? htmlspecialchars($situacion_legal['motivo_t'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
+                <div>
+                    <label class="h6">Motivo de traslado:</label>
+                    <?php echo !empty($situacion_legal['motivo_t']) ? htmlspecialchars($situacion_legal['motivo_t'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
                 </div>
-
-                <div class="form-group">
-                    <label for="situacionlegal">Situación legal:</label>
-                    <p class="form-control-static" id="situacionlegal"><?php echo !empty($situacion_legal['situacionlegal']) ? htmlspecialchars($situacion_legal['situacionlegal'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
+                <div>
+                    <label class="h6">Situación legal:</label>
+                    <?php echo !empty($situacion_legal['situacionlegal']) ? htmlspecialchars($situacion_legal['situacionlegal'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
                 </div>
-
-                <div class="form-group">
-                    <label for="causas">Causa/s:</label>
-                    <p class="form-control-static" id="causas">
-                        <?php
-                        echo !empty($situacion_legal['nombres_causas'])
-                            ? nl2br(htmlspecialchars($situacion_legal['nombres_causas'], ENT_QUOTES, 'UTF-8'))
-                            : 'No hay dato';
-                        ?>
-                    </p>
+                <div>
+                    <label class="h6">Causa/s:</label>
+                    <?php echo !empty($situacion_legal['nombres_causas'])
+                    ? nl2br(htmlspecialchars($situacion_legal['nombres_causas'], ENT_QUOTES, 'UTF-8'))
+                    : 'No hay dato'; ?>
                 </div>
-
-                <div class="form-group">
-                    <label for="id_juzgado">Juzgado:</label>
-                    <p class="form-control-static" id="id_juzgado">
-                        <?php
-                        if (!empty($situacion_legal['nombre_juzgado']) && !empty($situacion_legal['nombre_juez'])) {
-                            echo nl2br(htmlspecialchars($situacion_legal['nombre_juzgado'], ENT_QUOTES, 'UTF-8')) . ' - Juez: ' .
-                                nl2br(htmlspecialchars($situacion_legal['nombre_juez'], ENT_QUOTES, 'UTF-8'));
-                        } else {
-                            echo 'No hay dato';
-                        }
-                        ?>
-                    </p>
+                <div>
+                    <label class="h6">Juzgado:</label>                    
+                    <?php
+                    if (!empty($situacion_legal['nombre_juzgado']) && !empty($situacion_legal['nombre_juez'])) {
+                        echo nl2br(htmlspecialchars($situacion_legal['nombre_juzgado'], ENT_QUOTES, 'UTF-8')) . ' - Juez: ' .
+                            nl2br(htmlspecialchars($situacion_legal['nombre_juez'], ENT_QUOTES, 'UTF-8'));
+                    } else { echo 'No hay dato'; } ?>
                 </div>
-
-                <div class="form-group">
-                    <label for="en_prejucio">En perjuicio de quien:</label>
-                    <p class="form-control-static" id="en_prejucio"><?php echo !empty($situacion_legal['en_prejucio']) ? htmlspecialchars($situacion_legal['en_prejucio'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
+                <div>
+                    <label class="h6">En perjuicio de quien:</label>
+                    <?php echo !empty($situacion_legal['en_prejucio']) ? htmlspecialchars($situacion_legal['en_prejucio'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?> 
                 </div>
-
-                <div class="form-group">
-                    <label for="condena">Condena:</label>
-                    <p class="form-control-static" id="condena"><?php echo !empty($situacion_legal['condena']) ? htmlspecialchars($situacion_legal['condena'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
+                <div>
+                    <label class="h6">Condena:</label>
+                    <?php echo !empty($situacion_legal['condena']) ? htmlspecialchars($situacion_legal['condena'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
                 </div>
-
-                <div class="form-group">
-                    <label for="categoria">Categoria:</label>
-                    <p class="form-control-static" id="categoria"><?php echo !empty($situacion_legal['categoria']) ? htmlspecialchars($situacion_legal['categoria'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
+                <div>
+                    <label class="h6">Categoria:</label>
+                    <?php echo !empty($situacion_legal['categoria']) ? htmlspecialchars($situacion_legal['categoria'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
                 </div>
-
-                <div class="form-group">
-                    <label for="causas_pend">Causas pendientes de resolución:</label>
-                    <p class="form-control-static" id="causas_pend"><?php echo !empty($situacion_legal['causas_pend']) ? htmlspecialchars($situacion_legal['causas_pend'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?></p>
+                <div>
+                    <label class="h6">Causas pendientes de resolución:</label>
+                    <?php echo !empty($situacion_legal['causas_pend']) ? htmlspecialchars($situacion_legal['causas_pend'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>
                 </div>
-
-                <div class="form-group">
-                    <label for="reingreso_falta">Reingreso en caso de quebrantamiento de beneficio y/o libertad:</label>
-                    <p class="form-control-static" id="reingreso_falta"> <?php echo isset($situacion_legal['reingreso_falta']) ? ($situacion_legal['reingreso_falta'] ? 'Sí' : 'No') : 'No hay dato'; ?></p>
+                <div>
+                    <label class="h6">Reingreso en caso de quebrantamiento de beneficio y/o libertad:</label>
+                    <span class="fs-5"><?php echo isset($situacion_legal['reingreso_falta']) ? ($situacion_legal['reingreso_falta'] ? 'Sí' : 'No') : 'No hay dato'; ?></span> 
                 </div>
-
-                <div class="form-group">
-                    <label for="causa_nino">¿Causas judicializadas durante la niñez o adolescencia?:</label>
-                    <p class="form-control-static" id="causa_nino"><?php echo isset($situacion_legal['causa_nino']) ? ($situacion_legal['causa_nino'] ? 'Sí' : 'No') : 'No hay dato'; ?></p>
+                <div>
+                    <label class="h6">¿Causas judicializadas durante la niñez o adolescencia?:</label>
+                    <span class="fs-5"><?php echo isset($situacion_legal['causa_nino']) ? ($situacion_legal['causa_nino'] ? 'Sí' : 'No') : 'No hay dato'; ?></span> 
                 </div>
-
-                <div class="form-group">
-                    <label for="cumplio_medida">¿Cumplió medidas socioeducativas?:</label>
-                    <p class="form-control-static" id="cumplio_medida"><?php echo isset($situacion_legal['cumplio_medida']) ? ($situacion_legal['cumplio_medida'] ? 'Sí' : 'No') : 'No hay dato'; ?></p>
+                <div>
+                    <label class="h6">¿Cumplió medidas socioeducativas?:</label>
+                    <span class="fs-5"><?php echo isset($situacion_legal['cumplio_medida']) ? ($situacion_legal['cumplio_medida'] ? 'Sí' : 'No') : 'No hay dato'; ?></span> 
                 </div>
-
-                <div class="form-group">
-                    <label for="asistio_rehabi">Institucionalizaciones en centros de rehabilitación por conflictos con la ley:</label>
-                    <p class="form-control-static" id="asistio_rehabi"><?php echo isset($situacion_legal['asistio_rehabi']) ? ($situacion_legal['asistio_rehabi'] ? 'Sí' : 'No') : 'No hay dato'; ?></p>
+                <div>
+                    <label class="h6">Institucionalizaciones en centros de rehabilitación por conflictos con la ley:</label>
+                    <span class="fs-5"><?php echo isset($situacion_legal['asistio_rehabi']) ? ($situacion_legal['asistio_rehabi'] ? 'Sí' : 'No') : 'No hay dato'; ?></span> 
                 </div>
-
-                <div class="form-group">
-                    <label for="tiene_defensor">¿Cuenta con un defensor oficial?:</label>
-                    <p class="form-control-static" id="tiene_defensor">
-                        <?php echo isset($situacion_legal['tiene_defensor']) ? ($situacion_legal['tiene_defensor'] ? 'Sí' : 'No') : 'No hay dato'; ?>
-                    </p>
+                <div>
+                    <label class="h6">¿Cuenta con un defensor oficial?:</label>
+                    <span class="fs-5"><?php echo isset($situacion_legal['tiene_defensor']) ? ($situacion_legal['tiene_defensor'] ? 'Sí' : 'No') : 'No hay dato'; ?></span> 
                 </div>
-
                 <?php if (isset($situacion_legal['tiene_defensor']) && $situacion_legal['tiene_defensor']) : ?>
-                    <div class="form-group">
-                        <label for="nombre_defensor">¿Quién?:</label>
-                        <p class="form-control-static" id="nombre_defensor">
-                            <?php echo !empty($situacion_legal['nombre_defensor']) ? htmlspecialchars($situacion_legal['nombre_defensor'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?>
-                        </p>
+                    <div>
+                        <label class="h6">¿Quién?:</label>
+                        <?php echo !empty($situacion_legal['nombre_defensor']) ? htmlspecialchars($situacion_legal['nombre_defensor'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?>
                     </div>
-
-                    <div class="form-group">
-                        <label for="tiene_com_defensor">¿Tiene comunicación con él?:</label>
-                        <p class="form-control-static" id="tiene_com_defensor">
-                            <?php echo isset($situacion_legal['tiene_com_defensor']) ? ($situacion_legal['tiene_com_defensor'] ? 'Sí' : 'No') : 'No hay dato'; ?>
-                        </p>
+                    <div>
+                        <label class="h6">¿Tiene comunicación con él?:</label>
+                        <span class="fs-5"><?php echo isset($situacion_legal['tiene_com_defensor']) ? ($situacion_legal['tiene_com_defensor'] ? 'Sí' : 'No') : 'No hay dato'; ?></span> 
                     </div>
                 <?php endif; ?>
+                
+
+            </div>
+
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                
         </div>
 
     <?php else: ?>

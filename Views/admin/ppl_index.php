@@ -23,7 +23,7 @@ if (isset($_GET['txtID'])) {
                     <a class="btn btn-primary float-right mb-2" href="persona_crea.php">Nueva Persona</a>
                 </div>
                 <div class="card-body table-responsive">
-                    <table id="example" class="table table-striped table-sm" style="width:100%">
+                    <table id="example" class="table table-bordered table-striped table-hover table-sm" style="width:100%">
                         <thead class="thead-dark">
                             <tr>
                                 <th>#</th>
@@ -54,7 +54,7 @@ if (isset($_GET['txtID'])) {
                                     FROM 
                                         ppl AS ppl
                                     LEFT JOIN 
-                                        persona AS per ON ppl.idpersona = per.id
+                                        persona AS per ON ppl.idpersona = per.id  
                                     LEFT JOIN 
                                         domicilio AS dom ON per.id = dom.id_persona
                                     LEFT JOIN 
@@ -66,7 +66,9 @@ if (isset($_GET['txtID'])) {
                                     LEFT JOIN
                                         situacionlegal AS sl ON ppl.id = sl.id_ppl
                                     LEFT JOIN
-                                        fechappl AS fppl ON ppl.id = fppl.idppl";
+                                        fechappl AS fppl ON ppl.id = fppl.idppl
+                                    WHERE 
+                                        per.estado = 'Activo'";
                                     $stmt = $db->prepare($query);
                                     $stmt->execute();
                                     $pples = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -77,11 +79,15 @@ if (isset($_GET['txtID'])) {
                                             <td><?php echo htmlspecialchars($ppl['nombres'] . ' ' . $ppl['apellidos'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td><?php echo htmlspecialchars($ppl['dni'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td>
-                                                <?php echo htmlspecialchars($ppl['nombre_pais'], ENT_QUOTES, 'UTF-8') . ","; ?>
-                                                <?php echo htmlspecialchars($ppl['nombre_provincia'], ENT_QUOTES, 'UTF-8'). ","; ?>
-                                                <?php echo htmlspecialchars($ppl['nombre_ciudad'], ENT_QUOTES, 'UTF-8'). ","; ?>
-                                                <?php echo htmlspecialchars($ppl['localidad_domicilio'], ENT_QUOTES, 'UTF-8'). ","; ?>
-                                                <?php echo htmlspecialchars($ppl['direccion_domicilio'], ENT_QUOTES, 'UTF-8'); ?>
+                                                <div>                                                        
+                                                    <?php echo htmlspecialchars($ppl['nombre_pais'], ENT_QUOTES, 'UTF-8').",";?>
+                                                    <?php echo htmlspecialchars($ppl['nombre_provincia'], ENT_QUOTES, 'UTF-8').",";?>
+                                                    <?php echo htmlspecialchars($ppl['nombre_ciudad'], ENT_QUOTES, 'UTF-8').","; ?>
+                                                </div>
+                                                <div>                                                    
+                                                    <?php echo htmlspecialchars($ppl['localidad_domicilio'], ENT_QUOTES, 'UTF-8').",";?>
+                                                    <?php echo htmlspecialchars($ppl['direccion_domicilio'], ENT_QUOTES, 'UTF-8');?>
+                                                </div>
                                             </td>
                                             <td><?php echo htmlspecialchars($ppl['fecha_detencion'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td><?php echo htmlspecialchars($ppl['inicio_condena'], ENT_QUOTES, 'UTF-8'); ?></td>

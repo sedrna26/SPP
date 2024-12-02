@@ -177,6 +177,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_3'])) {
         registrarAuditoria($db, $accion, $tabla_afectada, $idppl, $detalles);
 
         echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
+        header("Location: ppl_informe.php?seccion=situacion-social&id=".$idppl);
     } catch (Exception $e) {
         $db->rollBack();
         echo "<div class='alert alert-danger'>Error al guardar los datos: " . $e->getMessage() . "</div>";
