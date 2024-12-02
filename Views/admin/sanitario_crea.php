@@ -49,7 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
         $accion = 'Agregar Datos Médicos';
         $tabla_afectada = 'datos_medicos';
         $detalles = "Se insertaron los datos médicos para el paciente con ID: $id_ppl";
-        registrarAuditoria($db, $accion, $tabla_afectada, $id_ppl, $detalles);
+        registrarAuditoria($db, $accion, $tabla_afectada, $id_ppl, $detalles);        
+        header("Location: ppl_informe.php?seccion=informe-sanitario&id=".$idppl);
+
         echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
     } catch (PDOException $e) {
         echo "<div class='alert alert-danger'>Error al guardar los datos: " . $e->getMessage() . "</div>";

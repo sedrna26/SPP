@@ -144,10 +144,7 @@ function obtenerUltimaFoto($dni, $db) {
 ?>
 <!-- ------------------------ -->
 <style>
-    .form-container {
-        margin: 20px;
-    }
-
+    
     .foto {
         width: 250px;
         height: 250px;
@@ -156,18 +153,7 @@ function obtenerUltimaFoto($dni, $db) {
         justify-content: center;
         align-items: center;
         border: 1px solid #ddd;
-    }
-
-    .line {
-        display: inline-block;
-        width: 150px;
-        border-bottom: 1px solid #000;
-        margin-left: 5px;
-    }
-
-    .section-title {
-        font-weight: bold;
-    }
+    }   
 </style>
 <!-- ------------------------------------ -->
 <?php $dni = isset($_GET['dni']) ? $_GET['dni'] : '';?>
@@ -184,26 +170,23 @@ function obtenerUltimaFoto($dni, $db) {
             </h5> -->
         </div>
         <div class="card-body  table-responsive">
-            <div class="container mb-4">
+            <div class="content mb-4">
                 <div class="row mt-2">
                     <div class="col-md-7">
-                        
                         <p>
                             <label class="h6 ">Apellidos y Nombres:</label>
                             <span class="form-control-static" id="nombres-apellidos">
                                 <?php
                                 echo !empty($persona['nombres']) && !empty($persona['apellidos']) ?
                                     htmlspecialchars($persona['nombres'] . ' ' . $persona['apellidos'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';
-                                ?>
+                                    'No hay dato'; ?>
                             </span>
                             <label class="h6 ml-5">D.N.I.:</label>
                             <span>
                                 <?php
                                 echo !empty($persona['dni']) ?
                                     htmlspecialchars($persona['dni'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';
-                                ?>
+                                    'No hay dato'; ?>
                             </span>
                         </p>
                         <p>
@@ -217,7 +200,6 @@ function obtenerUltimaFoto($dni, $db) {
                                 }
                                 ?>
                             </span>
-
                             <label class="h6 ml-5">Edad:</label>
                             <span>
                                 <?php
@@ -226,7 +208,6 @@ function obtenerUltimaFoto($dni, $db) {
                                     'No hay dato';
                                 ?>
                             </span>
-
                             <!-- <label class="h6 ml-5">Apodo:</label>
                             <span>
                                 <?php
@@ -235,7 +216,6 @@ function obtenerUltimaFoto($dni, $db) {
                                     'No hay dato';
                                 ?>
                             </span> -->
-
                         </p>
                         <p>
                             <label class="h6 ">País:</label>
@@ -243,16 +223,14 @@ function obtenerUltimaFoto($dni, $db) {
                                 <?php
                                 echo !empty($persona['pais']) ?
                                     htmlspecialchars($persona['pais'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';
-                                ?>
+                                    'No hay dato'; ?>
                             </span>
                             <label class="h6 ml-5">Provincia:</label>
                             <span>
                                 <?php
                                 echo !empty($persona['provincia']) ?
                                     htmlspecialchars($persona['provincia'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';
-                                ?>
+                                    'No hay dato';?>
                             </span>
                             <label class="h6 ml-5">Ciudad:</label>
                             <span>
@@ -262,8 +240,6 @@ function obtenerUltimaFoto($dni, $db) {
                                     'No hay dato';
                                 ?>
                             </span>
-                            
-                            
                         </p>
                         <p>
                             <label class="h6 ">Departamento / Localidad:</label>
@@ -271,11 +247,8 @@ function obtenerUltimaFoto($dni, $db) {
                                 <?php
                                 echo !empty($persona['localidad']) ?
                                     htmlspecialchars($persona['localidad'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';
-                                ?>
+                                    'No hay dato'; ?>
                             </span>
-                            
-                            
                         </p>
                         <p>
                             <label class="h6 ">Domicilio:</label>
@@ -283,11 +256,9 @@ function obtenerUltimaFoto($dni, $db) {
                                 <?php
                                 echo !empty($persona['direccion']) ?
                                     htmlspecialchars($persona['direccion'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';
-                                ?>
+                                    'No hay dato'; ?>
                             </span>
-                        </p>
-                        
+                        </p>                        
                     </div>
                     <div class="col-md-4 text-center mb-4">
                         <div class="foto">
@@ -307,7 +278,7 @@ function obtenerUltimaFoto($dni, $db) {
                     </div>
             </div>
             <!-- ------------------------- -->
-            <table id="" class="table table-striped table-sm">
+            <table id="example" class="table table-bordered table-striped table-hover table-sm" style="width:100%">
                 <thead class="thead-dark">
                     <tr>
                         <th>#</th>
@@ -318,72 +289,82 @@ function obtenerUltimaFoto($dni, $db) {
                         <th>Inicio Condena</th>
                         <th>Fin Condena</th>
                         <th>Carga</th>
-                        
                     </tr>
                 </thead>
                 <tbody>
-                            <?php
-                                try {
-                                    $query = "SELECT 
-                                        ppl.*,
-                                        per.*,
-                                        pai.nombre AS nombre_pais,
-                                        ciu.nombre AS nombre_ciudad,
-                                        pro.nombre AS nombre_provincia,
-                                        dom.localidad AS localidad_domicilio,
-                                        dom.direccion AS direccion_domicilio,
-                                        DATE_FORMAT(sl.fecha_detencion, '%d-%m-%Y') AS fecha_detencion,
-                                        DATE_FORMAT(fppl.inicio_condena, '%d-%m-%Y') AS inicio_condena,
-                                        COALESCE(DATE_FORMAT(fppl.fin_condena, '%d-%m-%Y'), '-') AS fin_condena
-                                    FROM 
-                                        ppl AS ppl
-                                    LEFT JOIN 
-                                        persona AS per ON ppl.idpersona = per.id
-                                    LEFT JOIN 
-                                        domicilio AS dom ON per.id = dom.id_persona
-                                    LEFT JOIN 
-                                        paises AS pai ON dom.id_pais = pai.id
-                                    LEFT JOIN 
-                                        ciudades AS ciu ON dom.id_ciudad = ciu.id
-                                    LEFT JOIN 
-                                        provincias AS pro ON dom.id_provincia = pro.id
-                                    LEFT JOIN
-                                        situacionlegal AS sl ON ppl.id = sl.id_ppl
-                                    LEFT JOIN
-                                        fechappl AS fppl ON ppl.id = fppl.idppl";
-                                    $stmt = $db->prepare($query);
-                                    $stmt->execute();
-                                    $pples = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                    foreach ($pples as $ppl) {
+                    <?php
+                    try {
+                        $query = "SELECT 
+                            ppl.*,
+                            per.*,
+                            pai.nombre AS nombre_pais,
+                            ciu.nombre AS nombre_ciudad,
+                            pro.nombre AS nombre_provincia,
+                            dom.localidad AS localidad_domicilio,
+                            dom.direccion AS direccion_domicilio,
+                            DATE_FORMAT(sl.fecha_detencion, '%d-%m-%Y') AS fecha_detencion,
+                            DATE_FORMAT(fppl.inicio_condena, '%d-%m-%Y') AS inicio_condena,
+                            COALESCE(DATE_FORMAT(fppl.fin_condena, '%d-%m-%Y'), '-') AS fin_condena
+                        FROM 
+                            ppl AS ppl
+                        LEFT JOIN 
+                            persona AS per ON ppl.idpersona = per.id
+                        LEFT JOIN 
+                            domicilio AS dom ON per.id = dom.id_persona
+                        LEFT JOIN 
+                            paises AS pai ON dom.id_pais = pai.id
+                        LEFT JOIN 
+                            ciudades AS ciu ON dom.id_ciudad = ciu.id
+                        LEFT JOIN 
+                            provincias AS pro ON dom.id_provincia = pro.id
+                        LEFT JOIN
+                            situacionlegal AS sl ON ppl.id = sl.id_ppl
+                        LEFT JOIN
+                            fechappl AS fppl ON ppl.id = fppl.idppl
+                        WHERE 
+                            per.dni = :dni
+                        ORDER BY 
+                            ppl.id DESC";
+                        $stmt = $db->prepare($query);
+                        $stmt->bindParam(':dni', $dni, PDO::PARAM_STR);
+                        $stmt->execute();
+                        $pples = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        
+                        foreach ($pples as $ppl) {
+                    ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($ppl['id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($ppl['nombres'] . ' ' . $ppl['apellidos'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($ppl['dni'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td>
+                                <?php 
+                                $domicilio = [];
+                                if (!empty($ppl['nombre_pais'])) $domicilio[] = htmlspecialchars($ppl['nombre_pais'], ENT_QUOTES, 'UTF-8');
+                                if (!empty($ppl['nombre_provincia'])) $domicilio[] = htmlspecialchars($ppl['nombre_provincia'], ENT_QUOTES, 'UTF-8');
+                                if (!empty($ppl['nombre_ciudad'])) $domicilio[] = htmlspecialchars($ppl['nombre_ciudad'], ENT_QUOTES, 'UTF-8');
+                                if (!empty($ppl['localidad_domicilio'])) $domicilio[] = htmlspecialchars($ppl['localidad_domicilio'], ENT_QUOTES, 'UTF-8');
+                                if (!empty($ppl['direccion_domicilio'])) $domicilio[] = htmlspecialchars($ppl['direccion_domicilio'], ENT_QUOTES, 'UTF-8');
+                                echo implode(', ', $domicilio); 
                                 ?>
-                                        <tr>
-                                            <td><?php echo htmlspecialchars($ppl['id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                            <td><?php echo htmlspecialchars($ppl['nombres'] . ' ' . $ppl['apellidos'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                            <td><?php echo htmlspecialchars($ppl['dni'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                            <td>
-                                                <?php echo htmlspecialchars($ppl['nombre_pais'], ENT_QUOTES, 'UTF-8') . ","; ?>
-                                                <?php echo htmlspecialchars($ppl['nombre_provincia'], ENT_QUOTES, 'UTF-8'). ","; ?>
-                                                <?php echo htmlspecialchars($ppl['nombre_ciudad'], ENT_QUOTES, 'UTF-8'). ","; ?>
-                                                <?php echo htmlspecialchars($ppl['localidad_domicilio'], ENT_QUOTES, 'UTF-8'). ","; ?>
-                                                <?php echo htmlspecialchars($ppl['direccion_domicilio'], ENT_QUOTES, 'UTF-8'); ?>
-                                            </td>
-                                            <td><?php echo htmlspecialchars($ppl['fecha_detencion'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                            <td><?php echo htmlspecialchars($ppl['inicio_condena'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                            <td><?php echo htmlspecialchars($ppl['fin_condena'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                            <td>
-                                                <a class="btn btn-info" href='ppl_informe.php?id=<?php echo $ppl['id']; ?>'>Informe(IEII)</a>
-                                            </td>
-                                            
-                                        </tr>
-                                <?php
-                                    }
-                                } catch (PDOException $e) {
-                                    error_log("Error al obtener los pples: " . $e->getMessage());
-                                }
-                                ?>
-                        </tbody>
+                            </td>
+                            <td><?php echo htmlspecialchars($ppl['fecha_detencion'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($ppl['inicio_condena'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($ppl['fin_condena'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td>
+                                <a class="btn btn-info" href='ppl_informe.php?id=<?php echo $ppl['id']; ?>'>Informe(IEII)</a>
+                            </td>
+                        </tr>
+                    <?php
+                        }
+                    } catch (PDOException $e) {
+                        error_log("Error al obtener los pples: " . $e->getMessage());
+                    }
+                    ?>
+                </tbody>
             </table>
         </div>
     </div>
     </div>
 </section>
+
+<?php require 'footer.php'; ?>
