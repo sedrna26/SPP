@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
             $_POST['sector_nro'],
             $_POST['pabellon_nro']
         ]);
-
+        header("Location: ppl_informe.php?seccion=clasificacion&id=".$idppl);
         echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
     } catch (PDOException $e) {
         echo "<div class='alert alert-danger'>Error al guardar los datos: " . $e->getMessage() . "</div>";

@@ -26,8 +26,15 @@ if ($idppl > 0) {
         }
     </style>
 
-    <div class="container mt-3">
-        <h3>Informe Laboral</h3>
+<div class="card">    
+    <div class="card-body">
+    <div class="d-flex align-items-center">
+        <h4>Informe Laboral</h4>
+        <a class="btn btn-warning ml-3 btn-sm" href='laboral_espiritual_edit.php?id=<?php echo $idppl; ?>'>Editar Labora-Espirutual</a>
+    </div>
+
+    <div class="row mt-3">   
+
         <?php if ($laboral): ?>
             <p>Tiene Experiencia Previa: <?= $laboral['tiene_exp'] ? 'Sí' : 'No'; ?></p>
             <p>Experiencia: <?= htmlspecialchars($laboral['experiencia']); ?></p>
@@ -49,4 +56,7 @@ if ($idppl > 0) {
         <?php else: ?>
             <p>No hay información de asistencia espiritual disponible.</p>
         <?php endif; ?>
+        
+        </div>     
     </div>
+</div>

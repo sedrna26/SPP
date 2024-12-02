@@ -49,6 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $tabla_afectada = 'educación';
         $detalles = "Se insertó una nueva educación para el PPL con ID: $idppl";
         registrarAuditoria($db, $accion, $tabla_afectada, $idppl, $detalles);
+
+        header("Location: ppl_informe.php?seccion=educacion&id=".$idppl);
+        exit();
     } catch (PDOException $e) {
         echo "<div class='alert alert-danger'>Error al guardar los datos: " . $e->getMessage() . "</div>";
     }
@@ -82,7 +85,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-
         .checkbox-group {
             margin-bottom: 15px;
         }
@@ -92,24 +94,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             display: inline;
             margin-left: 5px;
         }
-
-        /* .btn {
-            padding: 10px 15px;
-            background-color: #212529;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        } */
-
         #titulo {
             padding-bottom: 1rem;
         }
-
         /* Estilo para campos ocultos */
         .hidden {
             display: none;

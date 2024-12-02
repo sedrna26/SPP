@@ -60,6 +60,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
         $tabla_afectada = 'asistencia_espiritual, laboral';
         $detalles = "Se insertó una nueva asistencia_espiritual y laboral para el PPL con ID: $idppl";
         registrarAuditoria($db, $accion, $tabla_afectada, $idppl, $detalles);
+        
+        header("Location: ppl_informe.php?seccion=situacion-laboral&id=".$idppl);
 
 
         echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
