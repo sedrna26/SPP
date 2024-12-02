@@ -75,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 if ($id) {
     try {
-        $sql = "SELECT * FROM educacion WHERE id = :id";
+        $sql = "SELECT * FROM educacion WHERE id_ppl = :id";
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();

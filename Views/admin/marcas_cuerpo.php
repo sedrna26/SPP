@@ -7,12 +7,11 @@ if ($idppl <= 0) {
     die("ID de persona no válido");
 }
 
-// Crear tabla si no existe
 $sql = "CREATE TABLE IF NOT EXISTS marcas_cuerpo (
     id INT AUTO_INCREMENT PRIMARY KEY,
     idppl INT NOT NULL,
-    x FLOAT NOT NULL,
-    y FLOAT NOT NULL,
+    x DECIMAL(5,2) NOT NULL,
+    y DECIMAL(5,2) NOT NULL,
     description VARCHAR(255) NOT NULL,
     estado VARCHAR(20) DEFAULT 'Activo',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -20,62 +19,88 @@ $sql = "CREATE TABLE IF NOT EXISTS marcas_cuerpo (
 )";
 $conexion->query($sql);
 
-// Procesar eliminación de marca
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'eliminar_marca') {
-    $id_marca = $conexion->real_escape_string($_POST['id_marca']);
-    $sql_eliminar = "UPDATE marcas_cuerpo SET estado = 'Inactivo' WHERE id = '$id_marca' AND idppl = '$idppl'";
-    $conexion->query($sql_eliminar);
-    header("Location: {$_SERVER['PHP_SELF']}?id={$idppl}");
-    exit();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json');
+    $response = ['success' => false, 'message' => '', 'redirect' => ''];
+    
+    if (isset($_POST['action']) && $_POST['action'] === 'eliminar_marca') {
+        $id_marca = $conexion->real_escape_string($_POST['id_marca']);
+        $sql_eliminar = "UPDATE marcas_cuerpo SET estado = 'Inactivo' WHERE id = '$id_marca' AND idppl = '$idppl'";
+        if ($conexion->query($sql_eliminar)) {
+            $response = [
+                'success' => true,
+                'message' => 'Marca eliminada correctamente',
+                'redirect' => "marcas_cuerpo.php?id=" . $idppl
+            ];
+        }
+        echo json_encode($response);
+        exit;
+    }
+
+    if (isset($_POST['x']) && isset($_POST['y']) && isset($_POST['description'])) {
+        $x = $conexion->real_escape_string($_POST['x']);
+        $y = $conexion->real_escape_string($_POST['y']);
+        $description = $conexion->real_escape_string($_POST['description']);
+
+        $sql_insertar = "INSERT INTO marcas_cuerpo (idppl, x, y, description) 
+                         VALUES ('$idppl', '$x', '$y', '$description')";
+        if ($conexion->query($sql_insertar)) {
+            $new_id = $conexion->insert_id;
+            $response = [
+                'success' => true,
+                'message' => 'Marca agregada correctamente',
+                'redirect' => "marcas_cuerpo.php?id=" . $idppl,
+                'marca' => [
+                    'id' => $new_id,
+                    'x' => $x,
+                    'y' => $y,
+                    'description' => $description
+                ]
+            ];
+        }
+        echo json_encode($response);
+        exit;
+    }
 }
 
-// Procesar agregado de marca
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x']) && isset($_POST['y']) && isset($_POST['description'])) {
-    $x = $conexion->real_escape_string($_POST['x']);
-    $y = $conexion->real_escape_string($_POST['y']);
-    $description = $conexion->real_escape_string($_POST['description']);
-
-    $sql_insertar = "INSERT INTO marcas_cuerpo (idppl, x, y, description) 
-                     VALUES ('$idppl', '$x', '$y', '$description')";
-    $conexion->query($sql_insertar);
-    header("Location: {$_SERVER['PHP_SELF']}?id={$idppl}");
-    exit();
-}
-
-// Obtener marcas activas
 $sql_marcas = "SELECT id, x, y, description FROM marcas_cuerpo WHERE idppl = '$idppl' AND estado = 'Activo'";
 $resultado_marcas = $conexion->query($sql_marcas);
 $marcas = $resultado_marcas->fetch_all(MYSQLI_ASSOC);
 ?>
 
-    <style>
-        .body-container {
-            position: relative;
-            display: inline-block;
-        }
-        .body-mark {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            background-color: red;
-            border-radius: 50%;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transform: translate(-50%, -50%);
-            font-size: 12px;
-        }
-        #bodyImage {
-            max-width: 100%;
-            height: auto;
-        }
-        .marks-list {
-            max-height: 500px;
-            overflow-y: auto;
-        }
-    </style>
+<style>
+    .body-container {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+    .body-mark {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        background-color: red;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transform: translate(-50%, -50%);
+        font-size: 12px;
+        max-width: 5%;
+        max-height: 5%;
+    }
+    #bodyImage {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    .marks-list {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+</style>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-6">
@@ -86,14 +111,16 @@ $marcas = $resultado_marcas->fetch_all(MYSQLI_ASSOC);
                 <div class="card-body text-center">
                     <div class="body-container" id="bodyContainer">
                         <img src="../../img/tu-imagen.png" alt="Silueta del cuerpo" id="bodyImage" class="img-fluid">
-                        
-                        <?php foreach($marcas as $index => $marca): ?>
-                            <div class="body-mark" 
-                                 style="left: <?php echo $marca['x']; ?>px; top: <?php echo $marca['y']; ?>px;"
-                                 title="<?php echo htmlspecialchars($marca['description']); ?>">
-                                <?php echo $index + 1; ?>
-                            </div>
-                        <?php endforeach; ?>
+                        <div id="marks-container">
+                            <?php foreach($marcas as $index => $marca): ?>
+                                <div class="body-mark" 
+                                     data-mark-id="<?php echo $marca['id']; ?>"
+                                     style="left: <?php echo $marca['x']; ?>%; top: <?php echo $marca['y']; ?>%;"
+                                     title="<?php echo htmlspecialchars($marca['description']); ?>">
+                                    <?php echo $index + 1; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -104,40 +131,46 @@ $marcas = $resultado_marcas->fetch_all(MYSQLI_ASSOC);
                 <div class="card-header bg-dark text-white">
                     <h5 class="mb-0">Cicatrices Registradas</h5>
                 </div>
-                <div class="card-body marks-list">
+                <div class="card-body marks-list" id="marks-list">
                     <?php foreach($marcas as $index => $marca): ?>
-                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                            <div>
-                                <strong>Marca #<?php echo $index + 1; ?></strong>
+                        <div class=" justify-content-between align-items-center mb-2 pb-2 border-bottom" data-mark-id="<?php echo $marca['id']; ?>">
+
+                        
+                            <strong>Marca #<?php echo $index + 1; ?></strong>
+                            <button type="button" class="btn btn-danger btn-sm delete-mark" data-mark-id="<?php echo $marca['id']; ?>">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                       
+                            <div>                               
                                 <p class="mb-0"><?php echo htmlspecialchars($marca['description']); ?></p>
-                            </div>
-                            <form method="POST" class="d-inline">
-                                <input type="hidden" name="action" value="eliminar_marca">
-                                <input type="hidden" name="id_marca" value="<?php echo $marca['id']; ?>">
-                                <button type="submit" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                </button>
-                            </form>
+                            </div>                            
                         </div>
                     <?php endforeach; ?>
                 </div>
             </div>
-            
-            <div class="card mt-3">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Añadir Nueva Marca</h5>
-                </div>
-                <div class="card-body">
-                    <form method="POST" id="markForm">
-                        <input type="hidden" name="x" id="markX">
-                        <input type="hidden" name="y" id="markY">
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Descripción de la Marca</label>
-                            <textarea name="description" id="description" class="form-control" rows="3" required maxlength="255" placeholder="Describe la cicatriz aquí..."></textarea>
-                        </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addMarkModal" tabindex="-1" aria-labelledby="addMarkModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="addMarkModalLabel">Añadir Nueva Marca</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="markForm">
+                    <input type="hidden" name="x" id="markX">
+                    <input type="hidden" name="y" id="markY">
+                    <div class="mb-3">
+                        <textarea name="description" id="description" class="form-control" rows="3" required maxlength="255" placeholder="Describe la Marca aquí..."></textarea>
+                    </div>
+                    <div class="modal-footer px-0 pb-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary" id="saveMarkButton" disabled>Guardar Marca</button>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -150,21 +183,95 @@ document.addEventListener('DOMContentLoaded', function() {
     const markY = document.getElementById('markY');
     const description = document.getElementById('description');
     const saveMarkButton = document.getElementById('saveMarkButton');
+    const markForm = document.getElementById('markForm');
+    const addMarkModal = new bootstrap.Modal(document.getElementById('addMarkModal'));
+    const marksContainer = document.getElementById('marks-container');
+    const marksList = document.getElementById('marks-list');
 
     bodyImage.addEventListener('click', function(event) {
         const rect = event.target.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+        const x = ((event.clientX - rect.left) / rect.width) * 100;
+        const y = ((event.clientY - rect.top) / rect.height) * 100;
 
         markX.value = x;
         markY.value = y;
         
-        description.focus();
-        saveMarkButton.disabled = false;
+        description.value = '';
+        saveMarkButton.disabled = true;
+        
+        addMarkModal.show();
+        
+        setTimeout(() => {
+            description.focus();
+        }, 500);
     });
 
     description.addEventListener('input', function() {
         saveMarkButton.disabled = this.value.trim() === '';
+    });
+
+    description.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' && !event.shiftKey && !saveMarkButton.disabled) {
+            event.preventDefault();
+            submitForm();
+        }
+    });
+
+    markForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        submitForm();
+    });
+
+    function submitForm() {
+        const formData = new FormData(markForm);
+        
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.redirect) {
+                window.location.href = data.redirect;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            window.location.reload();
+        });
+    }
+
+    function handleDelete(event) {
+        const markId = event.target.closest('.delete-mark').dataset.markId;
+        
+        if (confirm('¿Está seguro de eliminar esta marca?')) {
+            const formData = new FormData();
+            formData.append('action', 'eliminar_marca');
+            formData.append('id_marca', markId);
+
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.location.reload();
+            });
+        }
+    }
+
+    document.querySelectorAll('.delete-mark').forEach(button => {
+        button.addEventListener('click', handleDelete);
+    });
+
+    document.getElementById('addMarkModal').addEventListener('hidden.bs.modal', function () {
+        markForm.reset();
     });
 });
 </script>

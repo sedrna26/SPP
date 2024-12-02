@@ -38,7 +38,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
         $tabla_afectada = 'observaciones';
         $detalles = "Se insertó una nueva observación para el PPL con ID: $idppl";
         registrarAuditoria($db, $accion, $tabla_afectada, $idppl, $detalles);
-
+            
+        header("Location: ppl_informe.php?seccion=observaciones&id=".$idppl);
 
         echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
     } catch (PDOException $e) {
@@ -49,41 +50,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
 
 <head>
     <style>
-        .form-section {
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-
-
-        /* .btn {
-            padding: 10px 15px;
-            background-color: #212529;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        } */
-
-        #titulo {
-            padding-bottom: 1rem;
-        }
     </style>
 </head>
 
@@ -94,13 +60,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
         <!-- Sección de Clasificación -->
         <div class="form-section">
             <h3 id="titulo">Observaciones del PPL</h3>
-
             <div class="form-group">
                 <label>Ingrese la observacion correspondiente:</label>
-                <textarea class="w-100 p-2 border border-gray-300 rounded mb-4"
-                    name="observacion" id="observacion" placeholder="Ingrese la obvservación">
-
-                </textarea>
+                <textarea class="form-control" name="observacion" id="observacion" rows="3" maxlength="255" placeholder="Ingrese la obvservación"></textarea>
             </div>
 
 

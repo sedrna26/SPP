@@ -42,15 +42,15 @@ if ($idppl > 0) {
 }
 ?>
 
+<div class="card">
+    
+        <div class="card-body">
+        <div class="d-flex align-items-center">
+            <h3 class="">Información Familiar General</h3>
+            <a class="btn btn-warning ml-3 btn-sm" href='socio-familia_edit.php?id=<?php echo $idppl; ?>'>Editar Socio-Familia</a>
+        </div>
 
-
-
-
-<body>
-    <div class="container mt-3">
-
-
-        <h3>Información Familiar General</h3>
+        <div class="row mt-3">
         <?php if ($familiaresInfo): ?>
             <p>Familiares FF.AA: <?= $familiaresInfo['familiares_ffaa'] ? 'Sí' : 'No'; ?></p>
             <p>Detalles FF.AA: <?= $familiaresInfo['ffaa_detalles']; ?></p>
@@ -142,7 +142,6 @@ if ($idppl > 0) {
         <?php else: ?>
             <p>No hay información disponible.</p>
         <?php endif; ?>
+        </div>     
     </div>
-</body>
-
-</html>
+</div>
