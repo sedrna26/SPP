@@ -1,13 +1,19 @@
 <?php require 'navbar.php'; ?>
 
 <?php
+if (!function_exists('finfo_open')) {
+    die('fileinfo extension is not available');
+}
+
 if (isset($_GET['dni']) && ctype_digit($_GET['dni'])) {
     $dni = $_GET['dni'];
+    // Modified query to get the latest record for this DNI
     $stmt = $conexion->prepare("SELECT ppl.*, per.*
         FROM ppl AS ppl
         LEFT JOIN persona AS per 
         ON ppl.idpersona = per.id
         WHERE per.dni = ?
+        ORDER BY ppl.id DESC LIMIT 1
     ");
     $stmt->bind_param("i", $dni);
     $stmt->execute();
@@ -23,6 +29,7 @@ if (isset($_GET['dni']) && ctype_digit($_GET['dni'])) {
     echo "DNI no válido.";
 }
 
+// Rest of the personal data queries
 try {
     $stmt_persona = $db->prepare("SELECT 
                                   persona.id,
@@ -45,19 +52,23 @@ try {
                               LEFT JOIN provincias pr ON d.id_provincia = pr.id
                               LEFT JOIN ciudades c ON d.id_ciudad = c.id
                               WHERE persona.id = :id
+                              ORDER BY persona.id DESC LIMIT 1
     ");
     $stmt_persona->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt_persona->execute();
     $persona = $stmt_persona->fetch(PDO::FETCH_ASSOC);
 
+    // Modified PPL query to get latest record
     $stmt_ppl = $db->prepare("SELECT id, apodo, profesion, trabaja, foto, huella
         FROM ppl
         WHERE idpersona = :id
+        ORDER BY id DESC LIMIT 1
     ");
     $stmt_ppl->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt_ppl->execute();
     $ppl = $stmt_ppl->fetch(PDO::FETCH_ASSOC);
 
+    // Modified situacion legal query to get latest record
     $stmt_situacion = $db->prepare("SELECT situacionlegal.id_ppl, situacionlegal.fecha_detencion, situacionlegal.dependencia, situacionlegal.motivo_t, 
                situacionlegal.situacionlegal, situacionlegal.causas, situacionlegal.id_juzgado, situacionlegal.en_prejucio, 
                situacionlegal.condena, situacionlegal.categoria, situacionlegal.reingreso_falta, situacionlegal.causas_pend, 
@@ -70,8 +81,9 @@ try {
         LEFT JOIN juzgado ON situacionlegal.id_juzgado = juzgado.id
         LEFT JOIN ppl_causas ON situacionlegal.id_ppl = ppl_causas.id_ppl
         LEFT JOIN delitos ON ppl_causas.id_causa = delitos.id_delito
-        WHERE situacionlegal.id_ppl = (SELECT id FROM ppl WHERE idpersona = :id)
+        WHERE situacionlegal.id_ppl = (SELECT id FROM ppl WHERE idpersona = :id ORDER BY id DESC LIMIT 1)
         GROUP BY situacionlegal.id_ppl
+        ORDER BY situacionlegal.id_ppl DESC LIMIT 1
     ");
     $stmt_situacion->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt_situacion->execute();
@@ -81,8 +93,55 @@ try {
     echo "Error en la consulta: " . $e->getMessage();
 }
 
-?>
+// Modified the table query to show latest records
+try {
+    $query = "SELECT ppl.*, per.*
+            FROM ppl AS ppl
+            LEFT JOIN persona AS per ON ppl.idpersona = per.id
+            WHERE per.dni = :dni
+            ORDER BY ppl.id DESC";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':dni', $dni, PDO::PARAM_STR);
+    $stmt->execute();
+    $pples = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log("Error al obtener el ppl: " . $e->getMessage());
+}
+// Función para validar y obtener la foto
+function obtenerUltimaFoto($dni, $db) {
+    try {
+        // Query para obtener la última foto
+        $query = "SELECT ppl.foto, ppl.id as ppl_id, persona.id as persona_id, persona.dni 
+                 FROM ppl 
+                 JOIN persona ON ppl.idpersona = persona.id 
+                 WHERE persona.dni = :dni 
+                 ORDER BY ppl.id DESC 
+                 LIMIT 1";
+                 
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':dni', $dni, PDO::PARAM_STR);
+        $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $rutaBase = '../../img_ppl/';
+        $fotoDefault = 'default.jpg';
+        
+        if ($resultado && !empty($resultado['foto'])) {
+            $rutaFoto = $rutaBase . htmlspecialchars($resultado['foto'], ENT_QUOTES, 'UTF-8');
+            
+            if (file_exists($rutaFoto)) {
+                return $rutaFoto;
+            }
+        }
+        
+        return $rutaBase . $fotoDefault;
+    } catch (PDOException $e) {
+        return $rutaBase . $fotoDefault;
+    }
+}
 
+
+?>
 <!-- ------------------------ -->
 <style>
     .form-container {
@@ -115,17 +174,20 @@ try {
 <section class="container mt-3">
     <div class="card rounded-2 border-0">
         <div class="card-header bg-dark text-white pb-0">
-            <h5 class="d-inline-block "><?php
-                                        echo !empty($persona['nombres']) && !empty($persona['apellidos']) ?
-                                            htmlspecialchars($persona['nombres'] . ' ' . $persona['apellidos'], ENT_QUOTES, 'UTF-8') :
-                                            'No hay dato';
-                                        ?></h5>
+        <h5 class="section-title mb-3 ">Datos Personales Actuales</h5>
+            <!-- <h5 class="d-inline-block ">
+                <?php
+                echo !empty($persona['nombres']) && !empty($persona['apellidos']) ?
+                    htmlspecialchars($persona['nombres'] . ' ' . $persona['apellidos'], ENT_QUOTES, 'UTF-8') :
+                    'No hay dato';
+                ?>
+            </h5> -->
         </div>
         <div class="card-body  table-responsive">
             <div class="container mb-4">
                 <div class="row mt-2">
                     <div class="col-md-7">
-                        <h5 class="section-title mb-3 ">A) DATOS PERSONALES</h5>
+                        
                         <p>
                             <label class="h6 ">Apellidos y Nombres:</label>
                             <span class="form-control-static" id="nombres-apellidos">
@@ -176,39 +238,11 @@ try {
 
                         </p>
                         <p>
-                            <label class="h6 ">Lugar:</label>
-                            <span>
-                                <?php
-                                echo !empty($persona['ciudad']) ?
-                                    htmlspecialchars($persona['ciudad'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';
-                                ?>
-                            </span>
-                            <label class="h6 ml-5">Nacionalidad:</label>
+                            <label class="h6 ">País:</label>
                             <span>
                                 <?php
                                 echo !empty($persona['pais']) ?
                                     htmlspecialchars($persona['pais'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';
-                                ?>
-                            </span>
-                        </p>
-                        <p>
-                            <label class="h6 ">Domicilio:</label>
-                            <span>
-                                <?php
-                                echo !empty($persona['direccion']) ?
-                                    htmlspecialchars($persona['direccion'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';
-                                ?>
-                            </span>
-                        </p>
-                        <p>
-                            <label class="h6 ">Departamento / Localidad:</label>
-                            <span>
-                                <?php
-                                echo !empty($persona['localidad']) ?
-                                    htmlspecialchars($persona['localidad'], ENT_QUOTES, 'UTF-8') :
                                     'No hay dato';
                                 ?>
                             </span>
@@ -220,63 +254,134 @@ try {
                                     'No hay dato';
                                 ?>
                             </span>
-                        </p>
-                    </div>
-                    <div class="col-md-4 text-center ">
-                        <div class="foto">
+                            <label class="h6 ml-5">Ciudad:</label>
                             <span>
-                                <?php if (!empty($ppl['foto'])): ?>
-                                    <img src="imagenes_p<?php echo !empty($ppl['foto']) ? htmlspecialchars($ppl['foto'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>" alt="Foto de la persona" style="max-width: 200px; max-height: 200px;">
-                                <?php else: ?>
-                                    No se encontró foto.
-                                <?php endif; ?>
+                                <?php
+                                echo !empty($persona['ciudad']) ?
+                                    htmlspecialchars($persona['ciudad'], ENT_QUOTES, 'UTF-8') :
+                                    'No hay dato';
+                                ?>
                             </span>
+                            
+                            
+                        </p>
+                        <p>
+                            <label class="h6 ">Departamento / Localidad:</label>
+                            <span>
+                                <?php
+                                echo !empty($persona['localidad']) ?
+                                    htmlspecialchars($persona['localidad'], ENT_QUOTES, 'UTF-8') :
+                                    'No hay dato';
+                                ?>
+                            </span>
+                            
+                            
+                        </p>
+                        <p>
+                            <label class="h6 ">Domicilio:</label>
+                            <span>
+                                <?php
+                                echo !empty($persona['direccion']) ?
+                                    htmlspecialchars($persona['direccion'], ENT_QUOTES, 'UTF-8') :
+                                    'No hay dato';
+                                ?>
+                            </span>
+                        </p>
+                        
+                    </div>
+                    <div class="col-md-4 text-center mb-4">
+                        <div class="foto">
+                            <?php
+                            if (!isset($dni)) {
+                                echo "<p>Error: DNI no definido</p>";
+                            } else {
+                                $rutaFoto = obtenerUltimaFoto($dni, $db);
+                            ?>
+                                <img src="<?php echo htmlspecialchars($rutaFoto, ENT_QUOTES, 'UTF-8'); ?>" 
+                                    alt="<?php echo ($rutaFoto !== '../../img_ppl/default.jpg') ? 'Foto de la persona' : 'Foto no disponible'; ?>" 
+                                    style="max-width: 250px; max-height: 250px; object-fit: cover;">
+                            <?php
+                            }
+                            ?>
                         </div>
                     </div>
-
-                </div>
             </div>
             <!-- ------------------------- -->
-            <table id="" class="table table-striped table-sm" >
+            <table id="" class="table table-striped table-sm">
                 <thead class="thead-dark">
                     <tr>
                         <th>#</th>
-                        <th>Fecha de Ingreso</th>
-                        <th>Fecha de Egreso</th>
-                        <th>Cargo/Delito</th>
-                        <th>informe</th>
+                        <th>Nombre y Apellido</th>
+                        <th>DNI</th>
+                        <th>Domicilio</th>
+                        <th>Fecha detención</th>
+                        <th>Inicio Condena</th>
+                        <th>Fin Condena</th>
+                        <th>Carga</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    try {
-                        $query = "SELECT ppl.*, per.*
-                                FROM ppl AS ppl
-                                LEFT JOIN 
-                                persona AS per 
-                                ON ppl.idpersona = per.id
-                                WHERE per.dni = $dni;";
-                        $stmt = $db->prepare($query);
-                        $stmt->execute();
-                        $pples = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        foreach ($pples as $ppl) {
-                    ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($ppl['id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td>15/04/2020</td>
-                                <td>15/04/2050</td>
-                                <td>Cargo/Delito</td>
-                                <td>
-                                  <a class="btn btn-info" href='ppl_informe.php?id=<?php echo $ppl['id']; ?>'>Informe(IEII)</a>
-                                <td>
-                            </tr>
-                    <?php
-                        }
-                    } catch (PDOException $e) {
-                        error_log("Error al obtener el ppl: " . $e->getMessage());
-                    }
-                    ?>
-                </tbody>
+                            <?php
+                                try {
+                                    $query = "SELECT 
+                                        ppl.*,
+                                        per.*,
+                                        pai.nombre AS nombre_pais,
+                                        ciu.nombre AS nombre_ciudad,
+                                        pro.nombre AS nombre_provincia,
+                                        dom.localidad AS localidad_domicilio,
+                                        dom.direccion AS direccion_domicilio,
+                                        DATE_FORMAT(sl.fecha_detencion, '%d-%m-%Y') AS fecha_detencion,
+                                        DATE_FORMAT(fppl.inicio_condena, '%d-%m-%Y') AS inicio_condena,
+                                        COALESCE(DATE_FORMAT(fppl.fin_condena, '%d-%m-%Y'), '-') AS fin_condena
+                                    FROM 
+                                        ppl AS ppl
+                                    LEFT JOIN 
+                                        persona AS per ON ppl.idpersona = per.id
+                                    LEFT JOIN 
+                                        domicilio AS dom ON per.id = dom.id_persona
+                                    LEFT JOIN 
+                                        paises AS pai ON dom.id_pais = pai.id
+                                    LEFT JOIN 
+                                        ciudades AS ciu ON dom.id_ciudad = ciu.id
+                                    LEFT JOIN 
+                                        provincias AS pro ON dom.id_provincia = pro.id
+                                    LEFT JOIN
+                                        situacionlegal AS sl ON ppl.id = sl.id_ppl
+                                    LEFT JOIN
+                                        fechappl AS fppl ON ppl.id = fppl.idppl";
+                                    $stmt = $db->prepare($query);
+                                    $stmt->execute();
+                                    $pples = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                    foreach ($pples as $ppl) {
+                                ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($ppl['id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td><?php echo htmlspecialchars($ppl['nombres'] . ' ' . $ppl['apellidos'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td><?php echo htmlspecialchars($ppl['dni'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td>
+                                                <?php echo htmlspecialchars($ppl['nombre_pais'], ENT_QUOTES, 'UTF-8') . ","; ?>
+                                                <?php echo htmlspecialchars($ppl['nombre_provincia'], ENT_QUOTES, 'UTF-8'). ","; ?>
+                                                <?php echo htmlspecialchars($ppl['nombre_ciudad'], ENT_QUOTES, 'UTF-8'). ","; ?>
+                                                <?php echo htmlspecialchars($ppl['localidad_domicilio'], ENT_QUOTES, 'UTF-8'). ","; ?>
+                                                <?php echo htmlspecialchars($ppl['direccion_domicilio'], ENT_QUOTES, 'UTF-8'); ?>
+                                            </td>
+                                            <td><?php echo htmlspecialchars($ppl['fecha_detencion'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td><?php echo htmlspecialchars($ppl['inicio_condena'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td><?php echo htmlspecialchars($ppl['fin_condena'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td>
+                                                <a class="btn btn-info" href='ppl_informe.php?id=<?php echo $ppl['id']; ?>'>Informe(IEII)</a>
+                                            </td>
+                                            
+                                        </tr>
+                                <?php
+                                    }
+                                } catch (PDOException $e) {
+                                    error_log("Error al obtener los pples: " . $e->getMessage());
+                                }
+                                ?>
+                        </tbody>
             </table>
         </div>
     </div>
