@@ -1,7 +1,7 @@
 <?php require 'navbar.php'; ?>
 <?php
 
-$id = isset($_GET['id']) ? $_GET['id'] : null;
+$id_ppl = isset($_GET['id']) ? $_GET['id'] : null;
 
 function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles)
 {
@@ -20,38 +20,38 @@ function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detall
     }
 } {
     $stmt_persona = $db->prepare("SELECT 
-                                  persona.id,
-                                  persona.dni, 
-                                  persona.nombres, 
-                                  persona.apellidos, 
-                                  DATE_FORMAT(persona.fechanac, '%d-%m-%Y') AS fechaNacimiento, 
-                                  persona.edad, 
-                                  persona.genero, 
-                                  persona.estadocivil, 
-                                  d.id AS id_direccion, 
-                                  p.nombre AS pais, 
-                                  pr.nombre AS provincia, 
-                                  c.nombre AS ciudad, 
-                                  d.localidad, 
-                                  d.direccion
-                              FROM persona
-                              LEFT JOIN domicilio d ON persona.direccion = d.id
-                              LEFT JOIN paises p ON d.id_pais = p.id
-                              LEFT JOIN provincias pr ON d.id_provincia = pr.id
-                              LEFT JOIN ciudades c ON d.id_ciudad = c.id
-                              WHERE persona.id = :id
-    ");
-    $stmt_persona->bindParam(':id', $id, PDO::PARAM_INT);
+    persona.id,
+    persona.dni, 
+    persona.nombres, 
+    persona.apellidos, 
+    DATE_FORMAT(persona.fechanac, '%d-%m-%Y') AS fechaNacimiento, 
+    persona.edad, 
+    persona.genero, 
+    persona.estadocivil, 
+    d.id AS id_direccion, 
+    p.nombre AS pais, 
+    pr.nombre AS provincia, 
+    c.nombre AS ciudad, 
+    d.localidad, 
+    d.direccion
+FROM persona
+LEFT JOIN domicilio d ON persona.direccion = d.id
+LEFT JOIN paises p ON d.id_pais = p.id
+LEFT JOIN provincias pr ON d.id_provincia = pr.id
+LEFT JOIN ciudades c ON d.id_ciudad = c.id
+WHERE persona.id = :id");
+
+    $stmt_persona->bindParam(':id', $id_ppl, PDO::PARAM_INT);
     $stmt_persona->execute();
     $persona = $stmt_persona->fetch(PDO::FETCH_ASSOC);
 
-    $stmt_ppl = $db->prepare("SELECT id, apodo, profesion, trabaja, foto, huella
-        FROM ppl
-        WHERE idpersona = :id
-    ");
-    $stmt_ppl->bindParam(':id', $id, PDO::PARAM_INT);
+
+    $stmt_ppl = $db->prepare("SELECT * FROM ppl  WHERE id = :id"); // Aquí se usa el campo idpersona en vez de id
+    $stmt_ppl->bindParam(':id', $id_ppl, PDO::PARAM_INT); // Pasamos el id correcto de persona
     $stmt_ppl->execute();
     $ppl = $stmt_ppl->fetch(PDO::FETCH_ASSOC);
+
+
 
     if (!$ppl) {
         die("PPL no encontrado.");
