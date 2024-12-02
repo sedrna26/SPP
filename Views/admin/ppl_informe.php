@@ -180,9 +180,6 @@ $idppl = isset($_GET['id']) ? $_GET['id'] : '';
                                 include 'clasificacion_lista.php';
                             }
                             break;
-
-
-
                         default:
                             if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2 || $_SESSION['id_rol'] === 3) {
                                 include 'persona_lista.php';
