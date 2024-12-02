@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: localhost
--- Tiempo de generación: 02-12-2024 a las 00:39:07
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 02-12-2024 a las 16:35:31
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -126037,38 +126037,6 @@ CREATE TABLE `informe_laboral` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `informe_psicologico`
---
-
-CREATE TABLE `informe_psicologico` (
-  `id` int(11) NOT NULL,
-  `id_ppl` int(11) NOT NULL,
-  `tipo_ingreso` varchar(15) NOT NULL,
-  `orient_temporo_esp` text DEFAULT NULL,
-  `juicio_realidad` text DEFAULT NULL,
-  `ideacion` text DEFAULT NULL,
-  `estado_afectivo` text DEFAULT NULL,
-  `antecedente_autolesion` text DEFAULT NULL,
-  `otros_datos` text DEFAULT NULL,
-  `dato_interes` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `informe_psiquiatrico`
---
-
-CREATE TABLE `informe_psiquiatrico` (
-  `id` int(11) NOT NULL,
-  `id_ppl` int(11) NOT NULL,
-  `tuvo_diagnostico` tinyint(1) NOT NULL,
-  `especificacion` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `juzgado`
 --
 
@@ -126146,24 +126114,8 @@ INSERT INTO `marcas_cuerpo` (`id`, `idppl`, `x`, `y`, `description`, `categoria`
 (31, 18, 470.333, 193.667, 'Cicatriz', 'cuerpo', 'Activo', '2024-12-01 23:05:13'),
 (32, 18, 341.333, 192.667, 'asda', 'cuerpo', 'Activo', '2024-12-01 23:05:23'),
 (33, 19, 105.333, 132.667, 'sdffsf', 'cuerpo', 'Activo', '2024-12-01 23:32:16'),
-(34, 19, 408.333, 73.6667, 'sdfsdf', 'cuerpo', 'Activo', '2024-12-01 23:32:25');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `marcas_cuerpo2`
---
-
-CREATE TABLE `marcas_cuerpo2` (
-  `id` int(11) NOT NULL,
-  `idppl` int(11) NOT NULL,
-  `x` float NOT NULL,
-  `y` float NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `categoria` varchar(50) DEFAULT 'cuerpo',
-  `estado` varchar(20) DEFAULT 'Activo',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+(34, 19, 408.333, 73.6667, 'sdfsdf', 'cuerpo', 'Activo', '2024-12-01 23:32:25'),
+(35, 19, 148.667, 252, 'asdasd', 'cuerpo', 'Inactivo', '2024-12-02 15:21:42');
 
 -- --------------------------------------------------------
 
@@ -128714,6 +128666,28 @@ INSERT INTO `provincias` (`id`, `id_pais`, `nombre`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `psiquiatrico_psicologico`
+--
+
+CREATE TABLE `psiquiatrico_psicologico` (
+  `id` int(11) NOT NULL,
+  `id_ppl` int(11) NOT NULL,
+  `diagnostico_psiquiatrico` varchar(255) DEFAULT NULL,
+  `si_no_diagnostico` tinyint(1) NOT NULL,
+  `institucionalizaciones_centros_rehab` varchar(255) DEFAULT NULL,
+  `orientacion_temporo_espacial` varchar(255) DEFAULT NULL,
+  `juicio_realidad` varchar(255) DEFAULT NULL,
+  `ideacion` varchar(255) DEFAULT NULL,
+  `estado_afectivo` varchar(255) DEFAULT NULL,
+  `antecedentes_autolesiones` varchar(255) DEFAULT NULL,
+  `antecedentes_consumo_sustancias` varchar(255) NOT NULL,
+  `edad_inicio_consumo` int(11) DEFAULT NULL,
+  `datos_interes_intervencion` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `registro_acceso`
 --
 
@@ -128953,20 +128927,6 @@ ALTER TABLE `informe_laboral`
   ADD KEY `idppl` (`idppl`);
 
 --
--- Indices de la tabla `informe_psicologico`
---
-ALTER TABLE `informe_psicologico`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_ppl` (`id_ppl`);
-
---
--- Indices de la tabla `informe_psiquiatrico`
---
-ALTER TABLE `informe_psiquiatrico`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_ppl` (`id_ppl`);
-
---
 -- Indices de la tabla `juzgado`
 --
 ALTER TABLE `juzgado`
@@ -128983,13 +128943,6 @@ ALTER TABLE `laboral`
 -- Indices de la tabla `marcas_cuerpo`
 --
 ALTER TABLE `marcas_cuerpo`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idppl` (`idppl`);
-
---
--- Indices de la tabla `marcas_cuerpo2`
---
-ALTER TABLE `marcas_cuerpo2`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idppl` (`idppl`);
 
@@ -129098,6 +129051,13 @@ ALTER TABLE `ppl_situacion_sociofamiliar`
 ALTER TABLE `provincias`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_pais` (`id_pais`);
+
+--
+-- Indices de la tabla `psiquiatrico_psicologico`
+--
+ALTER TABLE `psiquiatrico_psicologico`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_ppl` (`id_ppl`);
 
 --
 -- Indices de la tabla `registro_acceso`
@@ -129217,18 +129177,6 @@ ALTER TABLE `informe_laboral`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `informe_psicologico`
---
-ALTER TABLE `informe_psicologico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `informe_psiquiatrico`
---
-ALTER TABLE `informe_psiquiatrico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `juzgado`
 --
 ALTER TABLE `juzgado`
@@ -129244,13 +129192,7 @@ ALTER TABLE `laboral`
 -- AUTO_INCREMENT de la tabla `marcas_cuerpo`
 --
 ALTER TABLE `marcas_cuerpo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
-
---
--- AUTO_INCREMENT de la tabla `marcas_cuerpo2`
---
-ALTER TABLE `marcas_cuerpo2`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT de la tabla `medicamentos`
@@ -129343,6 +129285,12 @@ ALTER TABLE `provincias`
   MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2228;
 
 --
+-- AUTO_INCREMENT de la tabla `psiquiatrico_psicologico`
+--
+ALTER TABLE `psiquiatrico_psicologico`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `registro_acceso`
 --
 ALTER TABLE `registro_acceso`
@@ -129425,37 +129373,25 @@ ALTER TABLE `educacion`
 -- Filtros para la tabla `entrevista`
 --
 ALTER TABLE `entrevista`
-  ADD CONSTRAINT `fk_entrevista_ppl` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
+  ADD CONSTRAINT `fk_entrevista_ppl` FOREIGN KEY (`idppl`) REFERENCES `persona` (`id`);
 
 --
 -- Filtros para la tabla `fechappl`
 --
 ALTER TABLE `fechappl`
-  ADD CONSTRAINT `fechappl_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fechappl_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `firma`
 --
 ALTER TABLE `firma`
-  ADD CONSTRAINT `firma_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
+  ADD CONSTRAINT `firma_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
 
 --
 -- Filtros para la tabla `informe_laboral`
 --
 ALTER TABLE `informe_laboral`
-  ADD CONSTRAINT `informe_laboral_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`id`);
-
---
--- Filtros para la tabla `informe_psicologico`
---
-ALTER TABLE `informe_psicologico`
-  ADD CONSTRAINT `fk_pscilogico_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
-
---
--- Filtros para la tabla `informe_psiquiatrico`
---
-ALTER TABLE `informe_psiquiatrico`
-  ADD CONSTRAINT `fk_psiquiatrico_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
+  ADD CONSTRAINT `informe_laboral_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `persona` (`id`);
 
 --
 -- Filtros para la tabla `laboral`
@@ -129470,12 +129406,6 @@ ALTER TABLE `marcas_cuerpo`
   ADD CONSTRAINT `marcas_cuerpo_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `persona` (`id`);
 
 --
--- Filtros para la tabla `marcas_cuerpo2`
---
-ALTER TABLE `marcas_cuerpo2`
-  ADD CONSTRAINT `marcas_cuerpo2_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `ppl` (`idpersona`);
-
---
 -- Filtros para la tabla `observaciones`
 --
 ALTER TABLE `observaciones`
@@ -129485,7 +129415,7 @@ ALTER TABLE `observaciones`
 -- Filtros para la tabla `otros`
 --
 ALTER TABLE `otros`
-  ADD CONSTRAINT `fk_otros_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `ppl` (`id`);
+  ADD CONSTRAINT `fk_otros_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
 
 --
 -- Filtros para la tabla `persona`
@@ -129504,6 +129434,12 @@ ALTER TABLE `ppl`
 --
 ALTER TABLE `ppl_familiar_info`
   ADD CONSTRAINT `ppl_familiar_info_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `persona` (`id`);
+
+--
+-- Filtros para la tabla `psiquiatrico_psicologico`
+--
+ALTER TABLE `psiquiatrico_psicologico`
+  ADD CONSTRAINT `psiquiatrico_psicologico_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
