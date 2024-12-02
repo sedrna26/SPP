@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-12-2024 a las 16:35:31
+-- Tiempo de generación: 02-12-2024 a las 18:39:46
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -81,20 +81,6 @@ INSERT INTO `auditoria` (`id_auditoria`, `id_usuario`, `accion`, `tabla_afectada
 (13, 1, 'Agregar Datos Médicos', 'datos_medicos', 19, '2024-12-01 23:32:53', 'Se insertaron los datos médicos para el paciente con ID: 19'),
 (14, 1, 'Agregar Observación', 'observaciones', 19, '2024-12-01 23:33:09', 'Se insertó una nueva observación para el PPL con ID: 19'),
 (15, 1, 'Agregar Clasificacion', 'clasificacion', 19, '2024-12-01 23:33:56', 'Se insertó una nueva clasificacion para el PPL con ID: 19');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `caracteristicas`
---
-
-CREATE TABLE `caracteristicas` (
-  `id` int(11) NOT NULL,
-  `zona` varchar(50) NOT NULL,
-  `tipo` varchar(50) NOT NULL,
-  `descripcion` text DEFAULT NULL,
-  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -125972,19 +125958,6 @@ INSERT INTO `educacion` (`id`, `id_ppl`, `sabe_leer_escrib`, `primaria`, `secund
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `entrevista`
---
-
-CREATE TABLE `entrevista` (
-  `id` int(11) NOT NULL,
-  `idppl` int(11) NOT NULL,
-  `hora` datetime NOT NULL,
-  `fechai` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `fechappl`
 --
 
@@ -126011,7 +125984,6 @@ INSERT INTO `fechappl` (`id`, `idppl`, `inicio_condena`, `fin_condena`) VALUES
 
 CREATE TABLE `firma` (
   `id_firma` int(11) NOT NULL,
-  `id_ppl` int(11) DEFAULT NULL,
   `id_persona` int(11) DEFAULT NULL,
   `firma` varchar(120) DEFAULT NULL,
   `digito` varchar(120) DEFAULT NULL
@@ -126120,18 +126092,6 @@ INSERT INTO `marcas_cuerpo` (`id`, `idppl`, `x`, `y`, `description`, `categoria`
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `medicamentos`
---
-
-CREATE TABLE `medicamentos` (
-  `id` int(11) NOT NULL,
-  `toma_med` tinyint(1) NOT NULL,
-  `nombre_medicamento` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `observaciones`
 --
 
@@ -126149,22 +126109,6 @@ CREATE TABLE `observaciones` (
 INSERT INTO `observaciones` (`id_observacion`, `id_ppl`, `observacion`, `estado`) VALUES
 (3, 18, 'wfwqfwq wqfqwqv  \r\n                ', 'Activo'),
 (4, 19, 'Es que es de prueba\r\n                ', 'Activo');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `otros`
---
-
-CREATE TABLE `otros` (
-  `id` int(11) NOT NULL,
-  `id_ppl` int(11) NOT NULL,
-  `apellido` varchar(100) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `domicilio` varchar(100) DEFAULT NULL,
-  `vinculo_filial` varchar(80) DEFAULT NULL,
-  `telefono` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -128832,7 +128776,8 @@ INSERT INTO `usuarios` (`id_usuario`, `id_persona`, `id_rol`, `nombre_usuario`, 
 -- Indices de la tabla `asistencia_espiritual`
 --
 ALTER TABLE `asistencia_espiritual`
-  ADD PRIMARY KEY (`id_asistencia`);
+  ADD PRIMARY KEY (`id_asistencia`),
+  ADD KEY `id_ppl` (`id_ppl`);
 
 --
 -- Indices de la tabla `auditoria`
@@ -128840,12 +128785,6 @@ ALTER TABLE `asistencia_espiritual`
 ALTER TABLE `auditoria`
   ADD PRIMARY KEY (`id_auditoria`),
   ADD KEY `fk_auditoria_usuario` (`id_usuario`);
-
---
--- Indices de la tabla `caracteristicas`
---
-ALTER TABLE `caracteristicas`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `ciudades`
@@ -128899,13 +128838,6 @@ ALTER TABLE `educacion`
   ADD KEY `id_ppl` (`id_ppl`);
 
 --
--- Indices de la tabla `entrevista`
---
-ALTER TABLE `entrevista`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idppl` (`idppl`);
-
---
 -- Indices de la tabla `fechappl`
 --
 ALTER TABLE `fechappl`
@@ -128917,7 +128849,7 @@ ALTER TABLE `fechappl`
 --
 ALTER TABLE `firma`
   ADD PRIMARY KEY (`id_firma`),
-  ADD KEY `id_ppl` (`id_ppl`);
+  ADD KEY `id_persona` (`id_persona`);
 
 --
 -- Indices de la tabla `informe_laboral`
@@ -128947,23 +128879,10 @@ ALTER TABLE `marcas_cuerpo`
   ADD KEY `idppl` (`idppl`);
 
 --
--- Indices de la tabla `medicamentos`
---
-ALTER TABLE `medicamentos`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indices de la tabla `observaciones`
 --
 ALTER TABLE `observaciones`
   ADD PRIMARY KEY (`id_observacion`),
-  ADD KEY `id_ppl` (`id_ppl`);
-
---
--- Indices de la tabla `otros`
---
-ALTER TABLE `otros`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `id_ppl` (`id_ppl`);
 
 --
@@ -129063,7 +128982,8 @@ ALTER TABLE `psiquiatrico_psicologico`
 -- Indices de la tabla `registro_acceso`
 --
 ALTER TABLE `registro_acceso`
-  ADD PRIMARY KEY (`id_acceso`);
+  ADD PRIMARY KEY (`id_acceso`),
+  ADD KEY `id_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `rol`
@@ -129111,12 +129031,6 @@ ALTER TABLE `auditoria`
   MODIFY `id_auditoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT de la tabla `caracteristicas`
---
-ALTER TABLE `caracteristicas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `ciudades`
 --
 ALTER TABLE `ciudades`
@@ -129159,12 +129073,6 @@ ALTER TABLE `educacion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT de la tabla `entrevista`
---
-ALTER TABLE `entrevista`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `fechappl`
 --
 ALTER TABLE `fechappl`
@@ -129195,22 +129103,10 @@ ALTER TABLE `marcas_cuerpo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
--- AUTO_INCREMENT de la tabla `medicamentos`
---
-ALTER TABLE `medicamentos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `observaciones`
 --
 ALTER TABLE `observaciones`
   MODIFY `id_observacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT de la tabla `otros`
---
-ALTER TABLE `otros`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `paises`
@@ -129325,6 +129221,12 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- Filtros para la tabla `asistencia_espiritual`
+--
+ALTER TABLE `asistencia_espiritual`
+  ADD CONSTRAINT `asistencia_espiritual_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
+
+--
 -- Filtros para la tabla `auditoria`
 --
 ALTER TABLE `auditoria`
@@ -129370,12 +129272,6 @@ ALTER TABLE `educacion`
   ADD CONSTRAINT `fk_educacion_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
 
 --
--- Filtros para la tabla `entrevista`
---
-ALTER TABLE `entrevista`
-  ADD CONSTRAINT `fk_entrevista_ppl` FOREIGN KEY (`idppl`) REFERENCES `persona` (`id`);
-
---
 -- Filtros para la tabla `fechappl`
 --
 ALTER TABLE `fechappl`
@@ -129385,7 +129281,7 @@ ALTER TABLE `fechappl`
 -- Filtros para la tabla `firma`
 --
 ALTER TABLE `firma`
-  ADD CONSTRAINT `firma_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
+  ADD CONSTRAINT `firma_ibfk_1` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id`);
 
 --
 -- Filtros para la tabla `informe_laboral`
@@ -129412,12 +129308,6 @@ ALTER TABLE `observaciones`
   ADD CONSTRAINT `observaciones_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
 
 --
--- Filtros para la tabla `otros`
---
-ALTER TABLE `otros`
-  ADD CONSTRAINT `fk_otros_ppl` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
-
---
 -- Filtros para la tabla `persona`
 --
 ALTER TABLE `persona`
@@ -129430,16 +129320,70 @@ ALTER TABLE `ppl`
   ADD CONSTRAINT `fk_ppl_persona` FOREIGN KEY (`idpersona`) REFERENCES `persona` (`id`);
 
 --
+-- Filtros para la tabla `ppl_causas`
+--
+ALTER TABLE `ppl_causas`
+  ADD CONSTRAINT `ppl_causas_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
+
+--
 -- Filtros para la tabla `ppl_familiar_info`
 --
 ALTER TABLE `ppl_familiar_info`
   ADD CONSTRAINT `ppl_familiar_info_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `persona` (`id`);
 
 --
+-- Filtros para la tabla `ppl_hermanos`
+--
+ALTER TABLE `ppl_hermanos`
+  ADD CONSTRAINT `ppl_hermanos_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `persona` (`id`);
+
+--
+-- Filtros para la tabla `ppl_hijos`
+--
+ALTER TABLE `ppl_hijos`
+  ADD CONSTRAINT `ppl_hijos_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `persona` (`id`);
+
+--
+-- Filtros para la tabla `ppl_otros_visitantes`
+--
+ALTER TABLE `ppl_otros_visitantes`
+  ADD CONSTRAINT `ppl_otros_visitantes_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `persona` (`id`);
+
+--
+-- Filtros para la tabla `ppl_padres`
+--
+ALTER TABLE `ppl_padres`
+  ADD CONSTRAINT `ppl_padres_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `persona` (`id`);
+
+--
+-- Filtros para la tabla `ppl_situacion_sociofamiliar`
+--
+ALTER TABLE `ppl_situacion_sociofamiliar`
+  ADD CONSTRAINT `ppl_situacion_sociofamiliar_ibfk_1` FOREIGN KEY (`idppl`) REFERENCES `persona` (`id`);
+
+--
 -- Filtros para la tabla `psiquiatrico_psicologico`
 --
 ALTER TABLE `psiquiatrico_psicologico`
   ADD CONSTRAINT `psiquiatrico_psicologico_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
+
+--
+-- Filtros para la tabla `registro_acceso`
+--
+ALTER TABLE `registro_acceso`
+  ADD CONSTRAINT `registro_acceso_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`);
+
+--
+-- Filtros para la tabla `situacionlegal`
+--
+ALTER TABLE `situacionlegal`
+  ADD CONSTRAINT `situacionlegal_ibfk_1` FOREIGN KEY (`id_ppl`) REFERENCES `persona` (`id`);
+
+--
+-- Filtros para la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
