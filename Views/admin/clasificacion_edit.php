@@ -58,8 +58,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
                 $_POST['pabellon_nro']
             ]);
 
-            $accion = 'Agregar Clasificación';
-            $detalles = "Se insertó una nueva clasificación para el PPL con ID: $idppl";
+            $accion = 'Editar Clasificación';
+            $detalles = "Se actualizo clasificacion para el PPL con ID: $idppl";
         }
 
         // Registrar acción en la auditoría

@@ -41,11 +41,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
         $stmt->execute([$_POST['observacion'], $_POST['id_ppl']]);
 
         // Registrar acción en la auditoría
-        $accion = 'Actualizacion en  Observación';
+        $accion = 'Editar Observaciones';
         $tabla_afectada = 'observaciones';
         $detalles = "Se actualizó la observación para el PPL con ID: $idppl";
         registrarAuditoria($db, $accion, $tabla_afectada, $idppl, $detalles);
-        header("Location: ppl_informe.php?seccion=situacion-laboral&id=" . $idppl);
+        header("Location: ppl_informe.php?seccion=observaciones&id=" . $idppl);
         echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
     } catch (PDOException $e) {
         echo "<div class='alert alert-danger'>Error al guardar los datos: " . $e->getMessage() . "</div>";

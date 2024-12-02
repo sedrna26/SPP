@@ -82,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
         ]);
 
         $db->commit();
-        $accion = 'Actualizacion asistencia_espiritual, laboral';
+        $accion = 'Editar asistencia_espiritual, laboral';
         $tabla_afectada = 'asistencia_espiritual, laboral';
         $detalles = "$accion asistencia_espiritual y laboral para el PPL con ID: $idppl";
         registrarAuditoria($db, "$accion Datos", $tabla_afectada, $idppl, $detalles);
