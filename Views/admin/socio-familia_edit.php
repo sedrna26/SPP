@@ -1024,4 +1024,5 @@ document.addEventListener('DOMContentLoaded', configurarAdicionHijos);
             this.value === 'NO' ? 'block' : 'none';
     });
 </script>
-    <?php require 'footer.php'; ?>
+
+<?php require 'footer.php'; ?>
