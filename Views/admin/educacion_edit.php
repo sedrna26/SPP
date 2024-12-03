@@ -100,6 +100,11 @@ if ($id) {
             <div class="card shadow-sm rounded-4 border-0 mt-5">
                 <h5 class="card-header bg-dark text-white rounded-top-4 text-center">Actualizar Educación</h5>
                 <div class="card-body bg-light p-4">
+                <!-- ------------------- -->
+                <a href="ppl_informe.php?seccion=educacion&id=<?php echo $id; ?>">
+                    <div class="btn btn-secondary">Cancelar</div>
+                </a>
+                <!-- ------------------- -->
                     <form action="" method="post">
                         <input type="hidden" name="id" value="<?php echo htmlspecialchars($educacion['id'], ENT_QUOTES, 'UTF-8'); ?>">
 

@@ -3,145 +3,325 @@
 
 // Obtener el ID del PPsL de la URL
 $idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
+// Obtener el ID del PPL de la URL
+$idppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-if ($idppl > 0) {
-    // Obtener datos de ppl_familiar_info
-    $stmt = $db->prepare("SELECT * FROM ppl_familiar_info WHERE idppl = ?");
-    $stmt->execute([$idppl]);
-    $familiaresInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+// Función para obtener datos de las diferentes tablas
+function obtenerDatosFamiliares($db, $idppl) {
+    $datos = [
+        'info_familiar' => null,
+        'situacion_social' => null,
+        'padres' => [],
+        'hermanos' => [],
+        'pareja' => null,
+        'hijos' => [],
+        'otros_visitantes' => []
+    ];
 
-    // Obtener datos de ppl_situacion_sociofamiliar
-    $stmt = $db->prepare("SELECT * FROM ppl_situacion_sociofamiliar WHERE idppl = ?");
-    $stmt->execute([$idppl]);
-    $situacionSociofamiliar = $stmt->fetch(PDO::FETCH_ASSOC);
+    try {
+        // Obtener información familiar general
+        $stmt = $db->prepare("SELECT * FROM ppl_familiar_info WHERE idppl = ? AND estado = 'Activo'");
+        $stmt->execute([$idppl]);
+        $datos['info_familiar'] = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Obtener datos de ppl_padres
-    $stmt = $db->prepare("SELECT * FROM ppl_padres WHERE idppl = ?");
-    $stmt->execute([$idppl]);
-    $padres = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Obtener situación sociofamiliar
+        $stmt = $db->prepare("SELECT * FROM ppl_situacion_sociofamiliar WHERE idppl = ? AND estado = 'Activo'");
+        $stmt->execute([$idppl]);
+        $datos['situacion_social'] = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Obtener datos de ppl_hermanos
-    $stmt = $db->prepare("SELECT * FROM ppl_hermanos WHERE idppl = ?");
-    $stmt->execute([$idppl]);
-    $hermanos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Obtener datos de padres
+        $stmt = $db->prepare("SELECT * FROM ppl_padres WHERE idppl = ? AND estado = 'Activo'");
+        $stmt->execute([$idppl]);
+        $datos['padres'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Obtener datos de ppl_pareja
-    $stmt = $db->prepare("SELECT * FROM ppl_pareja WHERE idppl = ?");
-    $stmt->execute([$idppl]);
-    $pareja = $stmt->fetch(PDO::FETCH_ASSOC);
+        // Obtener datos de hermanos
+        $stmt = $db->prepare("SELECT * FROM ppl_hermanos WHERE idppl = ? AND estado = 'Activo'");
+        $stmt->execute([$idppl]);
+        $datos['hermanos'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Obtener datos de ppl_hijos
-    $stmt = $db->prepare("SELECT * FROM ppl_hijos WHERE idppl = ?");
-    $stmt->execute([$idppl]);
-    $hijos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Obtener datos de la pareja
+        $stmt = $db->prepare("SELECT * FROM ppl_pareja WHERE idppl = ? AND estado = 'Activo'");
+        $stmt->execute([$idppl]);
+        $datos['pareja'] = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Obtener datos de ppl_otros_visitantes
-    $stmt = $db->prepare("SELECT * FROM ppl_otros_visitantes WHERE idppl = ?");
-    $stmt->execute([$idppl]);
-    $otrosVisitantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Obtener datos de hijos
+        $stmt = $db->prepare("SELECT * FROM ppl_hijos WHERE idppl = ? AND estado = 'Activo'");
+        $stmt->execute([$idppl]);
+        $datos['hijos'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Obtener otros visitantes
+        $stmt = $db->prepare("SELECT * FROM ppl_otros_visitantes WHERE idppl = ? AND estado = 'Activo'");
+        $stmt->execute([$idppl]);
+        $datos['otros_visitantes'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $datos;
+    } catch (PDOException $e) {
+        // Manejar errores de base de datos
+        echo "Error al recuperar datos: " . $e->getMessage();
+        return null;
+    }
+}
+
+// Obtener los datos familiares
+$datosFamiliares = obtenerDatosFamiliares($db, $idppl);
+
+// Si no se encuentran datos, redirigir o mostrar un mensaje
+if (!$datosFamiliares) {
+    die("No se encontraron datos para este PPL.");
 }
 ?>
 
-<div class="card">
+
+<div class="container ">
     
-        <div class="card-body">
-        <div class="d-flex align-items-center">
-            <h3 class="">Información Familiar General</h3>
-            <a class="btn btn-warning ml-3 btn-sm" href='socio-familia_edit.php?id=<?php echo $idppl; ?>'>Editar Socio-Familia</a>
+    <!-- Información Familiar General -->
+    <div class="card mb-4">
+        <div class="card-header d-flex bg-primary text-white justify-content-between align-items-center">
+            <h4 class="mb-0 ">Datos Familiares Generales</h4>
+            <a class="btn btn-warning btn-sm" href='socio-familia_edit.php?id=<?php echo $idppl; ?>'>
+                <i class="fas fa-edit me-1"></i>Editar
+            </a> 
         </div>
-
-        <div class="row mt-3">
-        <?php if ($familiaresInfo): ?>
-            <p>Familiares FF.AA: <?= $familiaresInfo['familiares_ffaa'] ? 'Sí' : 'No'; ?></p>
-            <p>Detalles FF.AA: <?= $familiaresInfo['ffaa_detalles']; ?></p>
-            <p>Familiares Detenidos: <?= $familiaresInfo['familiares_detenidos'] ? 'Sí' : 'No'; ?></p>
-            <p>Detalles Detenidos: <?= $familiaresInfo['detenidos_detalles']; ?></p>
-            <p>Teléfono Familiar: <?= $familiaresInfo['telefono_familiar']; ?></p>
-            <p>Posee DNI: <?= $familiaresInfo['posee_dni'] ? 'Sí' : 'No'; ?></p>
-            <p>Motivo No DNI: <?= $familiaresInfo['motivo_no_dni']; ?></p>
-        <?php else: ?>
-            <p>No hay información disponible.</p>
-        <?php endif; ?>
-
-        <h3>Situación Sociofamiliar</h3>
-        <?php if ($situacionSociofamiliar): ?>
-            <p>Edad de Inicio Laboral: <?= $situacionSociofamiliar['edad_inicio_laboral']; ?></p>
-            <p>Situación Económica Precaria: <?= $situacionSociofamiliar['situacion_economica_precaria'] ? 'Sí' : 'No'; ?></p>
-            <p>Mendicidad en la Calle: <?= $situacionSociofamiliar['mendicidad_calle'] ? 'Sí' : 'No'; ?></p>
-        <?php else: ?>
-            <p>No hay información disponible.</p>
-        <?php endif; ?>
-
-        <h3>Padres</h3>
-        <?php if ($padres): ?>
-            <?php foreach ($padres as $padre): ?>
-                <h4><?= $padre['tipo'] == 'PADRE' ? 'Padre' : 'Madre'; ?></h4>
-                <p>Nombre: <?= $padre['nombre']; ?></p>
-                <p>Apellido: <?= $padre['apellido']; ?></p>
-                <p>Edad: <?= $padre['edad']; ?></p>
-                <p>Nacionalidad: <?= $padre['nacionalidad']; ?></p>
-                <p>Estado Civil: <?= $padre['estado_civil']; ?></p>
-                <p>Grado de Instrucción: <?= $padre['instruccion']; ?></p>
-                <p>Visita: <?= $padre['visita'] ? 'Sí' : 'No'; ?></p>
-                <hr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No hay información disponible.</p>
-        <?php endif; ?>
-
-        <h3>Hermanos</h3>
-        <?php if ($hermanos): ?>
-            <?php foreach ($hermanos as $hermano): ?>
-                <p>Nombre: <?= $hermano['nombre']; ?></p>
-                <p>Apellido: <?= $hermano['apellido']; ?></p>
-                <p>Edad: <?= $hermano['edad']; ?></p>
-                <p>Visita: <?= $hermano['visita'] ? 'Sí' : 'No'; ?></p>
-                <hr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No hay información disponible.</p>
-        <?php endif; ?>
-
-        <h3>Pareja</h3>
-        <?php if ($pareja): ?>
-            <p>Nombre: <?= ($pareja['nombre']); ?></p>
-            <p>Apellido: <?= ($pareja['apellido']); ?></p>
-            <p>Edad: <?= ($pareja['edad']); ?></p>
-            <p>Nacionalidad: <?= ($pareja['nacionalidad']); ?></p>
-            <p>Grado de Instrucción: <?= ($pareja['instruccion']); ?></p>
-            <p>Tipo de Unión: <?= ($pareja['tipo_union']); ?></p>
-            <p>Visita: <?= $pareja['visita'] ? 'Sí' : 'No'; ?></p>
-        <?php else: ?>
-            <p>No hay información disponible.</p>
-        <?php endif; ?>
-
-        <h3>Hijos</h3>
-        <?php if ($hijos): ?>
-            <?php foreach ($hijos as $hijo): ?>
-                <p>Nombre: <?= ($hijo['nombre']); ?></p>
-                <p>Apellido: <?= ($hijo['apellido']); ?></p>
-                <p>Edad: <?= ($hijo['edad']); ?></p>
-                <p>Fallecido: <?= $hijo['fallecido'] ? 'Sí' : 'No'; ?></p>
-                <p>Visita: <?= $hijo['visita'] ? 'Sí' : 'No'; ?></p>
-                <hr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No hay información disponible.</p>
-        <?php endif; ?>
-
-        <h3>Otros Visitantes</h3>
-        <?php if ($otrosVisitantes): ?>
-            <?php foreach ($otrosVisitantes as $visitante): ?>
-                <p>Nombre: <?= ($visitante['nombre']); ?></p>
-                <p>Apellido: <?= ($visitante['apellido']); ?></p>
-                <p>Teléfono: <?= ($visitante['telefono']); ?></p>
-                <p>Domicilio: <?= ($visitante['domicilio']); ?></p>
-                <p>Vínculo Filial: <?= ($visitante['vinculo_filial']); ?></p>
-                <hr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No hay información disponible.</p>
-        <?php endif; ?>
-        </div>     
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Familiares</h4>
+                        <p><strong>Familiares FF.AA:</strong> 
+                    <span class="badge py-2 px-3 fs-6">
+                        <span class="badge py-2 px-3 fs-6 <?php echo $datosFamiliares['info_familiar']['familiares_ffaa'] ? 'bg-success' : 'bg-danger'; ?>">
+                            <?php echo $datosFamiliares['info_familiar']['familiares_ffaa'] ? 'Sí' : 'No'; ?>
+                        </span>
+                        <?php if ($datosFamiliares['info_familiar']['familiares_ffaa']): ?>
+                            <span class="text-black">- <?php echo $datosFamiliares['info_familiar']['ffaa_detalles']; ?></span>
+                        <?php endif; ?>
+                        </span>
+                    </p>
+                    <p><strong>Familiares Detenidos:</strong>
+                        <span class="badge py-2 px-3 fs-6">
+                            <span class="badge py-2 px-3 fs-6 <?php echo $datosFamiliares['info_familiar']['familiares_detenidos'] ? 'bg-success' : 'bg-danger'; ?>">
+                            <?php echo $datosFamiliares['info_familiar']['familiares_detenidos'] ? 'Sí' : 'No'; ?>
+                            </span>
+                            <?php if ($datosFamiliares['info_familiar']['familiares_detenidos']): ?>
+                            <span class="text-black">- <?php echo $datosFamiliares['info_familiar']['detenidos_detalles']; ?></span>
+                            <?php endif; ?>
+                        </span>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h4>Documentación</h4>
+                    <p><strong>Posee DNI:</strong> 
+                        <span class="badge py-2 px-3 fs-6 <?php echo $datosFamiliares['info_familiar']['posee_dni'] ? 'bg-success' : 'bg-danger'; ?>">
+                            <?php echo $datosFamiliares['info_familiar']['posee_dni'] ? 'Sí' : 'No - ' . $datosFamiliares['info_familiar']['motivo_no_dni']; ?>
+                        </span>
+                    </p>
+                    <p><strong>Teléfono Familiar:</strong> <?php echo $datosFamiliares['info_familiar']['telefono_familiar'] ?? 'No registrado'; ?></p>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Situación Sociofamiliar -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Situación Sociofamiliar</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Edad Inicio Laboral:</strong> <?php echo $datosFamiliares['situacion_social']['edad_inicio_laboral'] ?? 'No registrada'; ?></p>
+                    <p><strong>Situación Económica Precaria:</strong> 
+                        <span class="badge py-2 px-3 fs-6 <?php echo $datosFamiliares['situacion_social']['situacion_economica_precaria'] ? 'bg-success' : 'bg-danger'; ?>">
+                            <?php echo $datosFamiliares['situacion_social']['situacion_economica_precaria'] ? 'Sí' : 'No'; ?>
+                        </span>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Mendicidad/Situación de Calle:</strong> 
+                        <span class="badge py-2 px-3 fs-6 <?php echo $datosFamiliares['situacion_social']['mendicidad_calle'] ? 'bg-success' : 'bg-danger'; ?>">
+                            <?php echo $datosFamiliares['situacion_social']['mendicidad_calle'] ? 'Sí' : 'No'; ?>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Padres -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Información de Padres</h4>
+        </div>
+        <div class="card-body">
+            <?php foreach ($datosFamiliares['padres'] as $padre): ?>
+                <div class="row mb-3">                    
+                    <div class="col-md-6">
+                        <h4><?php echo $padre['tipo']; ?></h4>
+                        <p><strong>Nombre:</strong> <?php echo $padre['nombre'] . ' ' . $padre['apellido']; ?></p>
+                        <p><strong>Edad:</strong> <?php echo $padre['edad'] ?? 'No registrada'; ?></p>
+                        <p><strong>Nacionalidad:</strong> <?php echo $padre['nacionalidad'] ?? 'No registrada'; ?></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Estado Civil:</strong> <?php echo $padre['estado_civil'] ?? 'No registrado'; ?></p>
+                        <p><strong>Instrucción:</strong> <?php echo $padre['instruccion'] ?? 'No registrada'; ?></p>
+                        <p><strong>Estado:</strong> 
+                            <span class="badge py-2 px-3 fs-6 <?php echo $padre['vivo'] ? 'bg-success' : 'bg-danger'; ?>">
+                                <?php echo $padre['vivo'] ? 'Vivo' : 'Fallecido'; ?>
+                            </span>
+                        </p>
+                        <p><strong>Visita:</strong> 
+                            <span class="badge py-2 px-3 fs-6 <?php echo $padre['visita'] ? 'bg-success' : 'bg-danger'; ?>">
+                                <?php echo $padre['visita'] ? 'Sí' : 'No'; ?>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="row mb-3">
+                    <!-- Segunda fila de contenido aquí -->
+                </div>
+
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <!-- Hermanos -->
+    <?php if (!empty($datosFamiliares['hermanos'])): ?>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Hermanos</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Edad</th>
+                            <th>Visita</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($datosFamiliares['hermanos'] as $hermano): ?>
+                            <tr>
+                                <td><?php echo $hermano['nombre'] . ' ' . $hermano['apellido']; ?></td>
+                                <td><?php echo $hermano['edad'] ?? 'No registrada'; ?></td>
+                                <td>
+                                    <span class="badge py-2 px-3 fs-6 <?php echo $hermano['visita'] ? 'bg-success' : 'bg-danger'; ?>">
+                                        <?php echo $hermano['visita'] ? 'Sí' : 'No'; ?>
+                                    </span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Pareja -->
+    <?php if ($datosFamiliares['pareja']): ?>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Información de Pareja</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nombre:</strong> <?php echo $datosFamiliares['pareja']['nombre'] . ' ' . $datosFamiliares['pareja']['apellido']; ?></p>
+                    <p><strong>Edad:</strong> <?php echo $datosFamiliares['pareja']['edad'] ?? 'No registrada'; ?></p>
+                    <p><strong>Nacionalidad:</strong> <?php echo $datosFamiliares['pareja']['nacionalidad'] ?? 'No registrada'; ?></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Instrucción:</strong> <?php echo $datosFamiliares['pareja']['instruccion'] ?? 'No registrada'; ?></p>
+                    <p><strong>Tipo de Unión:</strong> <?php echo $datosFamiliares['pareja']['tipo_union'] ?? 'No registrado'; ?></p>
+                    <p><strong>Visita:</strong> 
+                        <span class="badge py-2 px-3 fs-6 <?php echo $datosFamiliares['pareja']['visita'] ? 'bg-success' : 'bg-danger'; ?>">
+                            <?php echo $datosFamiliares['pareja']['visita'] ? 'Sí' : 'No'; ?>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Hijos -->
+    <?php if (!empty($datosFamiliares['hijos'])): ?>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Hijos</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Edad</th>
+                            <th>Fallecido</th>
+                            <th>Visita</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($datosFamiliares['hijos'] as $hijo): ?>
+                            <tr>
+                                <td><?php echo $hijo['nombre'] . ' ' . $hijo['apellido']; ?></td>
+                                <td><?php echo $hijo['edad'] ?? 'No registrada'; ?></td>
+                                <td>
+                                    <span class="badge py-2 px-3 fs-6 <?php echo $hijo['fallecido'] ? 'bg-danger' : 'bg-success'; ?>">
+                                        <?php echo $hijo['fallecido'] ? 'Sí' : 'No'; ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge py-2 px-3 fs-6 <?php echo $hijo['visita'] ? 'bg-success' : 'bg-danger'; ?>">
+                                        <?php echo $hijo['visita'] ? 'Sí' : 'No'; ?>
+                                    </span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Otros Visitantes (continued) -->
+    <?php if (!empty($datosFamiliares['otros_visitantes'])): ?>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Otros Visitantes</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Domicilio</th>
+                            <th>Vínculo Filial</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($datosFamiliares['otros_visitantes'] as $visitante): ?>
+                            <tr>
+                                <td><?php echo $visitante['nombre'] . ' ' . $visitante['apellido']; ?></td>
+                                <td><?php echo $visitante['telefono'] ?? 'No registrado'; ?></td>
+                                <td><?php echo $visitante['domicilio'] ?? 'No registrado'; ?></td>
+                                <td><?php echo $visitante['vinculo_filial'] ?? 'No registrado'; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
+</document_content>
+</document>
+</documents>

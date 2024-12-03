@@ -53,22 +53,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
     }
 }
 ?>
-<div class="container mt-5">
-    <form action="" method="POST" class="shadow p-4 rounded">
-        <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
-
-        <!-- Sección de Observaciones -->
-        <div class="mb-4">
-            <h3 id="titulo" class="mb-3">Editar Observaciones del PPL</h3>
-            <div class="form-group">
-                <label for="observacion" class="form-label">Ingrese la observación correspondiente:</label>
-                <textarea class="form-control" name="observacion" id="observacion" rows="3" maxlength="255" placeholder="Ingrese la observación"><?php echo htmlspecialchars($observacion); ?></textarea>
-            </div>
+<div class="container mt-5">    
+    <div class="card shadow-sm mt-5">
+        <h5 id="titulo"class="card-header bg-dark text-white ">Editar Observaciones del PPL</h5>
+        <div class="card-body ">
+            <!-- ------------------- -->
+            <a href="ppl_informe.php?seccion=observaciones&id=<?php echo $idppl; ?>">
+                <div class="btn btn-secondary">Cancelar</div>
+            </a>
+            <!-- ----------- -->
+            <form action="" method="POST" class=" ">
+                <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
+                <!-- Sección de Observaciones -->
+                <div class="mb-4">
+                    
+                    <div class="form-group">
+                        <label for="observacion" class="form-label my-3">Ingrese la observación correspondiente:</label>
+                        <textarea class="form-control shadow" name="observacion" id="observacion" rows="3" maxlength="255" placeholder="Ingrese la observación"><?php echo htmlspecialchars($observacion); ?></textarea>
+                    </div>
+                </div>
+                <!-- Botón de envío -->
+                <div class="">
+                    <button name="guardar_8" type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
         </div>
-
-        <!-- Botón de envío -->
-        <div class="d-grid">
-            <button name="guardar_8" type="submit" class="btn btn-primary">Guardar</button>
-        </div>
-    </form>
+    </div>
 </div>

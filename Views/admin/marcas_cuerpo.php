@@ -7,18 +7,6 @@ if ($idppl <= 0) {
     die("ID de persona no válido");
 }
 
-$sql = "CREATE TABLE IF NOT EXISTS marcas_cuerpo (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    idppl INT NOT NULL,
-    x DECIMAL(5,2) NOT NULL,
-    y DECIMAL(5,2) NOT NULL,
-    description VARCHAR(255) NOT NULL,
-    estado VARCHAR(20) DEFAULT 'Activo',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (idppl) REFERENCES ppl(id)
-)";
-$conexion->query($sql);
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
     $response = ['success' => false, 'message' => '', 'redirect' => ''];
