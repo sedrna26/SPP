@@ -11,14 +11,14 @@ $educacion = $stmt->fetch(PDO::FETCH_ASSOC);
 
 <div class="card">
 
-        <div class="card-body">
+    <div class="card-body">
         <div class="d-flex align-items-center">
-            <h4>Información Educativa</h4>
+            <h3>Información Educativa</h3>
             <a class="btn btn-warning ml-3 btn-sm" href='educacion_edit.php?id=<?php echo $idppl; ?>'>Editar educacion</a>
         </div>
-        
-            <div class="row mt-3">
-                <?php if ($educacion): ?>
+
+        <div class="row mt-3">
+            <?php if ($educacion): ?>
                 <p>Sabe Leer y Escribir: <?= $educacion['sabe_leer_escrib'] ? 'Sí' : 'No'; ?></p>
                 <p>Nivel Primaria: <?= htmlspecialchars($educacion['primaria']); ?></p>
                 <p>Nivel Secundaria: <?= htmlspecialchars($educacion['secundaria']); ?></p>
@@ -30,9 +30,9 @@ $educacion = $stmt->fetch(PDO::FETCH_ASSOC);
                 <p>Sección Deportiva: <?= htmlspecialchars($educacion['sec-deporte']); ?></p>
                 <p>Quiere Participar en Actividades Artísticas: <?= $educacion['quiere_act_artistica'] ? 'Sí' : 'No'; ?></p>
                 <p>Actividad Artística: <?= htmlspecialchars($educacion['act-artistica']); ?></p>
-                <?php else: ?>
-                    <p>No hay información educativa disponible.</p>
-                <?php endif; ?>
-            </div>     
+            <?php else: ?>
+                <p>No hay información educativa disponible.</p>
+            <?php endif; ?>
         </div>
     </div>
+</div>

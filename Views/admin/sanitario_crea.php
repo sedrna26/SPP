@@ -19,18 +19,20 @@ $id_ppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
     try {
         $db->beginTransaction();
-        $stmt = $db->prepare("INSERT INTO datos_medicos (id_ppl, hipertension, diabetes, enfermedad_corazon, asma, 
-            epilepsia, alergia, es_celiaco, bulimia_anorexia, medicacion, metabolismo, embarazo, hepatitis, 
+        $stmt = $db->prepare("INSERT INTO datos_medicos (id_ppl, hipertension, diabetes, enfermedad_corazon,enfermedad_corazon_cual ,asma, 
+            epilepsia, alergia,alergia_especifique,es_celiaco, bulimia_anorexia, medicacion, metabolismo, embarazo, hepatitis, 
             mononucleosis, otras_enfermedades, peso_actual, talla, imc, diagnostico, tipificacion_dieta) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?)");
         $stmt->execute([
             $_POST['id_ppl'],
             isset($_POST['hipertension']) ? 1 : 0,
             isset($_POST['diabetes']) ? 1 : 0,
             isset($_POST['enfermedad_corazon']) ? 1 : 0,
+            $_POST['enfermedad_corazon_cual'],
             isset($_POST['asma']) ? 1 : 0,
             isset($_POST['epilepsia']) ? 1 : 0,
             isset($_POST['alergia']) ? 1 : 0,
+            $_POST['alergia_especifique'],
             isset($_POST['es_celiaco']) ? 1 : 0,
             isset($_POST['bulimia_anorexia']) ? 1 : 0,
             $_POST['medicacion'],

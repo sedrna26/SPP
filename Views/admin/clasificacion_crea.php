@@ -1,6 +1,4 @@
 <?php
-// Incluir el archivo de conexión
-// require_once BASE_PATH . '/conn/connection.php';
 
 function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles)
 {
