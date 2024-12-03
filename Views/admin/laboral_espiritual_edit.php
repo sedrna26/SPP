@@ -95,15 +95,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
     }
 }
 ?>
-<form method="POST" class="container mt-4">
+<form method="POST" class="container mt-3">
     <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
-
+    <div class="row">
+        <div class="col">
     <!-- Sección Laboral -->
-    <div class="card mb-4">
-        <div class="card-header text-black">
+    <div class="card rounded-2 border-0">
+        <div class="card-header bg-dark text-white pb-0">
             <h5 class="mb-0">Informe Laboral</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body table-responsive">
+        <!-- ------------------- -->
+        <a href="ppl_informe.php?seccion=situacion-laboral&id=<?php echo $idppl; ?>">
+            <div class="btn btn-secondary mb-4">Cancelar</div>
+        </a>
+        <!-- ------------------- -->
+        
             <div class="form-check mb-3">
                 <input 
                     class="form-check-input" 
@@ -197,13 +204,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
             </div>
         </div>
     </div>
+    </div>
+    <div class="col">
 
     <!-- Sección Asistencia Espiritual -->
     <div class="card mb-4">
-        <div class="card-header  text-black">
+        <div class="card-header bg-dark text-white pb-0">
             <h5 class="mb-0">Asistencia Espiritual</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body table-responsive">
             <div class="form-check mb-3">
                 <input 
                     class="form-check-input" 
@@ -250,9 +259,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
                 >
             </div>
         </div>
+        <div class="text-center">
+            <button name="guardar_4" type="submit" class="btn btn-primary mb-3">Guardar Información</button>
+        </div>
     </div>
-
-    <div class="text-center">
-        <button name="guardar_4" type="submit" class="btn btn-primary">Guardar Información</button>
+    <!-- --------------------- -->        
+    </div>
+    </div>
     </div>
 </form>

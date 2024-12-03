@@ -254,7 +254,7 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
         <div class="card-body table-responsive">
             <form id="personaForm" action="" method="POST" enctype="multipart/form-data">
                 <h4 class="d-inline">Datos de la Persona</h4> 
-                <div class="container mt-4 d-inline">
+                <div class=" mt-4 d-inline">
                     <h4 class="text-danger fst-italic d-inline">*</h4>                    
                     <h6 class="text-danger small fst-italic d-inline">Campo requerido</h6>
                 </div>

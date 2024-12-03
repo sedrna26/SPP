@@ -73,81 +73,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
     }
 }
 ?>
-<head>
-    <style>
-        .form-section {
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+<!-- ---------------- -->
+<div class="container mt-5">    
+    <div class="card shadow-sm mt-5">
+        <h5 id="titulo"class="card-header bg-dark text-white ">Editar Clasificación del PPL</h5>
+        <div class="card-body ">
+            <!-- ------------------- -->
+            <a href="ppl_informe.php?seccion=clasificacion&id=<?php echo $idppl; ?>">
+                <div class="btn btn-secondary mb-4">Cancelar</div>
+            </a>
+            <!-- ----------- -->
+            <form method="POST">
+                <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
+                <!-- Sección de Clasificación -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label >Clasificación:</label>
+                        <select class="form-control" name="clasificacion" required>
+                            <option value="">Seleccione una clasificación</option>
+                            <option value="Adulto Primario" <?php echo isset($clasificacion['clasificacion']) && $clasificacion['clasificacion'] === 'Adulto Primario' ? 'selected' : ''; ?>>Adulto Primario</option>
+                            <option value="Adulto Reiterante" <?php echo isset($clasificacion['clasificacion']) && $clasificacion['clasificacion'] === 'Adulto Reiterante' ? 'selected' : ''; ?>>Adulto Reiterante</option>
+                            <option value="Adulto Reincidente" <?php echo isset($clasificacion['clasificacion']) && $clasificacion['clasificacion'] === 'Adulto Reincidente' ? 'selected' : ''; ?>>Adulto Reincidente</option>
+                        </select>
+                    </div>
 
-        input[type="text"],
-        input[type="number"],
-        select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
+                    <div class="form-group">
+                        <label>Sugerencia de Ubicación:</label>
+                        <input type="text" class="form-control" name="sugerencia" placeholder="Ingrese sugerencia de ubicación..." required value="<?php echo htmlspecialchars($clasificacion['sugerencia'] ?? ''); ?>">
+                    </div>
 
-        #titulo {
-            padding-bottom: 1rem;
-        }
-    </style>
-</head>
+                    <div class="form-group">
+                        <label>Número de Sector:</label>
+                        <select class="form-control" name="sector_nro" required>
+                            <option value="">Seleccione un sector</option>
+                            <option value="1" <?php echo isset($clasificacion['sector_nro']) && $clasificacion['sector_nro'] == 1 ? 'selected' : ''; ?>>Sector 1</option>
+                            <option value="2" <?php echo isset($clasificacion['sector_nro']) && $clasificacion['sector_nro'] == 2 ? 'selected' : ''; ?>>Sector 2</option>
+                            <option value="3" <?php echo isset($clasificacion['sector_nro']) && $clasificacion['sector_nro'] == 3 ? 'selected' : ''; ?>>Sector 3</option>
+                            <option value="4" <?php echo isset($clasificacion['sector_nro']) && $clasificacion['sector_nro'] == 4 ? 'selected' : ''; ?>>Sector 4</option>
+                        </select>
+                    </div>
 
-<body>
-    <form method="POST">
-        <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
+                    <div class="form-group">
+                        <label>Número de Pabellón:</label>
+                        <input class="form-control" type="number" name="pabellon_nro" min="1" required placeholder="Ingrese el número de pabellón..." value="<?php echo htmlspecialchars($clasificacion['pabellon_nro'] ?? ''); ?>">
+                    </div>
+                </div>
 
-        <!-- Sección de Clasificación -->
-        <div class="form-section">
-            <h3 id="titulo">Clasificación del PPL</h3>
-
-            <div class="form-group">
-                <label>Clasificación:</label>
-                <select name="clasificacion" required>
-                    <option value="">Seleccione una clasificación</option>
-                    <option value="Adulto Primario" <?php echo isset($clasificacion['clasificacion']) && $clasificacion['clasificacion'] === 'Adulto Primario' ? 'selected' : ''; ?>>Adulto Primario</option>
-                    <option value="Adulto Reiterante" <?php echo isset($clasificacion['clasificacion']) && $clasificacion['clasificacion'] === 'Adulto Reiterante' ? 'selected' : ''; ?>>Adulto Reiterante</option>
-                    <option value="Adulto Reincidente" <?php echo isset($clasificacion['clasificacion']) && $clasificacion['clasificacion'] === 'Adulto Reincidente' ? 'selected' : ''; ?>>Adulto Reincidente</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Sugerencia de Ubicación:</label>
-                <input type="text" name="sugerencia" placeholder="Ingrese sugerencia de ubicación..." required value="<?php echo htmlspecialchars($clasificacion['sugerencia'] ?? ''); ?>">
-            </div>
-
-            <div class="form-group">
-                <label>Número de Sector:</label>
-                <select name="sector_nro" required>
-                    <option value="">Seleccione un sector</option>
-                    <option value="1" <?php echo isset($clasificacion['sector_nro']) && $clasificacion['sector_nro'] == 1 ? 'selected' : ''; ?>>Sector 1</option>
-                    <option value="2" <?php echo isset($clasificacion['sector_nro']) && $clasificacion['sector_nro'] == 2 ? 'selected' : ''; ?>>Sector 2</option>
-                    <option value="3" <?php echo isset($clasificacion['sector_nro']) && $clasificacion['sector_nro'] == 3 ? 'selected' : ''; ?>>Sector 3</option>
-                    <option value="4" <?php echo isset($clasificacion['sector_nro']) && $clasificacion['sector_nro'] == 4 ? 'selected' : ''; ?>>Sector 4</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Número de Pabellón:</label>
-                <input type="number" name="pabellon_nro" min="1" required placeholder="Ingrese el número de pabellón..." value="<?php echo htmlspecialchars($clasificacion['pabellon_nro'] ?? ''); ?>">
-            </div>
+                <button name="guardar_9" type="submit" class="btn btn-primary">Guardar</button>
+            </form>
         </div>
-
-        <button name="guardar_9" type="submit" class="btn btn-primary">Guardar</button>
-    </form>
-</body>
+    </div>
+</div>
