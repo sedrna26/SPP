@@ -108,15 +108,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <!-- Sección de Educación -->
         <div class="form-section">
-            <h3 id="titulo">Información Educativa del PPL</h3>
+            <h3 class="d-inline" id="titulo">Información Educativa del PPL</h3>            
+            <div class="mt-4 d-inline">
+                <h4 class="text-danger fst-italic d-inline">*</h4>                    
+                <h6 class="text-danger small fst-italic d-inline">Campo requerido</h6>
+            </div>
 
-            <div class="checkbox-group">
+            <div class="checkbox-group mt-4">
                 <input type="checkbox" id="sabe_leer_escrib" name="sabe_leer_escrib" required>
                 <label for="sabe_leer_escrib" class="checkbox-label">¿Sabe leer y escribir?</label>
+                <h5 class="text-danger fst-italic d-inline">*</h5>
             </div>
 
             <div class="form-group">
-                <label>Nivel Primaria:</label>
+                <label class="d-inline">Nivel Primaria:</label>
+                <h5 class="text-danger fst-italic d-inline">*</h5>
                 <select name="primaria" required>
                     <option value="">Seleccione nivel</option>
                     <option value="Completa">Completa</option>
@@ -127,7 +133,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <div class="form-group">
-                <label>Nivel Secundaria:</label>
+                <label class="d-inline">Nivel Secundaria:</label>
+                <h5 class="text-danger fst-italic d-inline">*</h5>
                 <select name="secundaria" required>
                     <option value="">Seleccione nivel</option>
                     <option value="Completa">Completa</option>
