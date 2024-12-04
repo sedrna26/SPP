@@ -12,10 +12,9 @@ function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detall
         $stmt->bindParam(':registro_id', $registro_id);
         $stmt->execute();
     } catch (PDOException $e) {
-        echo "Error en el registro de auditoría: " . $e->getMessage();
+        echo '<div class="alert alert-danger" role="alert">Error en el registro de auditoría: ' . $e->getMessage() . '</div>';
     }
 }
-
 $id_ppl = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
     try {
@@ -41,150 +40,118 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
         $tabla_afectada = 'psiquiatrico_psicologico';
         $detalles = "Se insertaron los datos psiquiátricos/psicológicos para el paciente con ID: $id_ppl";
         registrarAuditoria($db, $accion, $tabla_afectada, $id_ppl, $detalles);
-        echo "<div class='alert alert-success'>Datos guardados correctamente</div>";
+        header("Location: ppl_informe.php?seccion=informe-psicologico&id=".$idppl);
+        echo '<div class="alert alert-success" role="alert">Datos guardados correctamente</div>';
     } catch (PDOException $e) {
-        echo "<div class='alert alert-danger'>Error al guardar los datos: " . $e->getMessage() . "</div>";
+        echo '<div class="alert alert-danger" role="alert">Error al guardar los datos: ' . $e->getMessage() . '</div>';
     }
 }
 ?>
-<style>
-    .form-section {
-        margin: 20px 0;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
 
-    .hidden {
-        display: none;
-    }
+<div class="container mt-4">
+    <form method="POST" class="needs-validation" novalidate>
+        <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($id_ppl); ?>">
 
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
-
-    input[type="text"],
-    textarea {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    }
-
-    .familiar-container {
-        border-left: 3px solid #212529;
-        padding-left: 15px;
-        margin-bottom: 20px;
-    }
-
-    .status-fallecido {
-        border-left-color: #212529;
-        background-color: #f9f9f9;
-    }
-
-    .children-container {
-        margin-left: 20px;
-        padding: 10px;
-        border-left: 2px dashed #212529;
-    }
-
-    #titulo {
-        padding-bottom: 1rem;
-    }
-</style>
-<form method="POST">
-    <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($id_ppl); ?>">
-
-    <div class="form-section">
-        <h3 id="titulo">Informe Psiquiátrico</h3>
-
-        <div class="form-group">
-            <div class="checkbox-group">
-                <label>
-                    <input type="checkbox" name="si_no_diagnostico" onchange="toggleDiagnosticoInput(this)"> ¿Tuvo alguna vez diagnóstico psiquiátrico? Sí/No
-                </label>
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Informe Psiquiátrico</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="si_no_diagnostico" name="si_no_diagnostico" onchange="toggleDiagnosticoInput(this)">
+                        <label class="form-check-label" for="si_no_diagnostico">¿Tuvo alguna vez diagnóstico psiquiátrico?</label>
+                    </div>
+                </div>
+                <div class="mb-3" id="diagnostico-group" style="display: none;">
+                    <label class="form-label">Diagnóstico Psiquiátrico:</label>
+                    <input type="text" class="form-control" name="diagnostico_psiquiatrico">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Institucionalizaciones en centros de rehabilitación:</label>
+                    <input type="text" class="form-control" name="institucionalizaciones_centros_rehab" required>
+                    <div class="invalid-feedback">Este campo es requerido</div>
+                </div>
             </div>
         </div>
-
-        <div class="form-group" id="diagnostico-group" style="display: none;">
-            <label>Diagnóstico Psiquiátrico:</label>
-            <input type="text" name="diagnostico_psiquiatrico">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Informe Psicológico (Dispositivo de Salud Mental)</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Orientación Témporo-Espacial:</label>
+                    <input type="text" class="form-control" name="orientacion_temporo_espacial" required>
+                    <div class="invalid-feedback">Este campo es requerido</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Juicio de Realidad:</label>
+                    <input type="text" class="form-control" name="juicio_realidad" required>
+                    <div class="invalid-feedback">Este campo es requerido</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Ideación:</label>
+                    <input type="text" class="form-control" name="ideacion" required>
+                    <div class="invalid-feedback">Este campo es requerido</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Estado Afectivo:</label>
+                    <input type="text" class="form-control" name="estado_afectivo" required>
+                    <div class="invalid-feedback">Este campo es requerido</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Antecedentes de Autolesiones:</label>
+                    <input type="text" class="form-control" name="antecedentes_autolesiones" required>
+                    <div class="invalid-feedback">Este campo es requerido</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Antecedentes de consumo de sustancias psicoactivas:</label>
+                    <input type="text" class="form-control" name="antecedentes_consumo_sustancias" oninput="toggleEdadInicioInput(this)">
+                </div>
+                <div class="mb-3" id="edad-inicio-group" style="display: none;">
+                    <label class="form-label">Edad de inicio de consumo:</label>
+                    <input type="number" class="form-control" name="edad_inicio_consumo" min="1" max="150">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Datos de interés y sugerencias de intervención:</label>
+                    <textarea class="form-control" name="datos_interes_intervencion" rows="3" required></textarea>
+                    <div class="invalid-feedback">Este campo es requerido</div>
+                </div>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label>Institucionalizaciones en centros de rehabilitación:</label>
-            <input type="text" name="institucionalizaciones_centros_rehab" required>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
+            <button name="guardar" type="submit" class="btn btn-primary btn-lg">Guardar Información</button>
         </div>
-
-        <h3 id="titulo">Informe Psicológico (Dispositivo de Salud Mental)</h3>
-
-        <div class="form-group">
-            <label>Orientación Témporo-Espacial:</label>
-            <input type="text" name="orientacion_temporo_espacial" required>
-        </div>
-
-        <div class="form-group">
-            <label>Juicio de Realidad:</label>
-            <input type="text" name="juicio_realidad" required>
-        </div>
-
-        <div class="form-group">
-            <label>Ideación:</label>
-            <input type="text" name="ideacion" required>
-        </div>
-
-        <div class="form-group">
-            <label>Estado Afectivo:</label>
-            <input type="text" name="estado_afectivo" required>
-        </div>
-
-        <div class="form-group">
-            <label>Antecedentes de Autolesiones:</label>
-            <input type="text" name="antecedentes_autolesiones" required>
-        </div>
-
-        <div class="form-group">
-            <label>Antecedentes de consumo de sustancias psicoactivas (alcohol, estupefacientes, psicofarmacos, inhalantes):</label>
-            <input type="text" name="antecedentes_consumo_sustancias" onchange="toggleEdadInicioInput(this)">
-        </div>
-
-        <div class="form-group" id="edad-inicio-group" style="display: none;">
-            <label>Edad de inicio de consumo:</label>
-            <input type="number" name="edad_inicio_consumo">
-        </div>
-
-        <div class="form-group">
-            <label>Datos de interés y sugerencias de intervención:</label>
-            <input type="text" name="datos_interes_intervencion" required>
-        </div>
-    </div>
-
-    <button name="guardar" type="submit" class="btn btn-primary">Guardar Información</button>
-</form>
+    </form>
+</div>
 
 <script>
     function toggleDiagnosticoInput(checkbox) {
         var diagnosticoGroup = document.getElementById('diagnostico-group');
-        if (checkbox.checked) {
-            diagnosticoGroup.style.display = 'block';
-        } else {
-            diagnosticoGroup.style.display = 'none';
-        }
+        diagnosticoGroup.style.display = checkbox.checked ? 'block' : 'none';
     }
 
     function toggleEdadInicioInput(input) {
         var edadInicioGroup = document.getElementById('edad-inicio-group');
-        if (input.value.trim() !== '') {
+        // Show/hide based on whether there's any text in the input
+        if (input.value.length > 0) {
             edadInicioGroup.style.display = 'block';
         } else {
             edadInicioGroup.style.display = 'none';
         }
     }
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
 </script>

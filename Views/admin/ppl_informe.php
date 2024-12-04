@@ -33,7 +33,10 @@ $idppl = isset($_GET['id']) ? $_GET['id'] : '';
                                 Marcas del Cuerpo
                             </a>
                             <a href="?seccion=informe-sanitario&id=<?php echo $idppl; ?>" class="btn <?php echo $seccion == 'informe-sanitario' ? 'btn-primary' : 'btn-secondary'; ?>">
-                                Informe Sanitario
+                                Sanitario
+                            </a>
+                            <a href="?seccion=informe-psicologico&id=<?php echo $idppl; ?>" class="btn <?php echo $seccion == 'informe-psicologico' ? 'btn-primary' : 'btn-secondary'; ?>">
+                                Psiquiátrico y Psicológico 
                             </a>
                             <a href="?seccion=observaciones&id=<?php echo $idppl; ?>" class="btn <?php echo $seccion == 'observaciones' ? 'btn-primary' : 'btn-secondary'; ?>">
                                 Observaciones
@@ -115,6 +118,7 @@ $idppl = isset($_GET['id']) ? $_GET['id'] : '';
                                 include 'laboral_espiritual_lista.php';
                             }
                             break;
+                            // ----------------------------
                         case 'marcas':
                             if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 3) {
                                 include 'marcas_cuerpo.php';
@@ -122,7 +126,26 @@ $idppl = isset($_GET['id']) ? $_GET['id'] : '';
                                 include 'marcas_cuerpo_lista.php';
                             }
                             break;
-
+                            // ---------------------------------
+                            case 'informe-psicologico':
+                                if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
+                                    $sql_psicologico = "SELECT estado FROM psiquiatrico_psicologico WHERE id_ppl = $idppl";
+                                    $result_psicologico = $conexion->query($sql_psicologico);
+                                    if ($result_psicologico && $result_psicologico->num_rows > 0) {
+                                        $psicologico = $result_psicologico->fetch_assoc();
+                                        if ($psicologico['estado'] === 'Activo') {
+                                            include 'psiquia_psico_lista.php';
+                                        } else {
+                                            include 'psiquia_psico_crea.php';
+                                        }
+                                    } else {
+                                        include 'psiquia_psico_crea.php';
+                                    }
+                                } else {
+                                    include 'psiquia_psico_lista.php';
+                                }
+                                break;   
+                            // ----------------------------
                         case 'informe-sanitario':
                             if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 3) {
                                
