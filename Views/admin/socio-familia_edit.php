@@ -436,383 +436,440 @@ try {
              </div>
             </div>
             <!-- Padre -->
-            <div class="form-section">
-                <h3>Información del Padre</h3>
-                <div class="row ">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Nombre:</label>
-                            <input type="text" name="padre_nombre"
-                                value="<?php echo htmlspecialchars($datos['padre']['nombre'] ?? ''); ?>"
-                                placeholder="Nombre del padre">
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Apellido:</label>
-                            <input type="text" name="padre_apellido"
-                                value="<?php echo htmlspecialchars($datos['padre']['apellido'] ?? ''); ?>"
-                                placeholder="Apellido del padre">
-                        </div>
-                    </div>
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="my-0 py-0">Información del Padre</h4>
                 </div>
-                <div class="row ">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Estado:</label>
-                            <select name="padre_vivo">
-                                <option value="Vivo" <?php echo (isset($datos['padre']) && $datos['padre']['vivo'] == 1) ? 'selected' : ''; ?>>Vivo</option>
-                                <option value="Fallecido" <?php echo (isset($datos['padre']) && $datos['padre']['vivo'] == 0) ? 'selected' : ''; ?>>Fallecido</option>
-                            </select>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Nombre:</label>
+                                <input type="text" name="padre_nombre"
+                                    value="<?php echo htmlspecialchars($datos['padre']['nombre'] ?? ''); ?>"
+                                    placeholder="Nombre del padre">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Apellido:</label>
+                                <input type="text" name="padre_apellido"
+                                    value="<?php echo htmlspecialchars($datos['padre']['apellido'] ?? ''); ?>"
+                                    placeholder="Apellido del padre">
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Edad:</label>
-                            <input type="number" name="padre_edad"
-                                value="<?php echo htmlspecialchars($datos['padre']['edad'] ?? ''); ?>"
-                                placeholder="Edad del padre">
+                    <div class="row ">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Estado:</label>
+                                <select name="padre_vivo">
+                                    <option value="Vivo" <?php echo (isset($datos['padre']) && $datos['padre']['vivo'] == 1) ? 'selected' : ''; ?>>Vivo</option>
+                                    <option value="Fallecido" <?php echo (isset($datos['padre']) && $datos['padre']['vivo'] == 0) ? 'selected' : ''; ?>>Fallecido</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Edad:</label>
+                                <input type="number" name="padre_edad"
+                                    value="<?php echo htmlspecialchars($datos['padre']['edad'] ?? ''); ?>"
+                                    placeholder="Edad del padre">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Nacionalidad:</label>
+                                <input type="text" name="padre_nacionalidad"
+                                    value="<?php echo htmlspecialchars($datos['padre']['nacionalidad'] ?? ''); ?>"
+                                    placeholder="Nacionalidad del padre">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="padre_estado_civil">Estado Civil:</label>
+                                <select name="padre_estado_civil" id="padre_estado_civil" class="form-control">
+                                    <option value="Casado" <?php echo (isset($datos['padre']['estado_civil']) && $datos['padre']['estado_civil'] == 'Casado') ? 'selected' : ''; ?>>Casado</option>
+                                    <option value="Soltero" <?php echo (isset($datos['padre']['estado_civil']) && $datos['padre']['estado_civil'] == 'Soltero') ? 'selected' : ''; ?>>Soltero</option>
+                                    <option value="Divorciado" <?php echo (isset($datos['padre']['estado_civil']) && $datos['padre']['estado_civil'] == 'Divorciado') ? 'selected' : ''; ?>>Divorciado</option>
+                                    <option value="Viudo" <?php echo (isset($datos['padre']['estado_civil']) && $datos['padre']['estado_civil'] == 'Viudo') ? 'selected' : ''; ?>>Viudo</option>
+                                </select>
+                            </div>                        
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Nacionalidad:</label>
-                            <input type="text" name="padre_nacionalidad"
-                                value="<?php echo htmlspecialchars($datos['padre']['nacionalidad'] ?? ''); ?>"
-                                placeholder="Nacionalidad del padre">
+                    <div class="row ">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Instrucción:</label>
+                                <input type="text" name="padre_instruccion"
+                                    value="<?php echo htmlspecialchars($datos['padre']['instruccion'] ?? ''); ?>"
+                                    placeholder="Nivel de instrucción del padre">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Visita:</label>
+                                <select name="visita_padre">
+                                    <option value="NO" <?php echo (isset($datos['padre']) && $datos['padre']['visita'] == 0) ? 'selected' : ''; ?>>No</option>
+                                    <option value="SI" <?php echo (isset($datos['padre']) && $datos['padre']['visita'] == 1) ? 'selected' : ''; ?>>Sí</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="padre_estado_civil">Estado Civil:</label>
-                            <select name="padre_estado_civil" id="padre_estado_civil" class="form-control">
-                                <option value="Casado" <?php echo (isset($datos['padre']['estado_civil']) && $datos['padre']['estado_civil'] == 'Casado') ? 'selected' : ''; ?>>Casado</option>
-                                <option value="Soltero" <?php echo (isset($datos['padre']['estado_civil']) && $datos['padre']['estado_civil'] == 'Soltero') ? 'selected' : ''; ?>>Soltero</option>
-                                <option value="Divorciado" <?php echo (isset($datos['padre']['estado_civil']) && $datos['padre']['estado_civil'] == 'Divorciado') ? 'selected' : ''; ?>>Divorciado</option>
-                                <option value="Viudo" <?php echo (isset($datos['padre']['estado_civil']) && $datos['padre']['estado_civil'] == 'Viudo') ? 'selected' : ''; ?>>Viudo</option>
-                            </select>
-                        </div>                        
-                    </div>
-                </div>
-                <div class="row ">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Instrucción:</label>
-                            <input type="text" name="padre_instruccion"
-                                value="<?php echo htmlspecialchars($datos['padre']['instruccion'] ?? ''); ?>"
-                                placeholder="Nivel de instrucción del padre">
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Visita:</label>
-                            <select name="visita_padre">
-                                <option value="NO" <?php echo (isset($datos['padre']) && $datos['padre']['visita'] == 0) ? 'selected' : ''; ?>>No</option>
-                                <option value="SI" <?php echo (isset($datos['padre']) && $datos['padre']['visita'] == 1) ? 'selected' : ''; ?>>Sí</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                </div>  
             </div>   
             <!-- Madre -->
-            <div class="form-section">
-                <h3>Información de la Madre</h3>
-                <div class="row ">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Nombre:</label>
-                            <input type="text" name="madre_nombre"
-                                value="<?php echo htmlspecialchars($datos['madre']['nombre'] ?? ''); ?>"
-                                placeholder="Nombre de la madre">
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Apellido:</label>
-                            <input type="text" name="madre_apellido"
-                                value="<?php echo htmlspecialchars($datos['madre']['apellido'] ?? ''); ?>"
-                                placeholder="Apellido de la madre">
-                        </div>
-                    </div>
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="my-0 py-0">Información de la Madre</h4>
                 </div>
+                <div class="card-body">                
+                    <div class="row ">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Nombre:</label>
+                                <input type="text" name="madre_nombre"
+                                    value="<?php echo htmlspecialchars($datos['madre']['nombre'] ?? ''); ?>"
+                                    placeholder="Nombre de la madre">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Apellido:</label>
+                                <input type="text" name="madre_apellido"
+                                    value="<?php echo htmlspecialchars($datos['madre']['apellido'] ?? ''); ?>"
+                                    placeholder="Apellido de la madre">
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="row ">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Estado:</label>
-                            <select name="madre_viva">
-                                <option value="Viva" <?php echo (isset($datos['madre']) && $datos['madre']['vivo'] == 1) ? 'selected' : ''; ?>>Viva</option>
-                                <option value="Fallecida" <?php echo (isset($datos['madre']) && $datos['madre']['vivo'] == 0) ? 'selected' : ''; ?>>Fallecida</option>
-                            </select>
+                    <div class="row ">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Estado:</label>
+                                <select name="madre_viva">
+                                    <option value="Viva" <?php echo (isset($datos['madre']) && $datos['madre']['vivo'] == 1) ? 'selected' : ''; ?>>Viva</option>
+                                    <option value="Fallecida" <?php echo (isset($datos['madre']) && $datos['madre']['vivo'] == 0) ? 'selected' : ''; ?>>Fallecida</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Edad:</label>
+                                <input type="number" name="madre_edad"
+                                    value="<?php echo htmlspecialchars($datos['madre']['edad'] ?? ''); ?>"
+                                    placeholder="Edad de la madre">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Nacionalidad:</label>
+                                <input type="text" name="madre_nacionalidad"
+                                    value="<?php echo htmlspecialchars($datos['madre']['nacionalidad'] ?? ''); ?>"
+                                    placeholder="Nacionalidad de la madre">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="madre_estado_civil">Estado Civil:</label>
+                                <select name="madre_estado_civil" id="madre_estado_civil" class="form-control">
+                                    <option value="Casado" <?php echo (isset($datos['madre']['estado_civil']) && $datos['madre']['estado_civil'] == 'Casado') ? 'selected' : ''; ?>>Casada</option>
+                                    <option value="Soltero" <?php echo (isset($datos['madre']['estado_civil']) && $datos['madre']['estado_civil'] == 'Soltero') ? 'selected' : ''; ?>>Soltera</option>
+                                    <option value="Divorciado" <?php echo (isset($datos['madre']['estado_civil']) && $datos['madre']['estado_civil'] == 'Divorciado') ? 'selected' : ''; ?>>Divorciada</option>
+                                    <option value="Viudo" <?php echo (isset($datos['madre']['estado_civil']) && $datos['madre']['estado_civil'] == 'Viudo') ? 'selected' : ''; ?>>Viuda</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Edad:</label>
-                            <input type="number" name="madre_edad"
-                                value="<?php echo htmlspecialchars($datos['madre']['edad'] ?? ''); ?>"
-                                placeholder="Edad de la madre">
+                    <div class="row ">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Instrucción:</label>
+                                <input type="text" name="madre_instruccion"
+                                    value="<?php echo htmlspecialchars($datos['madre']['instruccion'] ?? ''); ?>"
+                                    placeholder="Nivel de instrucción de la madre">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Visita:</label>
+                                <select name="visita_madre">
+                                    <option value="NO" <?php echo (isset($datos['madre']) && $datos['madre']['visita'] == 0) ? 'selected' : ''; ?>>No</option>
+                                    <option value="SI" <?php echo (isset($datos['madre']) && $datos['madre']['visita'] == 1) ? 'selected' : ''; ?>>Sí</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Nacionalidad:</label>
-                            <input type="text" name="madre_nacionalidad"
-                                value="<?php echo htmlspecialchars($datos['madre']['nacionalidad'] ?? ''); ?>"
-                                placeholder="Nacionalidad de la madre">
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="madre_estado_civil">Estado Civil:</label>
-                            <select name="madre_estado_civil" id="madre_estado_civil" class="form-control">
-                                <option value="Casado" <?php echo (isset($datos['madre']['estado_civil']) && $datos['madre']['estado_civil'] == 'Casado') ? 'selected' : ''; ?>>Casada</option>
-                                <option value="Soltero" <?php echo (isset($datos['madre']['estado_civil']) && $datos['madre']['estado_civil'] == 'Soltero') ? 'selected' : ''; ?>>Soltera</option>
-                                <option value="Divorciado" <?php echo (isset($datos['madre']['estado_civil']) && $datos['madre']['estado_civil'] == 'Divorciado') ? 'selected' : ''; ?>>Divorciada</option>
-                                <option value="Viudo" <?php echo (isset($datos['madre']['estado_civil']) && $datos['madre']['estado_civil'] == 'Viudo') ? 'selected' : ''; ?>>Viuda</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row ">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Instrucción:</label>
-                            <input type="text" name="madre_instruccion"
-                                value="<?php echo htmlspecialchars($datos['madre']['instruccion'] ?? ''); ?>"
-                                placeholder="Nivel de instrucción de la madre">
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Visita:</label>
-                            <select name="visita_madre">
-                                <option value="NO" <?php echo (isset($datos['madre']) && $datos['madre']['visita'] == 0) ? 'selected' : ''; ?>>No</option>
-                                <option value="SI" <?php echo (isset($datos['madre']) && $datos['madre']['visita'] == 1) ? 'selected' : ''; ?>>Sí</option>
-                            </select>
-                        </div>
-                    </div>
+                <!-- ------------ -->
                 </div>
             </div>
             
             <!-- Hermanos -->
-            <div class="form-section">
-                <h3>Información de Hermanos</h3>
-                <div class="form-group">
-                    <label>Número de Hermanos:</label>
-                    <input type="number" name="num_hermanos" id="num_hermanos"
-                        value="<?php echo count($datos['hermanos']); ?>"
-                        placeholder="Número de hermanos" min="0">
+             <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="my-0 py-0">Información de Hermanos</h4>
                 </div>
-                <div id="hermanos-container">
-                    <?php foreach ($datos['hermanos'] as $index => $hermano): ?>
-                        <div class="hermano-grupo">
-                            <div class="form-group">
-                                <label>Nombre del Hermano <?php echo $index + 1; ?>:</label>
-                                <input type="text" name="hermano_nombre_<?php echo $index; ?>"
-                                    value="<?php echo htmlspecialchars($hermano['nombre']); ?>"
-                                    placeholder="Nombre">
+                <div class="card-body">                         
+                    <div class="form-group">
+                        <label>Número de Hermanos:</label>
+                        <input type="number" name="num_hermanos" id="num_hermanos"
+                            value="<?php echo count($datos['hermanos']); ?>"
+                            placeholder="Número de hermanos" min="0">
+                    </div>
+                    <div id="hermanos-container">
+                        <?php foreach ($datos['hermanos'] as $index => $hermano): ?>
+                            <div class="hermano-grupo">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label>Nombre del Hermano <?php echo $index + 1; ?>:</label>
+                                            <input type="text" name="hermano_nombre_<?php echo $index; ?>"
+                                                value="<?php echo htmlspecialchars($hermano['nombre']); ?>"
+                                                placeholder="Nombre">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label>Apellido:</label>
+                                            <input type="text" name="hermano_apellido_<?php echo $index; ?>"
+                                                value="<?php echo htmlspecialchars($hermano['apellido']); ?>"
+                                                placeholder="Apellido">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label>Edad:</label>
+                                            <input type="number" name="hermano_edad_<?php echo $index; ?>"
+                                                value="<?php echo htmlspecialchars($hermano['edad']); ?>"
+                                                placeholder="Edad">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label>Visita:</label>
+                                            <select name="hermano_visita_<?php echo $index; ?>">
+                                                <option value="NO" <?php echo ($hermano['visita'] == 0) ? 'selected' : ''; ?>>No</option>
+                                                <option value="SI" <?php echo ($hermano['visita'] == 1) ? 'selected' : ''; ?>>Sí</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>Apellido:</label>
-                                <input type="text" name="hermano_apellido_<?php echo $index; ?>"
-                                    value="<?php echo htmlspecialchars($hermano['apellido']); ?>"
-                                    placeholder="Apellido">
-                            </div>
-                            <div class="form-group">
-                                <label>Edad:</label>
-                                <input type="number" name="hermano_edad_<?php echo $index; ?>"
-                                    value="<?php echo htmlspecialchars($hermano['edad']); ?>"
-                                    placeholder="Edad">
-                            </div>
-                            <div class="form-group">
-                                <label>Visita:</label>
-                                <select name="hermano_visita_<?php echo $index; ?>">
-                                    <option value="NO" <?php echo ($hermano['visita'] == 0) ? 'selected' : ''; ?>>No</option>
-                                    <option value="SI" <?php echo ($hermano['visita'] == 1) ? 'selected' : ''; ?>>Sí</option>
-                                </select>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
             <!-- Pareja -->
-            <div class="form-section">
-                <h3>Información de Pareja</h3>
-                <div class="row ">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Nombre:</label>
-                            <input type="text" name="pareja_nombre"
-                                value="<?php echo htmlspecialchars($datos['pareja']['nombre'] ?? ''); ?>"
-                                placeholder="Nombre de la pareja">
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Apellido:</label>
-                            <input type="text" name="pareja_apellido"
-                                value="<?php echo htmlspecialchars($datos['pareja']['apellido'] ?? ''); ?>"
-                                placeholder="Apellido de la pareja">
-                        </div>
-                    </div>
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="my-0 py-0">Información de Pareja</h4>
                 </div>
-                <div class="row ">
-                    <div class="col">
-                    <div class="form-group">
-                        <label>Edad:</label>
-                        <input type="number" name="pareja_edad"
-                            value="<?php echo htmlspecialchars($datos['pareja']['edad'] ?? ''); ?>"
-                            placeholder="Edad de la pareja">
-                    </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                        <label>Nacionalidad:</label>
-                        <input type="text" name="pareja_nacionalidad"
-                            value="<?php echo htmlspecialchars($datos['pareja']['nacionalidad'] ?? ''); ?>"
-                            placeholder="Nacionalidad de la pareja">
-                    </div>
-                    </div>
-                </div>
-                <div class="row ">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Instrucción:</label>
-                            <input type="text" name="pareja_instruccion"
-                                value="<?php echo htmlspecialchars($datos['pareja']['instruccion'] ?? ''); ?>"
-                                placeholder="Nivel de instrucción de la pareja">
+                <div class="card-body">
+                    <div class="row ">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Nombre:</label>
+                                <input type="text" name="pareja_nombre"
+                                    value="<?php echo htmlspecialchars($datos['pareja']['nombre'] ?? ''); ?>"
+                                    placeholder="Nombre de la pareja">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Apellido:</label>
+                                <input type="text" name="pareja_apellido"
+                                    value="<?php echo htmlspecialchars($datos['pareja']['apellido'] ?? ''); ?>"
+                                    placeholder="Apellido de la pareja">
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="row ">
+                        <div class="col">
                         <div class="form-group">
-                            <label>Tipo de Unión:</label>
-                            <input type="text" name="pareja_tipo_union"
-                                value="<?php echo htmlspecialchars($datos['pareja']['tipo_union'] ?? ''); ?>"
-                                placeholder="Tipo de unión (matrimonio, concubinato, etc.)">
+                            <label>Edad:</label>
+                            <input type="number" name="pareja_edad"
+                                value="<?php echo htmlspecialchars($datos['pareja']['edad'] ?? ''); ?>"
+                                placeholder="Edad de la pareja">
+                        </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                            <label>Nacionalidad:</label>
+                            <input type="text" name="pareja_nacionalidad"
+                                value="<?php echo htmlspecialchars($datos['pareja']['nacionalidad'] ?? ''); ?>"
+                                placeholder="Nacionalidad de la pareja">
+                        </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Visita:</label>
-                            <select name="visita_esposo">
-                                <?php $isVisita = isset($datos['pareja']) && $datos['pareja']['visita'] == 1;?>
-                                <option value="NO" <?php echo !$isVisita ? 'selected' : ''; ?>>No</option>
-                                <option value="SI" <?php echo $isVisita ? 'selected' : ''; ?>>Sí</option>
-                            </select>
+                    <div class="row ">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Instrucción:</label>
+                                <input type="text" name="pareja_instruccion"
+                                    value="<?php echo htmlspecialchars($datos['pareja']['instruccion'] ?? ''); ?>"
+                                    placeholder="Nivel de instrucción de la pareja">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Tipo de Unión:</label>
+                                <input type="text" name="pareja_tipo_union"
+                                    value="<?php echo htmlspecialchars($datos['pareja']['tipo_union'] ?? ''); ?>"
+                                    placeholder="Tipo de unión (matrimonio, concubinato, etc.)">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Visita:</label>
+                                <select name="visita_esposo">
+                                    <?php $isVisita = isset($datos['pareja']) && $datos['pareja']['visita'] == 1;?>
+                                    <option value="NO" <?php echo !$isVisita ? 'selected' : ''; ?>>No</option>
+                                    <option value="SI" <?php echo $isVisita ? 'selected' : ''; ?>>Sí</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Hijos -->
-            <div class="form-section">
-                <h3>Información de Hijos</h3>
-                <div class="form-group">
-                    <label>Tiene Hijos:</label>
-                    <select name="tiene_hijos" id="tiene_hijos">
-                        <option value="0" <?php echo (count($datos['hijos']) == 0) ? 'selected' : ''; ?>>No</option>
-                        <option value="1" <?php echo (count($datos['hijos']) > 0) ? 'selected' : ''; ?>>Sí</option>
-                    </select>
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="my-0 py-0">Información de Hijos</h4>
                 </div>
-                <div class="form-group">
-                    <label>Número de Hijos:</label>
-                    <input type="number" name="num_hijos" id="num_hijos"
-                        value="<?php echo count($datos['hijos']); ?>"
-                        placeholder="Número de hijos" min="0">
-                </div>
-                <div id="hijos-container">
-                    <?php foreach ($datos['hijos'] as $index => $hijo): ?>
-                        <div class="hijo-grupo">
-                            <div class="form-group">
-                                <label>Nombre del Hijo <?php echo $index + 1; ?>:</label>
-                                <input type="text" name="hijo_nombre_<?php echo $index; ?>"
-                                    value="<?php echo htmlspecialchars($hijo['nombre']); ?>"
-                                    placeholder="Nombre">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Tiene Hijos:</label>
+                        <select name="tiene_hijos" id="tiene_hijos">
+                            <option value="0" <?php echo (count($datos['hijos']) == 0) ? 'selected' : ''; ?>>No</option>
+                            <option value="1" <?php echo (count($datos['hijos']) > 0) ? 'selected' : ''; ?>>Sí</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Número de Hijos:</label>
+                        <input type="number" name="num_hijos" id="num_hijos"
+                            value="<?php echo count($datos['hijos']); ?>"
+                            placeholder="Número de hijos" min="0">
+                    </div>
+                    <div id="hijos-container">
+                        <?php foreach ($datos['hijos'] as $index => $hijo): ?>
+                            <div class="hijo-grupo">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                        <label>Nombre del Hijo <?php echo $index + 1; ?>:</label>
+                                        <input type="text" name="hijo_nombre_<?php echo $index; ?>"
+                                            value="<?php echo htmlspecialchars($hijo['nombre']); ?>"
+                                            placeholder="Nombre">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                        <label>Apellido:</label>
+                                        <input type="text" name="hijo_apellido_<?php echo $index; ?>"
+                                            value="<?php echo htmlspecialchars($hijo['apellido']); ?>"
+                                            placeholder="Apellido">
+                                        </div>
+                                    </div>
+                                
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label>Edad:</label>
+                                            <input type="number" name="hijo_edad_<?php echo $index; ?>"
+                                                value="<?php echo htmlspecialchars($hijo['edad']); ?>"
+                                                placeholder="Edad">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label>Fallecido:</label>
+                                            <input type="checkbox" name="hijo_fallecido_<?php echo $index; ?>"
+                                                <?php echo ($hijo['fallecido'] == 1) ? 'checked' : ''; ?>>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label>Visita:</label>
+                                            <select name="hijo_visita_<?php echo $index; ?>">
+                                                <option value="NO" <?php echo ($hijo['visita'] == 0) ? 'selected' : ''; ?>>No</option>
+                                                <option value="SI" <?php echo ($hijo['visita'] == 1) ? 'selected' : ''; ?>>Sí</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>Apellido:</label>
-                                <input type="text" name="hijo_apellido_<?php echo $index; ?>"
-                                    value="<?php echo htmlspecialchars($hijo['apellido']); ?>"
-                                    placeholder="Apellido">
-                            </div>
-                            <div class="form-group">
-                                <label>Edad:</label>
-                                <input type="number" name="hijo_edad_<?php echo $index; ?>"
-                                    value="<?php echo htmlspecialchars($hijo['edad']); ?>"
-                                    placeholder="Edad">
-                            </div>
-                            <div class="form-group">
-                                <label>Fallecido:</label>
-                                <input type="checkbox" name="hijo_fallecido_<?php echo $index; ?>"
-                                    <?php echo ($hijo['fallecido'] == 1) ? 'checked' : ''; ?>>
-                            </div>
-                            <div class="form-group">
-                                <label>Visita:</label>
-                                <select name="hijo_visita_<?php echo $index; ?>">
-                                    <option value="NO" <?php echo ($hijo['visita'] == 0) ? 'selected' : ''; ?>>No</option>
-                                    <option value="SI" <?php echo ($hijo['visita'] == 1) ? 'selected' : ''; ?>>Sí</option>
-                                </select>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
 
             <!-- Otros Visitantes -->
-            <div class="form-section">
-                <h3>Otros Visitantes</h3>
-                <div class="form-group">
-                    <label>Visita de Otros:</label>
-                    <select name="visita_otros" id="visita_otros">
-                        <option value="NO" <?php echo (count($datos['otros_visitantes']) == 0) ? 'selected' : ''; ?>>No</option>
-                        <option value="SI" <?php echo (count($datos['otros_visitantes']) > 0) ? 'selected' : ''; ?>>Sí</option>
-                    </select>
+            <div class="card mt-4 border border-black">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="my-0 py-0">Otros Visitantes</h4>
                 </div>
-                <div id="otros-visitantes-container">
-                    <?php foreach ($datos['otros_visitantes'] as $index => $visitante): ?>
-                        <div class="visitante-grupo">
-                            <div class="form-group">
-                                <label>Nombre:</label>
-                                <input type="text" name="otro_nombre[]"
-                                    value="<?php echo htmlspecialchars($visitante['nombre']); ?>"
-                                    placeholder="Nombre del visitante">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Visita de Otros:</label>
+                        <select name="visita_otros" id="visita_otros">
+                            <option value="NO" <?php echo (count($datos['otros_visitantes']) == 0) ? 'selected' : ''; ?>>No</option>
+                            <option value="SI" <?php echo (count($datos['otros_visitantes']) > 0) ? 'selected' : ''; ?>>Sí</option>
+                        </select>
+                    </div>
+                    <div id="otros-visitantes-container">
+                        <?php foreach ($datos['otros_visitantes'] as $index => $visitante): ?>
+                            <div class="visitante-grupo">
+                                <div class="row">
+                                    <div class="form-group col">
+                                        <label>Nombre:</label>
+                                        <input type="text" name="otro_nombre[]"
+                                            value="<?php echo htmlspecialchars($visitante['nombre']); ?>"
+                                            placeholder="Nombre del visitante">
+                                    </div>
+                                    <div class="form-group col">
+                                        <label>Apellido:</label>
+                                        <input type="text" name="otro_apellido[]"
+                                            value="<?php echo htmlspecialchars($visitante['apellido']); ?>"
+                                            placeholder="Apellido">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col">
+                                        <label>Teléfono:</label>
+                                        <input type="tel" class="form-control" name="otro_telefono[]"
+                                            value="<?php echo htmlspecialchars($visitante['telefono']); ?>"
+                                            placeholder="Teléfono">
+                                    </div>
+                                    <div class="form-group col">
+                                        <label>Domicilio:</label>
+                                        <input type="text" name="otro_domicilio[]"
+                                            value="<?php echo htmlspecialchars($visitante['domicilio']); ?>"
+                                            placeholder="Domicilio">
+                                    </div>
+                                    <div class="form-group col">
+                                        <label>Vínculo Filial:</label>
+                                        <input type="text" name="otro_vinculo[]"
+                                            value="<?php echo htmlspecialchars($visitante['vinculo_filial']); ?>"
+                                            placeholder="Vínculo familiar">
+                                    </div>
+
+                                </div>      
                             </div>
-                            <div class="form-group">
-                                <label>Apellido:</label>
-                                <input type="text" name="otro_apellido[]"
-                                    value="<?php echo htmlspecialchars($visitante['apellido']); ?>"
-                                    placeholder="Apellido">
-                            </div>
-                            <div class="form-group">
-                                <label>Teléfono:</label>
-                                <input type="tel" class="form-control" name="otro_telefono[]"
-                                    value="<?php echo htmlspecialchars($visitante['telefono']); ?>"
-                                    placeholder="Teléfono">
-                            </div>
-                            <div class="form-group">
-                                <label>Domicilio:</label>
-                                <input type="text" name="otro_domicilio[]"
-                                    value="<?php echo htmlspecialchars($visitante['domicilio']); ?>"
-                                    placeholder="Domicilio">
-                            </div>
-                            <div class="form-group">
-                                <label>Vínculo Filial:</label>
-                                <input type="text" name="otro_vinculo[]"
-                                    value="<?php echo htmlspecialchars($visitante['vinculo_filial']); ?>"
-                                    placeholder="Vínculo familiar">
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    </div>
+                    <button type="submit" name="actualizar_datos_familiares" class="btn btn-primary ml-2">
+                        Actualizar Información Familiar
+                    </button>
                 </div>
+                
+
+
             </div>
 
             <!-- Botón de Actualización -->
-            <div class="form-section">
-                <button type="submit" name="actualizar_datos_familiares" class="btn btn-primary">
-                    Actualizar Información Familiar
-                </button>
-            </div>
+                
         </form>
         </div>
     </div>
@@ -825,45 +882,86 @@ try {
     const numHijosInput = document.getElementById('num_hijos');
     const hijosContainer = document.getElementById('hijos-container');
     
+    // Almacenar una copia de los hijos existentes
+    let hijosSalvados = [];
+
     // Función para actualizar los campos de hijos
     function actualizarCamposHijos() {
         const numHijos = parseInt(numHijosInput.value) || 0;
         const hijosActuales = hijosContainer.children.length;
         
+        // Si se reduce a cero, guardar los hijos actuales
+        if (numHijos === 0 && hijosActuales > 0) {
+            hijosSalvados = Array.from(hijosContainer.children).map(hijoGrupo => {
+                // Extraer valores de los inputs
+                const inputs = hijoGrupo.querySelectorAll('input, select');
+                return Array.from(inputs).map(input => ({
+                    name: input.name,
+                    value: input.type === 'checkbox' ? input.checked : input.value,
+                    type: input.type
+                }));
+            });
+            
+            // Limpiar el contenedor
+            hijosContainer.innerHTML = '';
+        }
+
         // Agregar nuevos campos de hijos
         if (numHijos > hijosActuales) {
             for (let i = hijosActuales; i < numHijos; i++) {
                 const nuevoHijo = document.createElement('div');
                 nuevoHijo.className = 'hijo-grupo';
                 nuevoHijo.innerHTML = `
-                    <div class="form-group">
-                        <label>Nombre del Hijo ${i + 1}:</label>
-                        <input type="text" name="hijo_nombre_${i}" 
-                            placeholder="Nombre">
-                    </div>
-                    <div class="form-group">
-                        <label>Apellido:</label>
-                        <input type="text" name="hijo_apellido_${i}"
-                            placeholder="Apellido">
-                    </div>
-                    <div class="form-group">
-                        <label>Edad:</label>
-                        <input type="number" name="hijo_edad_${i}"
-                            placeholder="Edad">
-                    </div>
-                    <div class="form-group">
-                        <label>Fallecido:</label>
-                        <input type="checkbox" name="hijo_fallecido_${i}">
-                    </div>
-                    <div class="form-group">
-                        <label>Visita:</label>
-                        <select name="hijo_visita_${i}">
-                            <option value="NO">No</option>
-                            <option value="SI">Sí</option>
-                        </select>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label>Nombre del Hijo ${i + 1}:</label>
+                            <input type="text" class="form-control" name="hijo_nombre_${i}" placeholder="Nombre">
+                        </div>
+                        <div class="form-group col">
+                            <label>Apellido:</label>
+                            <input type="text" class="form-control" name="hijo_apellido_${i}" placeholder="Apellido">
+                        </div>                    
+
+                        <div class="form-group col">
+                            <label>Edad:</label>
+                            <input type="number" name="hijo_edad_${i}"
+                                placeholder="Edad">
+                        </div>
+                        <div class="form-group col">
+                            <label>Fallecido:</label>
+                            <input type="checkbox" name="hijo_fallecido_${i}">
+                        </div>
+                        <div class="form-group col">
+                            <label>Visita:</label>
+                            <select name="hijo_visita_${i}">
+                                <option value="NO">No</option>
+                                <option value="SI">Sí</option>
+                            </select>
+                        </div>
                     </div>
                 `;
                 hijosContainer.appendChild(nuevoHijo);
+            }
+
+            // Restaurar información guardada si existe
+            if (hijosSalvados.length > 0) {
+                hijosSalvados.forEach((hijoSalvado, index) => {
+                    if (index < numHijos) {
+                        const inputs = hijosContainer.children[index].querySelectorAll('input, select');
+                        hijoSalvado.forEach((inputData, inputIndex) => {
+                            if (inputs[inputIndex]) {
+                                inputs[inputIndex].name = inputData.name;
+                                if (inputData.type === 'checkbox') {
+                                    inputs[inputIndex].checked = inputData.value;
+                                } else {
+                                    inputs[inputIndex].value = inputData.value;
+                                }
+                            }
+                        });
+                    }
+                });
+                // Limpiar hijos salvados después de restaurar
+                hijosSalvados = [];
             }
         }
         // Eliminar campos de hijos en exceso
@@ -890,10 +988,29 @@ document.addEventListener('DOMContentLoaded', configurarAdicionHijos);
     const numHermanosInput = document.getElementById('num_hermanos');
     const hermanosContainer = document.getElementById('hermanos-container');
     
+    // Almacenar una copia de los hermanos existentes
+    let hermanosSalvados = [];
+
     // Función que maneja la actualización de campos
     function actualizarCamposHermanos() {
         const numHermanos = parseInt(numHermanosInput.value) || 0;
         const hermanosActuales = hermanosContainer.children.length;
+
+        // Si se reduce a cero, guardar los hermanos actuales
+        if (numHermanos === 0 && hermanosActuales > 0) {
+            hermanosSalvados = Array.from(hermanosContainer.children).map(hermanoGrupo => {
+                // Extraer valores de los inputs
+                const inputs = hermanoGrupo.querySelectorAll('input, select');
+                return Array.from(inputs).map(input => ({
+                    name: input.name,
+                    value: input.value,
+                    type: input.type
+                }));
+            });
+            
+            // Limpiar el contenedor
+            hermanosContainer.innerHTML = '';
+        }
 
         // Agregar nuevos campos de hermanos
         if (numHermanos > hermanosActuales) {
@@ -901,30 +1018,49 @@ document.addEventListener('DOMContentLoaded', configurarAdicionHijos);
                 const nuevoHermano = document.createElement('div');
                 nuevoHermano.className = 'hermano-grupo';
                 nuevoHermano.innerHTML = `
-                    <div class="form-group">
+                <div class="form-row">
+                    <div class="form-group col">
                         <label>Nombre del Hermano ${i + 1}:</label>
                         <input type="text" name="hermano_nombre_${i}" 
                             placeholder="Nombre">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col">
                         <label>Apellido:</label>
                         <input type="text" name="hermano_apellido_${i}" 
                             placeholder="Apellido">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col">
                         <label>Edad:</label>
                         <input type="number" name="hermano_edad_${i}" 
                             placeholder="Edad">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col">
                         <label>Visita:</label>
                         <select name="hermano_visita_${i}">
                             <option value="NO">No</option>
                             <option value="SI">Sí</option>
                         </select>
                     </div>
+                </div>
                 `;
                 hermanosContainer.appendChild(nuevoHermano);
+            }
+
+            // Restaurar información guardada si existe
+            if (hermanosSalvados.length > 0) {
+                hermanosSalvados.forEach((hermanoSalvado, index) => {
+                    if (index < numHermanos) {
+                        const inputs = hermanosContainer.children[index].querySelectorAll('input, select');
+                        hermanoSalvado.forEach((inputData, inputIndex) => {
+                            if (inputs[inputIndex]) {
+                                inputs[inputIndex].name = inputData.name;
+                                inputs[inputIndex].value = inputData.value;
+                            }
+                        });
+                    }
+                });
+                // Limpiar hermanos salvados después de restaurar
+                hermanosSalvados = [];
             }
         }
         // Eliminar campos de hermanos en exceso
@@ -941,7 +1077,7 @@ document.addEventListener('DOMContentLoaded', configurarAdicionHijos);
     numHermanosInput.addEventListener('change', actualizarCamposHermanos);
 }
         // Función para manejar la adición de otros visitantes
-        function configurarAdicionVisitantes() {
+function configurarAdicionVisitantes() {
             const visitaOtrosSelect = document.getElementById('visita_otros');
             const visitantesContainer = document.getElementById('otros-visitantes-container');
             visitaOtrosSelect.addEventListener('change', function() {
@@ -958,7 +1094,7 @@ document.addEventListener('DOMContentLoaded', configurarAdicionHijos);
             // Botón para agregar más visitantes
             const agregarVisitanteBtn = document.createElement('button');
             agregarVisitanteBtn.type = 'button';
-            agregarVisitanteBtn.textContent = 'Agregar Visitante';
+            agregarVisitanteBtn.textContent = 'Agregar Otro Visitante';
             agregarVisitanteBtn.className = 'btn btn-warning'; // Agregar clases de Bootstrap
             agregarVisitanteBtn.addEventListener('click', agregarNuevoVisitante);
 
@@ -967,32 +1103,37 @@ document.addEventListener('DOMContentLoaded', configurarAdicionHijos);
                 const nuevoVisitante = document.createElement('div');
                 nuevoVisitante.className = 'visitante-grupo';
                 nuevoVisitante.innerHTML = `
-            <div class="form-group">
-                <label>Nombre:</label>
-                <input type="text" name="otro_nombre[]" 
-                    placeholder="Nombre del visitante">
-            </div>
-            <div class="form-group">
-                <label>Apellido:</label>
-                <input type="text" name="otro_apellido[]" 
-                    placeholder="Apellido">
-            </div>
-            <div class="form-group">
-                <label>Teléfono:</label>
-                <input type="tel" class="form-control" name="otro_telefono[]" 
-                    placeholder="Teléfono">
-            </div>
-            <div class="form-group">
-                <label>Domicilio:</label>
-                <input type="text" name="otro_domicilio[]" 
-                    placeholder="Domicilio">
-            </div>
-            <div class="form-group">
-                <label>Vínculo Filial:</label>
-                <input type="text" name="otro_vinculo[]" 
-                    placeholder="Vínculo familiar">
-            </div>
-            <button type="button" class="btn btn-danger btn-eliminar-visitante">Eliminar Visitante</button>
+                <hr class="border-dark my-4">
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label>Nombre:</label>
+                            <input type="text" name="otro_nombre[]" 
+                                placeholder="Nombre del visitante">
+                        </div>
+                        <div class="form-group col">
+                            <label>Apellido:</label>
+                            <input type="text" name="otro_apellido[]" 
+                                placeholder="Apellido">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label>Teléfono:</label>
+                            <input type="tel" class="form-control" name="otro_telefono[]" 
+                                placeholder="Teléfono">
+                        </div>
+                        <div class="form-group col">
+                            <label>Domicilio:</label>
+                            <input type="text" name="otro_domicilio[]" 
+                                placeholder="Domicilio">
+                        </div>
+                        <div class="form-group col">
+                            <label>Vínculo Filial:</label>
+                            <input type="text" name="otro_vinculo[]" 
+                                placeholder="Vínculo familiar">
+                        </div>
+                    </div>    
+            <button type="button" class="btn btn-danger btn-eliminar-visitante mb-3">Eliminar Visitante</button>
         `;
                 // Agregar botón de eliminación para cada visitante
                 nuevoVisitante.querySelector('.btn-eliminar-visitante').addEventListener('click', function() {
@@ -1005,6 +1146,7 @@ document.addEventListener('DOMContentLoaded', configurarAdicionHijos);
             // Agregar botón de agregar visitante después del contenedor
             visitantesContainer.parentNode.insertBefore(agregarVisitanteBtn, visitantesContainer.nextSibling);
         }
+
         // Inicializar funcionalidades
         configurarAdicionHijos();
         configurarAdicionHermanos();

@@ -137,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
     </div>
 <?php endif; ?>
 
-<div class="container mt-5">
+<div class="container mt-3">
     <div class="card shadow-sm">
         <h5 class="card-header bg-dark text-white">
             <?php echo $datos_medicos ? 'Actualizar' : 'Crear'; ?> Datos Médicos

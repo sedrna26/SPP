@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-12-2024 a las 18:39:46
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Tiempo de generación: 04-12-2024 a las 08:53:04
+-- Versión del servidor: 10.4.28-MariaDB
+-- Versión de PHP: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -31,19 +31,11 @@ CREATE TABLE `asistencia_espiritual` (
   `id_asistencia` int(11) NOT NULL,
   `id_ppl` int(11) NOT NULL,
   `practica_culto` tinyint(1) DEFAULT NULL,
-  `culto` varchar(100) DEFAULT NULL,
+  `culto` varchar(255) DEFAULT NULL,
   `desea_participar` tinyint(1) NOT NULL,
-  `eleccion_actividad` varchar(100) NOT NULL,
+  `eleccion_actividad` varchar(255) NOT NULL,
   `estado` varchar(20) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `asistencia_espiritual`
---
-
-INSERT INTO `asistencia_espiritual` (`id_asistencia`, `id_ppl`, `practica_culto`, `culto`, `desea_participar`, `eleccion_actividad`, `estado`) VALUES
-(1, 18, 0, '', 0, '', 'Activo'),
-(2, 19, 0, '', 0, '', 'Activo');
 
 -- --------------------------------------------------------
 
@@ -80,7 +72,16 @@ INSERT INTO `auditoria` (`id_auditoria`, `id_usuario`, `accion`, `tabla_afectada
 (12, 1, 'Agregar Asistencia Espiritual y/o Laboral', 'asistencia_espiritual, laboral', 19, '2024-12-01 23:32:05', 'Se insertó una nueva asistencia_espiritual y laboral para el PPL con ID: 19'),
 (13, 1, 'Agregar Datos Médicos', 'datos_medicos', 19, '2024-12-01 23:32:53', 'Se insertaron los datos médicos para el paciente con ID: 19'),
 (14, 1, 'Agregar Observación', 'observaciones', 19, '2024-12-01 23:33:09', 'Se insertó una nueva observación para el PPL con ID: 19'),
-(15, 1, 'Agregar Clasificacion', 'clasificacion', 19, '2024-12-01 23:33:56', 'Se insertó una nueva clasificacion para el PPL con ID: 19');
+(15, 1, 'Agregar Clasificacion', 'clasificacion', 19, '2024-12-01 23:33:56', 'Se insertó una nueva clasificacion para el PPL con ID: 19'),
+(16, 1, 'Agregar PPL', 'persona, ppl, situacion legal', 3, '2024-12-04 07:39:55', 'Se agrego un nuevo ppl con ID del PPL: 3, ID de la persona: , \r\n    Apodo: , Nombre: asdasd, Apellido: asdasd'),
+(17, 1, 'Agregar Educación', 'educación', 20, '2024-12-04 07:40:17', 'Se insertó una nueva educación para el PPL con ID: 20'),
+(18, 1, 'Agregar Info Familiar', 'ppl_familiar_info, ppl_situacion_sociofamiliar, pp', 20, '2024-12-04 07:40:33', 'Se insertó una nueva Informacion Familiar para el PPL con ID: 20'),
+(19, 1, 'Agregar Asistencia Espiritual y/o Laboral', 'asistencia_espiritual, laboral', 20, '2024-12-04 07:40:51', 'Se insertó una nueva asistencia_espiritual y laboral para el PPL con ID: 20'),
+(20, 1, 'Agregar Datos Médicos', 'datos_medicos', 20, '2024-12-04 07:41:20', 'Se insertaron los datos médicos para el paciente con ID: 20'),
+(21, 1, 'Agregar Datos Psiquiátricos/Psicológicos', 'psiquiatrico_psicologico', 20, '2024-12-04 07:41:39', 'Se insertaron los datos psiquiátricos/psicológicos para el paciente con ID: 20'),
+(22, 1, 'Agregar Observación', 'observaciones', 20, '2024-12-04 07:41:43', 'Se insertó una nueva observación para el PPL con ID: 20'),
+(23, 1, 'Agregar Clasificacion', 'clasificacion', 20, '2024-12-04 07:41:52', 'Se insertó una nueva clasificacion para el PPL con ID: 20'),
+(24, 1, 'Editar Clasificación', 'clasificacion', 20, '2024-12-04 07:44:37', 'Se actualizó la clasificación para el PPL con ID: 20');
 
 -- --------------------------------------------------------
 
@@ -125751,14 +125752,6 @@ CREATE TABLE `clasificacion` (
   `estado` varchar(20) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `clasificacion`
---
-
-INSERT INTO `clasificacion` (`id`, `id_ppl`, `clasificacion`, `sugerencia`, `sector_nro`, `pabellon_nro`, `estado`) VALUES
-(4, 18, 'Adulto Primario', '---', 1, 4451, 'Activo'),
-(5, 19, 'Adulto Primario', '---', 1, 1209, 'Activo');
-
 -- --------------------------------------------------------
 
 --
@@ -125802,14 +125795,6 @@ CREATE TABLE `datos_medicos` (
   `diagnostico` varchar(255) DEFAULT NULL,
   `tipificacion_dieta` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `datos_medicos`
---
-
-INSERT INTO `datos_medicos` (`id`, `id_ppl`, `hipertension`, `diabetes`, `enfermedad_corazon`, `enfermedad_corazon_cual`, `asma`, `epilepsia`, `alergia`, `alergia_especifique`, `es_celiaco`, `bulimia_anorexia`, `medicacion`, `metabolismo`, `embarazo`, `hepatitis`, `mononucleosis`, `otras_enfermedades`, `peso_actual`, `talla`, `imc`, `diagnostico`, `tipificacion_dieta`) VALUES
-(2, 18, 1, 1, 0, NULL, 1, 1, 0, NULL, 0, 0, '', 0, 0, 0, 0, '', 70.00, 1.70, 242214.53, '--', '--'),
-(3, 19, 1, 1, 0, NULL, 1, 1, 0, NULL, 0, 0, '', 0, 0, 0, 0, '', 70.00, 1.80, 216049.38, '--', '--');
 
 -- --------------------------------------------------------
 
@@ -125915,15 +125900,6 @@ CREATE TABLE `domicilio` (
   `direccion` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `domicilio`
---
-
-INSERT INTO `domicilio` (`id`, `id_persona`, `id_pais`, `id_provincia`, `id_ciudad`, `localidad`, `direccion`) VALUES
-(1, 17, 5, 2217, 790518, 'Villa del Salvador ', '9 de julio y san juan'),
-(2, 18, 5, 2217, 790518, 'Villa del Salvador ', '9 de julio y san juan'),
-(3, 19, 5, 2217, 790520, 'Capital', 'libertador 534');
-
 -- --------------------------------------------------------
 
 --
@@ -125937,13 +125913,13 @@ CREATE TABLE `educacion` (
   `primaria` varchar(12) NOT NULL,
   `secundaria` varchar(12) NOT NULL,
   `tiene_educ_formal` tinyint(4) NOT NULL,
-  `educ-formal` varchar(50) DEFAULT NULL,
+  `educ-formal` varchar(255) DEFAULT NULL,
   `tiene_educ_no_formal` tinyint(4) NOT NULL,
-  `educ-no-formal` varchar(50) DEFAULT NULL,
+  `educ-no-formal` varchar(255) DEFAULT NULL,
   `quiere_deporte` tinyint(4) NOT NULL,
-  `sec-deporte` varchar(50) DEFAULT NULL,
+  `sec-deporte` varchar(255) DEFAULT NULL,
   `quiere_act_artistica` tinyint(4) NOT NULL,
-  `act-artistica` varchar(50) DEFAULT NULL,
+  `act-artistica` varchar(255) DEFAULT NULL,
   `estado` varchar(255) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -125953,7 +125929,8 @@ CREATE TABLE `educacion` (
 
 INSERT INTO `educacion` (`id`, `id_ppl`, `sabe_leer_escrib`, `primaria`, `secundaria`, `tiene_educ_formal`, `educ-formal`, `tiene_educ_no_formal`, `educ-no-formal`, `quiere_deporte`, `sec-deporte`, `quiere_act_artistica`, `act-artistica`, `estado`) VALUES
 (3, 18, 1, 'Completa', 'Completa', 1, 'Sssss', 0, '', 0, '', 0, '', 'Activo'),
-(4, 19, 1, 'Completa', 'Completa', 0, '', 0, '', 0, '', 0, '', 'Activo');
+(4, 19, 1, 'Completa', 'Completa', 0, '', 0, '', 0, '', 0, '', 'Activo'),
+(5, 20, 1, 'Completa', 'Completa', 1, 'efsdfsdfsdfdf', 0, '', 0, '', 0, '', 'Activo');
 
 -- --------------------------------------------------------
 
@@ -125967,14 +125944,6 @@ CREATE TABLE `fechappl` (
   `inicio_condena` date DEFAULT NULL,
   `fin_condena` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `fechappl`
---
-
-INSERT INTO `fechappl` (`id`, `idppl`, `inicio_condena`, `fin_condena`) VALUES
-(1, 1, '2024-12-01', NULL),
-(2, 2, '2024-12-01', NULL);
 
 -- --------------------------------------------------------
 
@@ -126050,14 +126019,6 @@ CREATE TABLE `laboral` (
   `estado` varchar(255) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `laboral`
---
-
-INSERT INTO `laboral` (`id_laboral`, `id_ppl`, `tiene_exp`, `experiencia`, `se_capacito`, `en_que_se_capacito`, `posee_certific`, `formac_interes`, `tiene_incl_lab`, `lugar_inclusion`, `estado`) VALUES
-(5, 18, 1, 'Obvio en muchas cosas', 1, 'Carpiteria', 1, 'Electricista', 0, '', 'Activo'),
-(6, 19, 1, 'ASDADADASDSADSA', 0, 'Carpiteria', 1, 'Electricista', 0, '', 'Activo');
-
 -- --------------------------------------------------------
 
 --
@@ -126075,20 +126036,6 @@ CREATE TABLE `marcas_cuerpo` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `marcas_cuerpo`
---
-
-INSERT INTO `marcas_cuerpo` (`id`, `idppl`, `x`, `y`, `description`, `categoria`, `estado`, `created_at`) VALUES
-(28, 16, 406.333, 56.6667, 'Tatuaje', 'cuerpo', 'Activo', '2024-12-01 21:03:01'),
-(29, 16, 494.333, 260.667, 'tatuaje', 'cuerpo', 'Activo', '2024-12-01 21:03:44'),
-(30, 18, 404.333, 136.667, 'Tatuaje', 'cuerpo', 'Activo', '2024-12-01 23:04:57'),
-(31, 18, 470.333, 193.667, 'Cicatriz', 'cuerpo', 'Activo', '2024-12-01 23:05:13'),
-(32, 18, 341.333, 192.667, 'asda', 'cuerpo', 'Activo', '2024-12-01 23:05:23'),
-(33, 19, 105.333, 132.667, 'sdffsf', 'cuerpo', 'Activo', '2024-12-01 23:32:16'),
-(34, 19, 408.333, 73.6667, 'sdfsdf', 'cuerpo', 'Activo', '2024-12-01 23:32:25'),
-(35, 19, 148.667, 252, 'asdasd', 'cuerpo', 'Inactivo', '2024-12-02 15:21:42');
-
 -- --------------------------------------------------------
 
 --
@@ -126101,14 +126048,6 @@ CREATE TABLE `observaciones` (
   `observacion` text NOT NULL,
   `estado` varchar(20) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `observaciones`
---
-
-INSERT INTO `observaciones` (`id_observacion`, `id_ppl`, `observacion`, `estado`) VALUES
-(3, 18, 'wfwqfwq wqfqwqv  \r\n                ', 'Activo'),
-(4, 19, 'Es que es de prueba\r\n                ', 'Activo');
 
 -- --------------------------------------------------------
 
@@ -126350,15 +126289,15 @@ INSERT INTO `paises` (`id`, `nombre`) VALUES
 CREATE TABLE `persona` (
   `id` int(11) NOT NULL,
   `dni` varchar(9) DEFAULT NULL,
-  `apellidos` varchar(50) NOT NULL,
-  `nombres` varchar(50) NOT NULL,
+  `apellidos` varchar(255) NOT NULL,
+  `nombres` varchar(255) NOT NULL,
   `fechanac` date NOT NULL,
   `edad` int(3) NOT NULL,
   `direccion` varchar(255) NOT NULL DEFAULT 'Sin dirección',
   `genero` varchar(50) NOT NULL,
   `estadocivil` varchar(50) NOT NULL,
   `educacion` int(11) DEFAULT NULL,
-  `estado` varchar(150) NOT NULL DEFAULT 'Activo'
+  `estado` varchar(10) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -126366,23 +126305,7 @@ CREATE TABLE `persona` (
 --
 
 INSERT INTO `persona` (`id`, `dni`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `educacion`, `estado`) VALUES
-(1, '44123890', 'Castro', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL, 'Activo'),
-(2, '44123891', 'Demian', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL, 'Activo'),
-(3, '40470766', 'Rodriguez', 'Horacio Andres', '1997-11-26', 26, 'Tucuman Sur 2000', 'Masculino', 'Soltero', NULL, 'Activo'),
-(4, '45476132', 'Bueno', 'Maxi Agustin', '2000-01-23', 24, 'libertador 534', 'Masculino', 'Soltero', NULL, 'Activo'),
-(5, '44406135', 'Castro', 'Ismael ', '2000-01-23', 24, '9 de julio', 'Masculino', 'Soltero', NULL, 'Activo'),
-(8, '44123892', 'Castro', 'Camila', '2000-01-23', 24, '9 de julio y san juan', 'Femenino', 'Soltero', NULL, 'Activo'),
-(9, '34234120', 'Castro', 'Maxi Agustin', '2002-02-23', 22, '9 de julio', 'Masculino', 'Soltero', NULL, 'Activo'),
-(10, '45475124', 'Castro', 'Demian', '2000-02-23', 24, '9 de julio y san juan', 'Masculino', 'Soltero', NULL, 'Activo'),
-(11, '45479130', 'Rodriguez', 'Juan', '2000-02-23', 24, 'pppp', 'Otro', 'Soltero', NULL, 'Activo'),
-(12, '45476191', 'Castro', 'Marcos', '2024-11-15', 0, 'libertador 534', 'Masculino', 'Soltero', NULL, 'Activo'),
-(13, '45476139', 'Castro', 'Juan', '1984-01-23', 40, '9 de julio', 'Femenino', 'Divorciado', NULL, 'Activo'),
-(14, '32342167', 'Castro', 'Camila', '1999-03-23', 25, '9 de julio', 'Femenino', 'Soltero', NULL, 'Activo'),
-(15, '44123890', 'ads', 'sad', '1993-12-12', 30, '2', 'Masculino', 'Soltero', NULL, 'Activo'),
-(16, '38015715', 'asd', 'sda', '2024-12-26', 23, '1', 'Masculino', 'Soltero', NULL, 'Activo'),
-(17, '44123892', 'Rodriguez', 'Marcos', '2000-12-13', 24, '1', 'Masculino', 'Soltero', NULL, 'Activo'),
-(18, '44123892', 'Rodriguez', 'Marcos', '2000-01-20', 24, '2', 'Masculino', 'Soltero', NULL, 'Activo'),
-(19, '32342167', 'Rodriguez', 'Juan', '2000-01-23', 24, '3', 'Masculino', 'Soltero', NULL, 'Activo');
+(1, '44123890', 'Castro', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL, 'Activo');
 
 -- --------------------------------------------------------
 
@@ -126395,18 +126318,10 @@ CREATE TABLE `ppl` (
   `idpersona` int(11) NOT NULL,
   `apodo` varchar(20) DEFAULT NULL,
   `trabaja` tinyint(1) NOT NULL,
-  `profesion` varchar(50) DEFAULT NULL,
-  `foto` varchar(30) DEFAULT NULL,
+  `profesion` varchar(255) DEFAULT NULL,
+  `foto` varchar(255) DEFAULT NULL,
   `huella` blob DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `ppl`
---
-
-INSERT INTO `ppl` (`id`, `idpersona`, `apodo`, `trabaja`, `profesion`, `foto`, `huella`) VALUES
-(1, 18, '', 1, 'Carpintero', NULL, NULL),
-(2, 19, '', 1, 'Electricista', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -126430,7 +126345,8 @@ INSERT INTO `ppl_causas` (`id_ppl_causa`, `id_ppl`, `id_causa`) VALUES
 (3, 2, 1),
 (4, 2, 2),
 (5, 2, 3),
-(6, 2, 4);
+(6, 2, 4),
+(7, 3, 2);
 
 -- --------------------------------------------------------
 
@@ -126448,16 +126364,8 @@ CREATE TABLE `ppl_familiar_info` (
   `telefono_familiar` varchar(20) DEFAULT NULL,
   `posee_dni` tinyint(1) DEFAULT NULL,
   `motivo_no_dni` text DEFAULT NULL,
-  `estado` varchar(20) NOT NULL DEFAULT 'Activo'
+  `estado` varchar(10) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `ppl_familiar_info`
---
-
-INSERT INTO `ppl_familiar_info` (`id`, `idppl`, `familiares_ffaa`, `ffaa_detalles`, `familiares_detenidos`, `detenidos_detalles`, `telefono_familiar`, `posee_dni`, `motivo_no_dni`, `estado`) VALUES
-(1, 18, 0, '', 0, '', '2646040713', 1, '', 'Activo'),
-(2, 19, 0, '', 0, '', '2646045710', 1, '', 'Activo');
 
 -- --------------------------------------------------------
 
@@ -126468,8 +126376,8 @@ INSERT INTO `ppl_familiar_info` (`id`, `idppl`, `familiares_ffaa`, `ffaa_detalle
 CREATE TABLE `ppl_hermanos` (
   `id` int(11) NOT NULL,
   `idppl` int(11) NOT NULL,
-  `apellido` varchar(50) NOT NULL,
-  `nombre` varchar(50) NOT NULL,
+  `apellido` varchar(255) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
   `edad` int(3) DEFAULT NULL,
   `visita` tinyint(1) DEFAULT 0,
   `estado` varchar(20) NOT NULL DEFAULT 'Activo'
@@ -126484,12 +126392,12 @@ CREATE TABLE `ppl_hermanos` (
 CREATE TABLE `ppl_hijos` (
   `id` int(11) NOT NULL,
   `idppl` int(11) NOT NULL,
-  `apellido` varchar(50) NOT NULL,
-  `nombre` varchar(50) NOT NULL,
+  `apellido` varchar(255) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
   `edad` int(3) DEFAULT NULL,
   `fallecido` tinyint(1) DEFAULT 0,
   `visita` tinyint(1) DEFAULT 0,
-  `estado` varchar(255) NOT NULL DEFAULT 'Activo'
+  `estado` varchar(10) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -126501,8 +126409,8 @@ CREATE TABLE `ppl_hijos` (
 CREATE TABLE `ppl_otros_visitantes` (
   `id` int(11) NOT NULL,
   `idppl` int(11) NOT NULL,
-  `apellido` varchar(50) NOT NULL,
-  `nombre` varchar(50) NOT NULL,
+  `apellido` varchar(255) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
   `telefono` varchar(20) DEFAULT NULL,
   `domicilio` varchar(100) DEFAULT NULL,
   `vinculo_filial` varchar(50) DEFAULT NULL,
@@ -126520,8 +126428,8 @@ CREATE TABLE `ppl_padres` (
   `idppl` int(11) NOT NULL,
   `tipo` enum('PADRE','MADRE') NOT NULL,
   `vivo` tinyint(1) NOT NULL DEFAULT 1,
-  `apellido` varchar(50) NOT NULL,
-  `nombre` varchar(50) NOT NULL,
+  `apellido` varchar(255) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
   `edad` int(3) DEFAULT NULL,
   `nacionalidad` varchar(50) DEFAULT NULL,
   `estado_civil` varchar(20) DEFAULT NULL,
@@ -126529,16 +126437,6 @@ CREATE TABLE `ppl_padres` (
   `visita` tinyint(1) DEFAULT 0,
   `estado` varchar(20) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `ppl_padres`
---
-
-INSERT INTO `ppl_padres` (`id`, `idppl`, `tipo`, `vivo`, `apellido`, `nombre`, `edad`, `nacionalidad`, `estado_civil`, `instruccion`, `visita`, `estado`) VALUES
-(1, 18, 'PADRE', 0, 'Marcos ', 'Lopez', 45, 'Argetina', 'Casado', 'Secundaria', 1, 'Activo'),
-(2, 18, 'MADRE', 0, 'Castro', 'Camila', 50, 'Argentina', 'Casada', 'Secundaria', 1, 'Activo'),
-(3, 19, 'PADRE', 0, 'Vargas', 'Franco', 45, 'Argetina', '', 'Secundaria', 1, 'Activo'),
-(4, 19, 'MADRE', 0, 'Castro', 'Lucia', 50, 'Argentina', '', 'Secundaria', 1, 'Activo');
 
 -- --------------------------------------------------------
 
@@ -126549,23 +126447,15 @@ INSERT INTO `ppl_padres` (`id`, `idppl`, `tipo`, `vivo`, `apellido`, `nombre`, `
 CREATE TABLE `ppl_pareja` (
   `id` int(11) NOT NULL,
   `idppl` int(11) NOT NULL,
-  `apellido` varchar(50) DEFAULT NULL,
-  `nombre` varchar(50) DEFAULT NULL,
+  `apellido` varchar(255) DEFAULT NULL,
+  `nombre` varchar(255) DEFAULT NULL,
   `edad` int(3) DEFAULT NULL,
   `nacionalidad` varchar(50) DEFAULT NULL,
-  `instruccion` varchar(100) DEFAULT NULL,
+  `instruccion` varchar(255) DEFAULT NULL,
   `tipo_union` varchar(50) DEFAULT NULL,
   `visita` tinyint(1) DEFAULT 0,
   `estado` varchar(20) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `ppl_pareja`
---
-
-INSERT INTO `ppl_pareja` (`id`, `idppl`, `apellido`, `nombre`, `edad`, `nacionalidad`, `instruccion`, `tipo_union`, `visita`, `estado`) VALUES
-(1, 18, 'Luxcw', 'Lucia', 26, 'Argentina', 'Desempleada', '', 0, 'Activo'),
-(2, 19, 'Assad', 'Lsfrq', 50, 'Argentina', 'Desempleada', 'Union Convivencial', 0, 'Activo');
 
 -- --------------------------------------------------------
 
@@ -126581,14 +126471,6 @@ CREATE TABLE `ppl_situacion_sociofamiliar` (
   `mendicidad_calle` tinyint(1) DEFAULT 0,
   `estado` varchar(255) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `ppl_situacion_sociofamiliar`
---
-
-INSERT INTO `ppl_situacion_sociofamiliar` (`id`, `idppl`, `edad_inicio_laboral`, `situacion_economica_precaria`, `mendicidad_calle`, `estado`) VALUES
-(1, 18, 14, 0, 1, 'Activo'),
-(2, 19, 20, 0, 0, 'Activo');
 
 -- --------------------------------------------------------
 
@@ -128626,7 +128508,8 @@ CREATE TABLE `psiquiatrico_psicologico` (
   `antecedentes_autolesiones` varchar(255) DEFAULT NULL,
   `antecedentes_consumo_sustancias` varchar(255) NOT NULL,
   `edad_inicio_consumo` int(11) DEFAULT NULL,
-  `datos_interes_intervencion` varchar(255) DEFAULT NULL
+  `datos_interes_intervencion` varchar(255) DEFAULT NULL,
+  `estado` varchar(10) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -128647,7 +128530,8 @@ CREATE TABLE `registro_acceso` (
 --
 
 INSERT INTO `registro_acceso` (`id_acceso`, `id_usuario`, `hora_inicio`, `hora_cierre`) VALUES
-(1, 1, '2024-12-01 19:09:17', NULL);
+(1, 1, '2024-12-01 19:09:17', '2024-12-04 04:49:19'),
+(2, 1, '2024-12-04 04:49:26', NULL);
 
 -- --------------------------------------------------------
 
@@ -128679,12 +128563,12 @@ CREATE TABLE `situacionlegal` (
   `id` int(11) NOT NULL,
   `id_ppl` int(11) NOT NULL,
   `fecha_detencion` date NOT NULL,
-  `dependencia` varchar(50) NOT NULL,
+  `dependencia` varchar(255) NOT NULL,
   `motivo_t` varchar(100) DEFAULT NULL,
   `situacionlegal` varchar(15) NOT NULL,
   `causas` int(11) NOT NULL,
   `id_juzgado` int(11) NOT NULL,
-  `en_prejucio` varchar(100) DEFAULT NULL,
+  `en_prejucio` varchar(255) DEFAULT NULL,
   `condena` varchar(100) NOT NULL,
   `categoria` varchar(20) NOT NULL,
   `reingreso_falta` tinyint(1) DEFAULT NULL,
@@ -128693,16 +128577,9 @@ CREATE TABLE `situacionlegal` (
   `cumplio_medida` tinyint(1) NOT NULL,
   `asistio_rehabi` tinyint(1) NOT NULL,
   `tiene_defensor` tinyint(1) NOT NULL,
-  `nombre_defensor` varchar(100) DEFAULT NULL,
+  `nombre_defensor` varchar(255) DEFAULT NULL,
   `tiene_com_defensor` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `situacionlegal`
---
-
-INSERT INTO `situacionlegal` (`id`, `id_ppl`, `fecha_detencion`, `dependencia`, `motivo_t`, `situacionlegal`, `causas`, `id_juzgado`, `en_prejucio`, `condena`, `categoria`, `reingreso_falta`, `causas_pend`, `causa_nino`, `cumplio_medida`, `asistio_rehabi`, `tiene_defensor`, `nombre_defensor`, `tiene_com_defensor`) VALUES
-(1, 1, '2024-12-01', 'asd', 'asd', 'penado', 2, 1, '', 'asd', 'primario', 1, 'dsa', 1, 1, 1, 0, '', 1);
 
 -- --------------------------------------------------------
 
@@ -128756,17 +128633,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `id_persona`, `id_rol`, `nombre_usuario`, `contrasena`, `fecha_creacion`, `activo`) VALUES
-(1, 1, 1, 'demadmin', '$2y$10$7zlO/gJEfkGfzOlc9WGchO4tRaI7N/55cX1C5eQq6PHJ3XHxd864S', '2024-09-29 18:15:24', 1),
-(2, 3, 2, 'horo3670', '$2y$10$8KOt0RcZi/Z.2DM.Vy/N4OGoX7jhQhQ/ylctvaFo0x0im9eVG2/4u', '2024-10-14 17:56:47', 0),
-(3, 4, 2, 'mabu8333', '$2y$10$buXh8IvsIhUO/QGwsumY8uMz0iGxToTvko0X/diWkkZlty0CbResu', '2024-11-12 20:48:39', 0),
-(4, 5, 2, 'isca196', '$2y$10$cGhq5QXrwvwPNLoTCfGKxOTNbGeF8jJqF.JPCAcFmBvn1tLK9SOo.', '2024-11-12 20:51:04', 0),
-(7, 8, 2, 'caca9444', '$2y$10$Gbpm131Sd0RTq9VozNZT1uOU5iiz2xV81jpEXI3gTYrQq.NRVaHDO', '2024-11-13 15:44:36', 0),
-(8, 9, 2, 'maca716', '$2y$10$3ATJMTwEjGW3bU7/LNf1p.8xAG7aJsquFW7QNRy0JjvobRE42j8yO', '2024-11-13 15:45:47', 0),
-(9, 10, 3, 'deca7111', '$2y$10$CCxf1bMEGXlqFVvW.cZabO/O5y.63JyDuRJo7rjCEtTP/tbSTudvO', '2024-11-13 15:48:08', 0),
-(10, 11, 3, 'juro4955', '$2y$10$wtfM4DVSyyht/1XdcpNfTOiC/lDU7IOydsKjCaDMD6ujOhv03p7li', '2024-11-13 15:53:33', 0),
-(11, 12, 3, 'maca011', '$2y$10$EjJk.wAVN5Aj5nkhOvDuh.R2862JXuaAIO10AQG.7edqYtPNrO4A2', '2024-11-13 15:56:11', 0),
-(12, 13, 3, 'juca5632', '$2y$10$W6fZSJbR.cWa/O./mZWHWuQJ7sTfUUYdK4Cp7GvktkOXoL0SiFSou', '2024-11-13 15:58:05', 0),
-(13, 14, 3, 'caca7310', '$2y$10$PHZHAqe/sFxfJdmXc/65kukIck/a/PD.pvXcvTn6QrzyYVilFEFE.', '2024-11-13 16:05:34', 0);
+(1, 1, 1, 'demadmin', '$2y$10$7zlO/gJEfkGfzOlc9WGchO4tRaI7N/55cX1C5eQq6PHJ3XHxd864S', '2024-09-29 18:15:24', 1);
 
 --
 -- Índices para tablas volcadas
@@ -129022,13 +128889,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `asistencia_espiritual`
 --
 ALTER TABLE `asistencia_espiritual`
-  MODIFY `id_asistencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_asistencia` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `auditoria`
 --
 ALTER TABLE `auditoria`
-  MODIFY `id_auditoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_auditoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `ciudades`
@@ -129040,7 +128907,7 @@ ALTER TABLE `ciudades`
 -- AUTO_INCREMENT de la tabla `clasificacion`
 --
 ALTER TABLE `clasificacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `datos_anexos`
@@ -129052,7 +128919,7 @@ ALTER TABLE `datos_anexos`
 -- AUTO_INCREMENT de la tabla `datos_medicos`
 --
 ALTER TABLE `datos_medicos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `delitos`
@@ -129064,19 +128931,19 @@ ALTER TABLE `delitos`
 -- AUTO_INCREMENT de la tabla `domicilio`
 --
 ALTER TABLE `domicilio`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `educacion`
 --
 ALTER TABLE `educacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `fechappl`
 --
 ALTER TABLE `fechappl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `informe_laboral`
@@ -129094,19 +128961,19 @@ ALTER TABLE `juzgado`
 -- AUTO_INCREMENT de la tabla `laboral`
 --
 ALTER TABLE `laboral`
-  MODIFY `id_laboral` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_laboral` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `marcas_cuerpo`
 --
 ALTER TABLE `marcas_cuerpo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `observaciones`
 --
 ALTER TABLE `observaciones`
-  MODIFY `id_observacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_observacion` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `paises`
@@ -129118,25 +128985,25 @@ ALTER TABLE `paises`
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl`
 --
 ALTER TABLE `ppl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl_causas`
 --
 ALTER TABLE `ppl_causas`
-  MODIFY `id_ppl_causa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_ppl_causa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl_familiar_info`
 --
 ALTER TABLE `ppl_familiar_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl_hermanos`
@@ -129160,19 +129027,19 @@ ALTER TABLE `ppl_otros_visitantes`
 -- AUTO_INCREMENT de la tabla `ppl_padres`
 --
 ALTER TABLE `ppl_padres`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl_pareja`
 --
 ALTER TABLE `ppl_pareja`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl_situacion_sociofamiliar`
 --
 ALTER TABLE `ppl_situacion_sociofamiliar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `provincias`
@@ -129184,13 +129051,13 @@ ALTER TABLE `provincias`
 -- AUTO_INCREMENT de la tabla `psiquiatrico_psicologico`
 --
 ALTER TABLE `psiquiatrico_psicologico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `registro_acceso`
 --
 ALTER TABLE `registro_acceso`
-  MODIFY `id_acceso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_acceso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -129202,7 +129069,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `situacionlegal`
 --
 ALTER TABLE `situacionlegal`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `tiposdelito`

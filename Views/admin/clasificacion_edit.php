@@ -75,8 +75,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
 ?>
 
 <!-- ---------------- -->
-<div class="container mt-5">    
-    <div class="card shadow-sm mt-5">
+<div class="container mt-3">    
+    <div class="card shadow-sm">
         <h5 id="titulo"class="card-header bg-dark text-white ">Editar Clasificación del PPL</h5>
         <div class="card-body ">
             <!-- ------------------- -->
