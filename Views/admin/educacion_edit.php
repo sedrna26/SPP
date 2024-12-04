@@ -76,6 +76,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+<style>
+    .hidden {
+    display: none !important;
+}
+</style>
 
 
 
@@ -94,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <h3 id="titulo">Editar Información Educativa del PPL</h3>
                     <div class="checkbox-group">
                         <input type="checkbox" id="sabe_leer_escrib" name="sabe_leer_escrib"
-                            <?php echo ($educacion && $educacion['sabe_leer_escrib']) ? 'checked' : ''; ?> required>
+                            <?php echo ($educacion && $educacion['sabe_leer_escrib']) ? 'checked' : ''; ?> >
                         <label for="sabe_leer_escrib" class="checkbox-label">¿Sabe leer y escribir?</label>
                     </div>
                     <div class="form-group">
@@ -159,51 +164,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             value="<?php echo htmlspecialchars($educacion['act-artistica'] ?? ''); ?>">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
             </form>
         </div>
     </div>
 </div>
 
 <script>
-    // Función para manejar la visibilidad de los campos
-    function toggleFormGroup(checkboxId, groupId) {
-        const checkbox = document.getElementById(checkboxId);
-        const group = document.getElementById(groupId);
-        if (!checkbox || !group) return; // Validación de elementos
-        const input = group.querySelector('input[type="text"]');
-        // Configurar estado inicial
-        if (checkbox.checked) {
-            group.classList.remove('hidden');
-            if (input) input.required = true;
-        } else {
-            group.classList.add('hidden');
-            if (input) {
-                input.required = false;
-                input.value = ''; // Limpiar el campo cuando se oculta
-            }
-        }
-        // Agregar listener para cambios
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                group.classList.remove('hidden');
-                if (input) input.required = true;
-            } else {
-                group.classList.add('hidden');
-                if (input) {
-                    input.required = false;
-                    input.value = ''; // Limpiar el campo cuando se oculta
+    document.addEventListener('DOMContentLoaded', function() {
+    // Definimos los pares de checkbox y grupo
+    const toggles = [
+        { checkbox: 'tiene_educ_formal', group: 'educ_formal_group' },
+        { checkbox: 'tiene_educ_no_formal', group: 'educ_no_formal_group' },
+        { checkbox: 'quiere_deporte', group: 'deporte_group' },
+        { checkbox: 'quiere_act_artistica', group: 'artistica_group' }
+    ];
+
+    toggles.forEach(function(toggle) {
+        const checkbox = document.getElementById(toggle.checkbox);
+        const group = document.getElementById(toggle.group);
+
+        if (checkbox && group) {
+            // Función para manejar la visibilidad
+            function handleVisibility() {
+                if (checkbox.checked) {
+                    group.classList.remove('hidden');
+                } else {
+                    group.classList.add('hidden');
+                    // Limpiar el input cuando se oculta
+                    const input = group.querySelector('input[type="text"]');
+                    if (input) input.value = '';
                 }
             }
-        });
-    }
-    // Configurar los listeners para todos los checkboxes cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleFormGroup('tiene_educ_formal', 'educ_formal_group');
-        toggleFormGroup('tiene_educ_no_formal', 'educ_no_formal_group');
-        toggleFormGroup('quiere_deporte', 'deporte_group');
-        toggleFormGroup('quiere_act_artistica', 'artistica_group');
+
+            // Configurar estado inicial
+            handleVisibility();
+
+            // Agregar listener para cambios
+            checkbox.addEventListener('change', handleVisibility);
+        }
     });
+});
 </script>
 
 <?php require 'footer.php'; ?>

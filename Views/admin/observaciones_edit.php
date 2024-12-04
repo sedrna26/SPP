@@ -53,8 +53,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
     }
 }
 ?>
-<div class="container mt-5">    
-    <div class="card shadow-sm mt-5">
+<div class="container mt-3">    
+    <div class="card shadow-sm">
         <h5 id="titulo"class="card-header bg-dark text-white ">Editar Observaciones del PPL</h5>
         <div class="card-body ">
             <!-- ------------------- -->
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
                 <div class="mb-4">
                     
                     <div class="form-group">
-                        <label for="observacion" class="form-label my-3">Ingrese la observación correspondiente:</label>
+                        <label for="observacion" class="form-label my-3"><h5>Ingrese la observación correspondiente:</h5></label>
                         <textarea class="form-control shadow" name="observacion" id="observacion" rows="3" maxlength="255" placeholder="Ingrese la observación"><?php echo htmlspecialchars($observacion); ?></textarea>
                     </div>
                 </div>

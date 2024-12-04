@@ -122,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
                 <label class="form-check-label" for="tieneExp">¿Tiene experiencia previa a la detención?</label>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3" id="experienciaContainer" style="display: <?php echo isset($laboral['tiene_exp']) && $laboral['tiene_exp'] ? 'block' : 'none'; ?>">
                 <label for="experiencia" class="form-label">Describa su experiencia:</label>
                 <input 
                     type="text" 
@@ -145,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
                 <label class="form-check-label" for="seCapacito">¿Se capacitó en oficios?</label>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3" id="capacitacionContainer" style="display: <?php echo isset($laboral['se_capacito']) && $laboral['se_capacito'] ? 'block' : 'none'; ?>">
                 <label for="enQueSeCapacito" class="form-label">¿En qué se capacitó?</label>
                 <input 
                     type="text" 
@@ -158,27 +158,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
             </div>
 
             <div class="form-check mb-3">
-                <input 
-                    class="form-check-input" 
-                    type="checkbox" 
-                    name="posee_certific" 
-                    id="poseeCertific" 
-                    <?php echo isset($laboral['posee_certific']) && $laboral['posee_certific'] ? 'checked' : ''; ?>
-                >
-                <label class="form-check-label" for="poseeCertific">Posee certificación del oficio</label>
-            </div>
+            <input 
+                class="form-check-input" 
+                type="checkbox" 
+                name="posee_certific" 
+                id="poseeCertific" 
+                <?php echo isset($laboral['posee_certific']) && $laboral['posee_certific'] ? 'checked' : ''; ?>
+            >
+            <label class="form-check-label" for="poseeCertific">Posee certificación del oficio</label>
+        </div>
 
-            <div class="mb-3">
-                <label for="formacInteres" class="form-label">Capacitación y/o formación que resulte de interés:</label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    id="formacInteres" 
-                    name="formac_interes" 
-                    value="<?php echo htmlspecialchars($laboral['formac_interes'] ?? ''); ?>" 
-                    placeholder="Ingrese formación de interés..."
-                >
-            </div>
+        <div class="mb-3" id="formacInteresContainer" style="display: <?php echo isset($laboral['posee_certific']) && $laboral['posee_certific'] ? 'block' : 'none'; ?>">
+            <label for="formacInteres" class="form-label">Capacitación y/o formación que resulte de interés:</label>
+            <input 
+                type="text" 
+                class="form-control" 
+                id="formacInteres" 
+                name="formac_interes" 
+                value="<?php echo htmlspecialchars($laboral['formac_interes'] ?? ''); ?>" 
+                placeholder="Ingrese formación de interés..."
+            >
+        </div>
 
             <div class="form-check mb-3">
                 <input 
@@ -191,7 +191,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
                 <label class="form-check-label" for="tieneInclLab">Presenta posibilidad de inclusión laboral</label>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3" id="lugarInclusionContainer" style="display: <?php echo isset($laboral['tiene_incl_lab']) && $laboral['tiene_incl_lab'] ? 'block' : 'none'; ?>">
                 <label for="lugarInclusion" class="form-label">¿Cuál/es?</label>
                 <input 
                     type="text" 
@@ -224,7 +224,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
                 <label class="form-check-label" for="practicaCulto">¿Practica algún culto?</label>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3" id="cultoContainer" style="display: <?php echo isset($espiritual['practica_culto']) && $espiritual['practica_culto'] ? 'block' : 'none'; ?>">
                 <label for="culto" class="form-label">Especifique el culto:</label>
                 <input 
                     type="text" 
@@ -247,7 +247,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
                 <label class="form-check-label" for="deseaParticipar">¿Desea participar en alguna actividad religiosa?</label>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3" id="actividadContainer" style="display: <?php echo isset($espiritual['desea_participar']) && $espiritual['desea_participar'] ? 'block' : 'none'; ?>">
                 <label for="eleccionActividad" class="form-label">Especifique la actividad:</label>
                 <input 
                     type="text" 
@@ -268,3 +268,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
     </div>
     </div>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Laboral Section
+    var tieneExpCheckbox = document.getElementById('tieneExp');
+    var experienciaContainer = document.getElementById('experienciaContainer');
+    tieneExpCheckbox.addEventListener('change', function() {
+        experienciaContainer.style.display = this.checked ? 'block' : 'none';
+    });
+
+    var seCapacitoCheckbox = document.getElementById('seCapacito');
+    var capacitacionContainer = document.getElementById('capacitacionContainer');
+    seCapacitoCheckbox.addEventListener('change', function() {
+        capacitacionContainer.style.display = this.checked ? 'block' : 'none';
+    });
+
+    var poseeCertificCheckbox = document.getElementById('poseeCertific');
+    var formacInteresContainer = document.getElementById('formacInteresContainer');
+    poseeCertificCheckbox.addEventListener('change', function() {
+        formacInteresContainer.style.display = this.checked ? 'block' : 'none';
+    });
+
+    var tieneInclLabCheckbox = document.getElementById('tieneInclLab');
+    var lugarInclusionContainer = document.getElementById('lugarInclusionContainer');
+    tieneInclLabCheckbox.addEventListener('change', function() {
+        lugarInclusionContainer.style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Spiritual Assistance Section
+    var practicaCultoCheckbox = document.getElementById('practicaCulto');
+    var cultoContainer = document.getElementById('cultoContainer');
+    practicaCultoCheckbox.addEventListener('change', function() {
+        cultoContainer.style.display = this.checked ? 'block' : 'none';
+    });
+
+    var deseaParticiparCheckbox = document.getElementById('deseaParticipar');
+    var actividadContainer = document.getElementById('actividadContainer');
+    deseaParticiparCheckbox.addEventListener('change', function() {
+        actividadContainer.style.display = this.checked ? 'block' : 'none';
+    });
+});
+</script>
+</body>
+</html>

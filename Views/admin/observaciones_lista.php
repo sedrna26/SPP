@@ -12,27 +12,32 @@ try {
 }
 
 ?>
-
-<body>
-    <div class="observaciones-list">
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Observaciones</h4>
+                <a href='observaciones_edit.php?id=<?php echo $idppl; ?>' class="btn btn-warning btn-sm">
+                    <i class="fas fa-edit me-1"></i>Editar
+                </a>
+        </div>
         <div class="card-body">
-            <div class="d-flex align-items-center">
-                <h3>Observaciones</h3>
-                <a class="btn btn-warning ml-3 btn-sm" href='observaciones_edit.php?id=<?php echo $idppl; ?>'>Editar Observaciones</a>
-            </div>
-            <ul>
-                <?php
-                if (count($observaciones) > 0):
-                    foreach ($observaciones as $observacion):
-                ?>
-                        <?php echo htmlspecialchars($observacion['observacion']); ?>
-                    <?php
-                    endforeach;
-                else:
-                    ?>
-                    <li>No hay observaciones registradas.</li>
-                <?php endif; ?>
-            </ul>
+            <?php if (count($observaciones) > 0): ?>
+                <div class="list-group">
+                    <?php foreach ($observaciones as $index => $observacion): ?>
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">                                     
+                            </div>
+                            <p class="mb-1">
+                                <?php echo htmlspecialchars($observacion['observacion']); ?>
+                            </p>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-info" role="alert">
+                    No hay observaciones registradas.
+                </div>
+            <?php endif; ?>
         </div>
     </div>
-</body>
+</div>

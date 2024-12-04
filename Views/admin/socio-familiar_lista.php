@@ -72,8 +72,7 @@ if (!$datosFamiliares) {
 ?>
 
 
-<div class="container ">
-    
+<div class="container ">    
     <!-- Información Familiar General -->
     <div class="card mb-4">
         <div class="card-header d-flex bg-primary text-white justify-content-between align-items-center">
@@ -83,42 +82,64 @@ if (!$datosFamiliares) {
             </a> 
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <h4>Familiares</h4>
-                        <p><strong>Familiares FF.AA:</strong> 
-                    <span class="badge py-2 px-3 fs-6">
-                        <span class="badge py-2 px-3 fs-6 <?php echo $datosFamiliares['info_familiar']['familiares_ffaa'] ? 'bg-success' : 'bg-danger'; ?>">
-                            <?php echo $datosFamiliares['info_familiar']['familiares_ffaa'] ? 'Sí' : 'No'; ?>
-                        </span>
-                        <?php if ($datosFamiliares['info_familiar']['familiares_ffaa']): ?>
-                            <span class="text-black">- <?php echo $datosFamiliares['info_familiar']['ffaa_detalles']; ?></span>
-                        <?php endif; ?>
-                        </span>
-                    </p>
-                    <p><strong>Familiares Detenidos:</strong>
-                        <span class="badge py-2 px-3 fs-6">
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <div class="border rounded p-3 h-100">
+                        <h5 class="text-primary mb-3">Familiares</h5>
+                        <div class="mb-2">
+                            <strong>Familiares FF.AA:</strong> 
+                            <span class="badge py-2 px-3 fs-6 <?php echo $datosFamiliares['info_familiar']['familiares_ffaa'] ? 'bg-success' : 'bg-danger'; ?>">
+                                <?php echo $datosFamiliares['info_familiar']['familiares_ffaa'] ? 'Sí' : 'No'; ?>
+                            </span>
+                            <?php if ($datosFamiliares['info_familiar']['familiares_ffaa']): ?>
+                                <small class="text-black d-block mt-1">
+                                    <?php echo $datosFamiliares['info_familiar']['ffaa_detalles']; ?>
+                                </small>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <strong>Familiares Detenidos:</strong>
                             <span class="badge py-2 px-3 fs-6 <?php echo $datosFamiliares['info_familiar']['familiares_detenidos'] ? 'bg-success' : 'bg-danger'; ?>">
-                            <?php echo $datosFamiliares['info_familiar']['familiares_detenidos'] ? 'Sí' : 'No'; ?>
+                                <?php echo $datosFamiliares['info_familiar']['familiares_detenidos'] ? 'Sí' : 'No'; ?>
                             </span>
                             <?php if ($datosFamiliares['info_familiar']['familiares_detenidos']): ?>
-                            <span class="text-black">- <?php echo $datosFamiliares['info_familiar']['detenidos_detalles']; ?></span>
+                                <small class="text-black d-block mt-1">
+                                    <?php echo $datosFamiliares['info_familiar']['detenidos_detalles']; ?>
+                                </small>
                             <?php endif; ?>
-                        </span>
-                    </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <h4>Documentación</h4>
-                    <p><strong>Posee DNI:</strong> 
-                        <span class="badge py-2 px-3 fs-6 <?php echo $datosFamiliares['info_familiar']['posee_dni'] ? 'bg-success' : 'bg-danger'; ?>">
-                            <?php echo $datosFamiliares['info_familiar']['posee_dni'] ? 'Sí' : 'No - ' . $datosFamiliares['info_familiar']['motivo_no_dni']; ?>
-                        </span>
-                    </p>
-                    <p><strong>Teléfono Familiar:</strong> <?php echo $datosFamiliares['info_familiar']['telefono_familiar'] ?? 'No registrado'; ?></p>
+                
+                <div class="col-12 col-md-6">
+                    <div class="border rounded p-3 h-100">
+                        <h5 class="text-primary mb-3">Documentación</h5>
+                        
+                        <div class="mb-2">
+                            <strong>Posee DNI:</strong> 
+                            <span class="badge py-2 px-3 fs-6 <?php echo $datosFamiliares['info_familiar']['posee_dni'] ? 'bg-success' : 'bg-danger'; ?>">
+                                <?php echo $datosFamiliares['info_familiar']['posee_dni'] ? 'Sí' : 'No'; ?>
+                            </span>
+                            <?php if (!$datosFamiliares['info_familiar']['posee_dni']): ?>
+                                <small class="text-black d-block mt-1">
+                                    <?php echo $datosFamiliares['info_familiar']['motivo_no_dni']; ?>
+                                </small>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <strong>Teléfono Familiar:</strong> 
+                            <span class="badge text-bg-light">
+                                <?php echo $datosFamiliares['info_familiar']['telefono_familiar'] ?? 'No registrado'; ?>
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- Situación Sociofamiliar -->
     <div class="card mb-4">
@@ -128,7 +149,7 @@ if (!$datosFamiliares) {
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <p><strong>Edad Inicio Laboral:</strong> <?php echo $datosFamiliares['situacion_social']['edad_inicio_laboral'] ?? 'No registrada'; ?></p>
+                    <p><strong>Edad Inicio Laboral:</strong> <span class="badge text-black fs-6"> <?php echo $datosFamiliares['situacion_social']['edad_inicio_laboral'] ?? 'No registrada'; ?> </span></p>
                     <p><strong>Situación Económica Precaria:</strong> 
                         <span class="badge py-2 px-3 fs-6 <?php echo $datosFamiliares['situacion_social']['situacion_economica_precaria'] ? 'bg-success' : 'bg-danger'; ?>">
                             <?php echo $datosFamiliares['situacion_social']['situacion_economica_precaria'] ? 'Sí' : 'No'; ?>
@@ -155,7 +176,7 @@ if (!$datosFamiliares) {
             <?php foreach ($datosFamiliares['padres'] as $padre): ?>
                 <div class="row mb-3">                    
                     <div class="col-md-6">
-                        <h4><?php echo $padre['tipo']; ?></h4>
+                        <h4 class="text-primary"><?php echo $padre['tipo']; ?></h4>
                         <p><strong>Nombre:</strong> <?php echo $padre['nombre'] . ' ' . $padre['apellido']; ?></p>
                         <p><strong>Edad:</strong> <?php echo $padre['edad'] ?? 'No registrada'; ?></p>
                         <p><strong>Nacionalidad:</strong> <?php echo $padre['nacionalidad'] ?? 'No registrada'; ?></p>
