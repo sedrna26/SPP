@@ -46,9 +46,9 @@ if ($_POST) {
                     $stmtInsertRegistro->bindParam(':id_usuario', $usuario['id_usuario'], PDO::PARAM_INT);
                     $stmtInsertRegistro->execute();
                     if ($usuario['id_rol'] == 1) {
-                        header('Location: admin/index.php');
+                        header('Location: admin/ppl_index.php');
                     } else {
-                        header('Location: user/index.php');
+                        header('Location: admin/ppl_index.php');
                     }
                     exit;
                 } else {
@@ -87,7 +87,6 @@ if ($_POST) {
             gris claro: #cccccc 
             gris oscuro: #666666
             amarillo: #f9e612
-
             */
             min-height: 100vh;
             display: flex;
@@ -112,7 +111,13 @@ if ($_POST) {
                 </div>
                 <div class="col">
                     <p class="py-0 my-0"><b>Correccional</b></p>
-                    <p class="py-0 my-0">maol4192</p>
+                    <p class="py-0 my-0">maol4645</p>
+                    <p class="py-0 my-0"><b>Clave</b></p>
+                    <p class="py-0 my-0">123</p>
+                </div>
+                <div class="col">
+                    <p class="py-0 my-0"><b>Sanidad</b></p>
+                    <p class="py-0 my-0">jupe3225</p>
                     <p class="py-0 my-0"><b>Clave</b></p>
                     <p class="py-0 my-0">123</p>
                 </div>
@@ -128,7 +133,7 @@ if ($_POST) {
                 <div class="input-group-text bg-info">
                     <img src="../img/padlock-svgrepo-com.svg" alt="password-icon" style="height: 1rem" />
                 </div>
-                <input class="form-control bg-light" type="password" placeholder="contraseña" name="contrasena" id="contrasena" required />
+                <input class="form-control bg-light" type="password" placeholder="Contraseña" name="contrasena" id="contrasena" required />
             </div>
             <button type="submit" class="btn btn-primary text-white w-100 mt-4 fs-5 fw-semibold shadow-sm">Iniciar Sesión</button>
             <?php

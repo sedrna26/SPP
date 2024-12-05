@@ -12,9 +12,10 @@ if (!isset($_SESSION['id_usuario'])) {
   exit;
 }
 $id_rol = $_SESSION['id_rol'];
+$id_usuario= $_SESSION['id_usuario'];
 
 
-$query = "SELECT nombre_rol FROM rol WHERE id_rol = ?";
+$query = "SELECT * FROM rol WHERE id_rol = ?";
 $stmt = $conexion->prepare($query);
 
 if (!$stmt) {
@@ -151,7 +152,7 @@ if ($result && $result->num_rows > 0) {
   <?php } ?>
   <!-- ------------------------------------- -->
   <div style="height:60px">
-    <nav class="navbar navbar-expand-lg fixed-top " style="background-color: #f9e612;">
+    <nav class="navbar navbar-expand-lg fixed-top my-0 py-0" style="background-color: #f9e612;">
       <div class="container-fluid ml-2 ">
         <a href="index.php" class="navbar-brand mb-0 pr-4 ">
           <img class="d-line-block align-top " src="../../img/LOGO2.ico" width="100px" style="margin-right:0px">
@@ -170,17 +171,24 @@ if ($result && $result->num_rows > 0) {
               <a class="nav-link " href="ppl_index.php"><b>PPL</b></a>
             </li>
             <?php
-            if ($_SESSION['id_rol'] === 1) {
+              if ($_SESSION['id_rol'] === 1) {
+            ?>
+                  <li class="nav-item  pr-3">
+                    <a class="nav-link " href="admin_index.php"><b>Admininstrador</b></a>
+                  </li>
+            <?php
+              }
+            ?>
+            <!-- --------------- -->
+            <?php
+              if ($_SESSION['id_rol'] === 1) {
             ?>
               <li class="nav-item  pr-3">
-                <a class="nav-link " href="admin_index.php"><b>Admininstrador</b></a>
+                <a class="nav-link " href="auditoria.php"><b>Auditoria</b></a>
               </li>
             <?php
-            }
+              }
             ?>
-            <li class="nav-item  pr-3">
-              <a class="nav-link " href="auditoria.php"><b>Auditoria</b></a>
-            </li>
           </ul>
           <!-- ------------------------------------------------------- -->
           <form class="form-inline d-flex justify-content-end">
@@ -199,14 +207,31 @@ if ($result && $result->num_rows > 0) {
                       </b>
                       <span>
                         <?php if (isset($_SESSION['nombres'])) : ?>
+                          <!-- -------------- -->
+                           <?php
+                           $query = "SELECT nombre_usuario FROM usuarios WHERE activo = 1 AND id_usuario = :id_usuario";  // Usamos un parámetro para evitar inyecciones SQL
+
+                           $stmt = $db->prepare($query);
+                           $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+                           $stmt->execute();
+                           $usuario = $stmt->fetch(PDO::FETCH_ASSOC);                          
+                           ?>
+                           <!-- ------------------ -->
+                          <?php echo $usuario['nombre_usuario']; ?>
+                          <br>
                           <?php echo $_SESSION['nombres']; ?>
+                          <?php echo $_SESSION['apellidos']; ?>
                         <?php endif; ?>
                       </span>
                       
                     </span>
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><a class="dropdown-item" href="#"> <i class="fas fa-cog pe-2"></i>Configuración</a></li>
+                  <?php
+                      if ($_SESSION['id_rol'] === 1) {
+                    ?>
+                    <li><a class="dropdown-item" href="config_user.php"> <i class="fas fa-cog pe-2"></i>Configuración</a></li>
+                    <?php }?>
                     <li><a class="dropdown-item" href="javascript:cerrar()"> <i class="fa fa-power-off pe-2"></i>Cerrar Sesión</a></li>
                   </ul>
                 </li>

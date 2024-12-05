@@ -20,7 +20,13 @@ if (isset($_GET['txtID'])) {
             <div class="card rounded-2 border-0">
                 <div class="card-header bg-dark text-white pb-0">
                     <h5 class="d-inline-block">Listado de PPL</h5>
-                    <a class="btn btn-primary float-right mb-2" href="persona_crea.php">Nueva Persona</a>
+                    <?php
+                        if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) { 
+                    ?>
+                        <a class="btn btn-primary float-right mb-2" href="persona_crea.php">Nueva Persona</a>
+                    <?php
+                       }
+                    ?>
                 </div>
                 <div class="card-body table-responsive">
                     <table id="example" class="table table-bordered table-striped table-hover table-sm" style="width:100%">

@@ -9,9 +9,13 @@ $psiquia_psico = $stmt->fetch(PDO::FETCH_ASSOC);
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0 ">Informe Psiquiátrico y Psicológico</h4>
+            <?php
+                if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 3) { 
+            ?>
             <a class="btn btn-warning btn-sm" href='psiquia_psico_edit.php?id=<?php echo $idppl; ?>'>
                 <i class="fas fa-edit me-1"></i> Editar
             </a>
+            <?php }?>
         </div>
 
         <div class="card-body">

@@ -1,13 +1,10 @@
-<?php require 'navbar.php'; ?>
 <?php
-
-$id_ppl = isset($_GET['id']) ? $_GET['id'] : null;
-
-function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles)
-{
+require 'navbar.php';
+// Función de auditoría
+function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles) {
     try {
-        $sql = "INSERT INTO auditoria (id_usuario, accion, detalles, tabla_afectada, registro_id, fecha)
-        VALUES (:id_usuario, :accion, :detalles, :tabla_afectada, :registro_id, NOW())";
+        $sql = "INSERT INTO auditoria (id_usuario, accion, detalles, tabla_afectada, registro_id, fecha) 
+                VALUES (:id_usuario, :accion, :detalles, :tabla_afectada, :registro_id, NOW())";
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':id_usuario', $_SESSION['id_usuario']);
         $stmt->bindParam(':accion', $accion);
@@ -16,202 +13,246 @@ function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detall
         $stmt->bindParam(':registro_id', $registro_id);
         $stmt->execute();
     } catch (PDOException $e) {
-        echo "Error en el registro de auditoría: " . $e->getMessage();
+        error_log("Error en el registro de auditoría: " . $e->getMessage());
     }
-} {
-    $stmt_persona = $db->prepare("SELECT 
-    persona.id,
-    persona.dni, 
-    persona.nombres, 
-    persona.apellidos, 
-    DATE_FORMAT(persona.fechanac, '%d-%m-%Y') AS fechaNacimiento, 
-    persona.edad, 
-    persona.genero, 
-    persona.estadocivil, 
-    d.id AS id_direccion, 
-    p.nombre AS pais, 
-    pr.nombre AS provincia, 
-    c.nombre AS ciudad, 
-    d.localidad, 
-    d.direccion
-FROM persona
-LEFT JOIN domicilio d ON persona.direccion = d.id
-LEFT JOIN paises p ON d.id_pais = p.id
-LEFT JOIN provincias pr ON d.id_provincia = pr.id
-LEFT JOIN ciudades c ON d.id_ciudad = c.id
-WHERE persona.id = :id");
+}
 
-    $stmt_persona->bindParam(':id', $id_ppl, PDO::PARAM_INT);
-    $stmt_persona->execute();
-    $persona = $stmt_persona->fetch(PDO::FETCH_ASSOC);
+// Verificar si se ha proporcionado un ID
+if (!isset($_GET['id'])) {
+    header("Location: ppl_index.php?error=id_no_proporcionado");
+    exit();
+}
 
-
-    $stmt_ppl = $db->prepare("SELECT * FROM ppl  WHERE id = :id"); // Aquí se usa el campo idpersona en vez de id
-    $stmt_ppl->bindParam(':id', $id_ppl, PDO::PARAM_INT); // Pasamos el id correcto de persona
-    $stmt_ppl->execute();
-    $ppl = $stmt_ppl->fetch(PDO::FETCH_ASSOC);
-
-
+$id_ppl = $_GET['id'];
+try {
+    // Obtener datos actuales del PPL
+    $stmt = $db->prepare(" SELECT p.*, ppl.*, d.* 
+        FROM persona p 
+        JOIN ppl ON p.id = ppl.idpersona 
+        LEFT JOIN domicilio d ON p.direccion = d.id 
+        WHERE ppl.idpersona = :id_ppl
+    ");
+    $stmt->bindParam(':id_ppl', $id_ppl);
+    $stmt->execute();
+    $ppl = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$ppl) {
-        die("PPL no encontrado.");
+        header("Location: ppl_index.php?error=ppl_no_encontrado");
+        exit();
     }
+} catch (PDOException $e) {
+    die("Error al obtener datos: " . $e->getMessage());
+}
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        try {
-            $apodo = $_POST['apodo'] ?? '';
-            $profesion = $_POST['profesion'] ?? '';
-            $trabaja = ($_POST['trabaja'] ?? '0') == '1' ? 1 : 0;
+// Procesar el formulario cuando se envía
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $post_id = $_POST['id'];
+    try {
+        $db->beginTransaction();
 
-            $id_ppl = $_POST['id'] ?? null;
+        // Actualizar datos de PPL
+        $stmt = $db->prepare("UPDATE ppl 
+        SET trabaja = :trabaja,
+            profesion = :profesion,
+            huella = CASE 
+                WHEN :nueva_huella = 1 THEN :huella_data
+                ELSE huella
+            END
+        WHERE idpersona = :id_ppl
+        ");
 
-            if (!$id_ppl) {
-                die("ID de PPL no proporcionado.");
-            }
-
-            $stmt = $db->prepare("SELECT foto, huella FROM ppl WHERE id = :id");
-            $stmt->bindParam(':id', $id_ppl, PDO::PARAM_INT);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$result) {
-                die("No se encontró el PPL con el ID proporcionado.");
-            }
-
-            $fotoExistente = $result['foto'];
-            $huellaExistente = $result['huella'];
-
-            if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-                $foto = $_FILES['foto']['name'];
-                $fotoTmp = $_FILES['foto']['tmp_name'];
-
-                $target_dir_foto = "imagenes_p/";
-                $target_file = $target_dir_foto . basename($foto);
-
-                if (!file_exists($target_dir_foto)) {
-                    mkdir($target_dir_foto, 0777, true);
-                }
-
-                if (move_uploaded_file($fotoTmp, $target_file)) {
-                } else {
-                    die("Error al subir la nueva foto.");
-                }
-            } else {
-                $foto = $fotoExistente;
-            }
-
-            if (isset($_FILES['huella']) && $_FILES['huella']['error'] === UPLOAD_ERR_OK) {
-                $huellaTmp = $_FILES['huella']['tmp_name'];
-                if (!empty($huellaTmp) && file_exists($huellaTmp)) {
-                    $huella = file_get_contents($huellaTmp);
-                } else {
-                    die("Error al procesar la nueva huella.");
-                }
-            } else {
-                $huella = $huellaExistente;
-            }
-
-            $stmt_update = $db->prepare("
-                UPDATE ppl
-                SET apodo = :apodo,
-                    profesion = :profesion,
-                    trabaja = :trabaja,
-                    foto = :foto,
-                    huella = :huella
-                WHERE id = :id
-            ");
-            $stmt_update->bindParam(':apodo', $apodo);
-            $stmt_update->bindParam(':profesion', $profesion);
-            $stmt_update->bindParam(':trabaja', $trabaja);
-            $stmt_update->bindParam(':foto', $foto);
-            $stmt_update->bindParam(':huella', $huella, PDO::PARAM_LOB);
-            $stmt_update->bindParam(':id', $id_ppl, PDO::PARAM_INT);
-
-            if ($stmt_update->execute()) {
-                $accion = 'Editar PPL - PPL';
-                $tabla_afectada = 'ppl';
-                $detalles = "Se editó el PPL con ID: $id_ppl";
-                registrarAuditoria($db, $accion, $tabla_afectada, $id_ppl, $detalles);
-
-                header("Location: ppl_informe.php?id=" . urlencode($id_ppl) . "&mensaje=" . urlencode("PPL - PPL Editado con éxito."));
-                exit();
-            } else {
-                die("Error al actualizar el PPL.");
-            }
-        } catch (PDOException $e) {
-            echo "Error: " . $e->getMessage();
+        $trabaja = ($_POST['trabaja'] === 'Si') ? 1 : 0;
+        $nueva_huella = isset($_FILES['huella']) && $_FILES['huella']['error'] === UPLOAD_ERR_OK ? 1 : 0;
+        $huella_data = null;
+    
+        if ($nueva_huella) {
+            $huella_data = file_get_contents($_FILES['huella']['tmp_name']);
         }
+    
+        $stmt->bindParam(':trabaja', $trabaja);
+        $stmt->bindParam(':profesion', $_POST['profesion']);
+        $stmt->bindParam(':id_ppl', $post_id);
+        $stmt->bindParam(':nueva_huella', $nueva_huella, PDO::PARAM_INT);
+        $stmt->bindParam(':huella_data', $huella_data, PDO::PARAM_LOB);
+        $stmt->execute();
+
+        // Procesar nueva foto si se ha subido
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = '../../img_ppl';
+            $foto_temp = $_FILES['foto']['tmp_name'];
+            $original_ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+            $foto_nombre = substr(hash('md5', uniqid('', true)), 0, 10) . '.' . $original_ext;
+            $foto_path = $upload_dir . '/' . $foto_nombre;
+
+            if (move_uploaded_file($foto_temp, $foto_path)) {
+                // Actualizar nombre de foto en la base de datos
+                $stmt = $db->prepare("UPDATE ppl SET foto = :foto WHERE idpersona = :id_ppl");
+                $stmt->bindParam(':foto', $foto_nombre);
+                $stmt->bindParam(':id_ppl', $id_ppl);
+                $stmt->execute();
+
+                // Eliminar foto anterior si existe
+                if (!empty($ppl['foto'])) {
+                    $foto_anterior = $upload_dir . '/' . $ppl['foto'];
+                    if (file_exists($foto_anterior)) {
+                        unlink($foto_anterior);
+                    }
+                }
+            }
+        }
+
+        // Registrar en auditoría
+        $detalles = "Actualización de PPL - Profesión: {$_POST['profesion']}, Trabaja: " . 
+                   ($_POST['trabaja'] === 'Si' ? 'Sí' : 'No') .
+                   ($nueva_huella ? ", Huella actualizada" : "");
+        
+        registrarAuditoria(
+            $db,
+            'Actualizar PPL',
+            'ppl',
+            $id_ppl,
+            $detalles
+        );
+
+        $db->commit();
+        var_dump($id_ppl); 
+        
+        header("Location: ppl_informe.php?id=" . $id_ppl);
+        
+        exit();
+
+    } catch (PDOException $e) {
+        $db->rollBack();
+        $error = "Error en la actualización: " . $e->getMessage();
     }
 }
 ?>
 
-
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Editar PPL</h4>
+<div class="container mt-3">
+    <div class="card rounded-2 border-0">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Editar Datos de PPL</h5>
         </div>
-        <div class="card-body">
-            <form action="ppl_edit.php?id=<?php echo $ppl['id']; ?>" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="id" value="<?php echo ($ppl['id']); ?>">
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="profesion" class="form-label">Profesion:</label>
-                        <input type="text" id="profesion" name="profesion" class="form-control" value="<?php echo !empty($ppl['profesion']) ? htmlspecialchars($ppl['profesion'], ENT_QUOTES, 'UTF-8') : 'No hay dato' ?>" required>
+        <div class="card-body bg-light">
+            
+            <form method="POST" enctype="multipart/form-data">                
+                <input type="hidden" name="id" value="<?php echo htmlspecialchars($id_ppl); ?>">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="profesion" class="form-label">Profesión</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="profesion" 
+                               name="profesion" 
+                               value="<?php echo htmlspecialchars($ppl['profesion'] ?? ''); ?>"
+                               pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+" 
+                               >
+                        <div class="invalid-feedback">
+                            Por favor ingrese una profesión válida (solo letras y espacios).
+                        </div>
                     </div>
-
-                    <div class="col-md-6">
-                        <label for="trabaja" class="form-label">¿Trabajaba en el momento de la detención?:</label>
+                    <div class="col-md-6 mb-3">
+                        <label for="trabaja" class="form-label">¿Trabajaba al momento de la detención?</label>
                         <select class="form-select" id="trabaja" name="trabaja" required>
-                            <option value="1" <?php echo ($ppl['trabaja'] == 1 ? 'selected' : ''); ?>>Sí</option>
-                            <option value="0" <?php echo ($ppl['trabaja'] == 0 ? 'selected' : ''); ?>>No</option>
+                            <option value="Si" <?php echo ($ppl['trabaja'] == 1) ? 'selected' : ''; ?>>Sí</option>
+                            <option value="No" <?php echo ($ppl['trabaja'] == 0) ? 'selected' : ''; ?>>No</option>
                         </select>
                     </div>
                 </div>
 
+                <!-- Sección de fotos -->
                 <div class="row mb-3">
-                    <!-- Foto -->
                     <div class="col-md-6">
-                        <label for="foto" class="form-label">Foto:</label>
-                        <?php if (!empty($ppl['foto'])): ?>
-                            <div class="mb-2">
-                                <img src="imagenes_p/<?php echo htmlspecialchars($ppl['foto'], ENT_QUOTES, 'UTF-8'); ?>"
-                                    alt="Foto de la persona"
-                                    style="max-width: 200px; max-height: 200px;">
-                            </div>
-                        <?php else: ?>
-                            <p>No se encontró foto.</p>
-                        <?php endif; ?>
-                        <input type="file" id="foto" name="foto" class="form-control">
+                        <label for="foto" class="form-label">Nueva Foto</label>
+                        <input type="file" 
+                               class="form-control" 
+                               id="foto" 
+                               name="foto" 
+                               accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.svg,.tiff,.heic,.heif">
+                        <div class="form-text">Formatos permitidos: JPG, JPEG, PNG</div>
+                        
                     </div>
-
-                    <!-- Huella -->
                     <div class="col-md-6">
-                        <label for="huella" class="form-label">Huella:</label>
+                        <div class="row">                            
+                            <div class="col">
+                                <label class="form-label">Foto Actual</label>
+                                    <?php if (!empty($ppl['foto'])): ?>
+                                        <div>
+                                            <img src="../../img_ppl/<?php echo htmlspecialchars($ppl['foto']); ?>" 
+                                                class="img-thumbnail" 
+                                                style="max-width: 200px;" 
+                                                alt="Foto actual">
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="text-muted">No hay foto actual</div>
+                                    <?php endif; ?>
+                            </div>
+                            <div class="col">
+                                <div id="nuevaFotoPreview" class="mt-2"></div>
+                            </div>
+                        </div>               
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="huella" class="form-label">Huella Dactilar</label>
+                    <input type="file" 
+                           class="form-control" 
+                           id="huella" 
+                           name="huella" 
+                           accept=".dat,.raw">
+                    <div class="form-text">
+                        Archivo de huella dactilar (opcional)
                         <?php if (!empty($ppl['huella'])): ?>
-                            <div class="mb-2">
-                                <img src="data:image/png;base64,<?php echo base64_encode($ppl['huella']); ?>"
-                                    alt="Huella"
-                                    style="max-width: 200px; max-height: 200px;">
-                            </div>
-                        <?php else: ?>
-                            <p>No se encontró huella.</p>
+                            - Ya existe una huella registrada
                         <?php endif; ?>
-                        <input type="file" id="huella" name="huella" class="form-control">
                     </div>
                 </div>
 
-                <div class="row mb-3">
-
+                <div class="mt-3">
+                    <a href="ppl_informe.php?&id=<?php echo $id_ppl; ?>" class="btn btn-secondary me-md-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                 </div>
-
-                <div class="d-flex justify-content-center mt-3">
-                    <button type="submit" class="btn btn-success btn-lg">Actualizar Datos</button>
-                </div>
-
             </form>
         </div>
     </div>
 </div>
-<?php require 'footer.php'; ?>
+
+<script>
+    // Validación del formulario
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+
+    // Preview de imagen
+    document.getElementById('foto').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const previewContainer = document.getElementById('nuevaFotoPreview');
+        
+        // Clear existing preview
+        previewContainer.innerHTML = '';
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.createElement('img');
+                preview.src = e.target.result;
+                preview.className = 'img-thumbnail';
+                preview.style.maxWidth = '200px';
+                previewContainer.appendChild(preview);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

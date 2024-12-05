@@ -95,6 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
     }
 }
 ?>
+
 <form method="POST" class="container mt-3">
     <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
     <div class="row">
@@ -102,13 +103,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
     <!-- Sección Laboral -->
     <div class="card rounded-2 border-0">
         <div class="card-header bg-dark text-white pb-0">
-            <h5 class="mb-0">Informe Laboral</h5>
+            <h5 class="">Informe Laboral</h5>
         </div>
         <div class="card-body table-responsive">
         <!-- ------------------- -->
-        <a href="ppl_informe.php?seccion=situacion-laboral&id=<?php echo $idppl; ?>">
-            <div class="btn btn-secondary mb-4">Cancelar</div>
-        </a>
+        
         <!-- ------------------- -->
         
             <div class="form-check mb-3">
@@ -259,12 +258,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_4'])) {
                 >
             </div>
         </div>
-        <div class="text-center">
-            <button name="guardar_4" type="submit" class="btn btn-primary mb-3">Guardar Información</button>
+
+        <div class="my-4 mr-3" >
+            
+            
+            <button style="float: right;" type="submit" name="guardar_4" class="btn btn-primary ml-3">Guardar Cambios</button>
+            <a style="float: right;" href="ppl_informe.php?seccion=situacion-laboral&id=<?php echo $idppl; ?>" class="btn btn-secondary">Cancelar</a>
+
         </div>
+
+
+
+        
     </div>
     <!-- --------------------- -->        
-    </div>
     </div>
     </div>
 </form>

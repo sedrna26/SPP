@@ -106,17 +106,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
             <h5 class="mb-0">Editar Informe Psiquiátrico y Psicológico del PPL</h5>
         </div>
         <div class="card-body">
-            <div class="mb-3">
-                <a href="ppl_informe.php?seccion=informe-psicologico&id=<?php echo $id_ppl; ?>" class="btn btn-secondary">
-                    Cancelar
-                </a>
-            </div>
+            
 
             <form method="POST" class="needs-validation" novalidate>
                 <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($id_ppl); ?>">
 
                 <div class="mb-4">
-                    <h4 class="mb-3">Editar Informe Psiquiátrico</h4>
 
                     <div class="mb-3">
                         <div class="form-check">
@@ -218,7 +213,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
 
                     <div class="mb-3">
                         <label class="form-label">Datos de interés y sugerencias de intervención:</label>
-                        <textarea class="form-control" 
+                        <textarea class="form-control border-secondary" 
                                   name="datos_interes_intervencion" 
                                   required
                                   rows="3"><?php echo htmlspecialchars($psiquia_psico['datos_interes_intervencion'] ?? ''); ?></textarea>
@@ -226,7 +221,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
                 </div>
 
                 <div class="mb-3">
-                    <button name="guardar" type="submit" class="btn btn-primary">Guardar Cambios</button>
+                
+                    <a href="ppl_informe.php?seccion=informe-psicologico&id=<?php echo $id_ppl; ?>" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                
+                    <button name="guardar" type="submit" class="btn btn-primary ml-2">Guardar Cambios</button>
                 </div>
             </form>
         </div>

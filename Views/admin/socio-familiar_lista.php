@@ -77,9 +77,13 @@ if (!$datosFamiliares) {
     <div class="card mb-4">
         <div class="card-header d-flex bg-primary text-white justify-content-between align-items-center">
             <h4 class="mb-0 ">Datos Familiares Generales</h4>
-            <a class="btn btn-warning btn-sm" href='socio-familia_edit.php?id=<?php echo $idppl; ?>'>
-                <i class="fas fa-edit me-1"></i>Editar
-            </a> 
+            <?php
+                if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) { 
+            ?>
+                <a class="btn btn-warning btn-sm" href='socio-familia_edit.php?id=<?php echo $idppl; ?>'>
+                    <i class="fas fa-edit me-1"></i>Editar
+                </a>
+            <?php }?> 
         </div>
         <div class="card-body">
             <div class="row g-3">
