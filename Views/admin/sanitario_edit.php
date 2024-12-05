@@ -143,10 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
             <?php echo $datos_medicos ? 'Actualizar' : 'Crear'; ?> Datos Médicos
         </h5>
         <div class="card-body">
-            <a href="ppl_informe.php?seccion=informe-sanitario&id=<?php echo $idppl; ?>" 
-               class="btn btn-secondary mb-3">
-                Cancelar
-            </a>
+            
 
             <form method="POST" class="needs-validation" novalidate>
                 <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
@@ -216,34 +213,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
                 <!-- Datos Antropométricos -->
                 <div class="mb-4">
                     <h5 class="mb-3">Datos Antropométricos</h5>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="peso_actual" class="form-label">Peso actual (kg):</label>
+                                <input class="form-control" type="number" step="0.01" name="peso_actual" id="peso_actual" 
+                                    value="<?php echo htmlspecialchars($datos_medicos['peso_actual'] ?? ''); ?>" 
+                                    required>
+                                <div class="invalid-feedback">
+                                    Por favor ingrese un peso válido
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="talla" class="form-label">Talla (cm):</label>
+                                <input class="form-control" type="number" step="0.1" name="talla" id="talla" 
+                                    value="<?php echo htmlspecialchars($datos_medicos['talla'] ?? ''); ?>" 
+                                    required>
+                                <div class="invalid-feedback">
+                                    Por favor ingrese una talla válida
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="imc" class="form-label">IMC:</label>
+                                <input class="form-control" type="text" name="imc" id="imc" 
+                                    value="<?php echo htmlspecialchars($datos_medicos['imc'] ?? ''); ?>" 
+                                    readonly>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <div class="mb-3">
-                        <label for="peso_actual" class="form-label">Peso actual (kg):</label>
-                        <input class="form-control" type="number" step="0.01" name="peso_actual" id="peso_actual" 
-                               value="<?php echo htmlspecialchars($datos_medicos['peso_actual'] ?? ''); ?>" 
-                               required>
-                        <div class="invalid-feedback">
-                            Por favor ingrese un peso válido
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="talla" class="form-label">Talla (cm):</label>
-                        <input class="form-control" type="number" step="0.1" name="talla" id="talla" 
-                               value="<?php echo htmlspecialchars($datos_medicos['talla'] ?? ''); ?>" 
-                               required>
-                        <div class="invalid-feedback">
-                            Por favor ingrese una talla válida
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="imc" class="form-label">IMC:</label>
-                        <input class="form-control" type="text" name="imc" id="imc" 
-                               value="<?php echo htmlspecialchars($datos_medicos['imc'] ?? ''); ?>" 
-                               readonly>
-                    </div>
-
                     <div class="mb-3">
                         <label for="diagnostico" class="form-label">Diagnóstico:</label>
                         <input class="form-control" type="text" name="diagnostico" id="diagnostico" 
@@ -256,10 +259,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
                                value="<?php echo htmlspecialchars($datos_medicos['tipificacion_dieta'] ?? ''); ?>">
                     </div>
                 </div>
-
-                <button name="guardar" type="submit" class="btn btn-primary">
+                <!-- --------------------- -->
+                <a href="ppl_informe.php?seccion=informe-sanitario&id=<?php echo $idppl; ?>" 
+                    class="btn btn-secondary">
+                    Cancelar
+                </a>
+                <button name="guardar" type="submit" class="btn btn-primary ml-2">
                     <?php echo $datos_medicos ? 'Actualizar' : 'Guardar'; ?> Información
                 </button>
+                
+                <!-- --------------------- -->
             </form>
         </div>
     </div>

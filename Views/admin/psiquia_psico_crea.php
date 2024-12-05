@@ -114,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Datos de interés y sugerencias de intervención:</label>
-                    <textarea class="form-control" name="datos_interes_intervencion" rows="3" required></textarea>
+                    <textarea class="form-control" name="datos_interes_intervencion" rows="3" ></textarea>
                     <div class="invalid-feedback">Este campo es requerido</div>
                 </div>
             </div>

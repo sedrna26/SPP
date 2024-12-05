@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-12-2024 a las 08:53:04
+-- Tiempo de generación: 05-12-2024 a las 12:59:33
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -52,36 +52,6 @@ CREATE TABLE `auditoria` (
   `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
   `detalles` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `auditoria`
---
-
-INSERT INTO `auditoria` (`id_auditoria`, `id_usuario`, `accion`, `tabla_afectada`, `registro_id`, `fecha`, `detalles`) VALUES
-(1, 1, 'Agregar PPL', 'persona, ppl, situacion legal', 1, '2024-12-01 22:44:18', 'Se agrego un nuevo ppl con ID del PPL: 1, ID de la persona: , \n    Apodo: , Nombre: Marcos, Apellido: Rodriguez'),
-(2, 1, 'Agregar Educación', 'educación', 18, '2024-12-01 22:58:17', 'Se insertó una nueva educación para el PPL con ID: 18'),
-(3, 1, 'Agregar Info Familiar', 'ppl_familiar_info, ppl_situacion_sociofamiliar, pp', 18, '2024-12-01 23:00:37', 'Se insertó una nueva Informacion Familiar para el PPL con ID: 18'),
-(4, 1, 'Agregar Asistencia Espiritual y/o Laboral', 'asistencia_espiritual, laboral', 18, '2024-12-01 23:04:09', 'Se insertó una nueva asistencia_espiritual y laboral para el PPL con ID: 18'),
-(5, 1, 'Agregar Datos Médicos', 'datos_medicos', 18, '2024-12-01 23:10:24', 'Se insertaron los datos médicos para el paciente con ID: 18'),
-(6, 1, 'Agregar Observación', 'observaciones', 18, '2024-12-01 23:13:35', 'Se insertó una nueva observación para el PPL con ID: 18'),
-(7, 1, 'Agregar Clasificacion', 'clasificacion', 18, '2024-12-01 23:14:04', 'Se insertó una nueva clasificacion para el PPL con ID: 18'),
-(8, 1, 'Agregar Clasificacion', 'clasificacion', 18, '2024-12-01 23:14:44', 'Se insertó una nueva clasificacion para el PPL con ID: 18'),
-(9, 1, 'Agregar PPL', 'persona, ppl, situacion legal', 2, '2024-12-01 23:29:22', 'Se agrego un nuevo ppl con ID del PPL: 2, ID de la persona: , \n    Apodo: , Nombre: Juan, Apellido: Rodriguez'),
-(10, 1, 'Agregar Educación', 'educación', 19, '2024-12-01 23:30:11', 'Se insertó una nueva educación para el PPL con ID: 19'),
-(11, 1, 'Agregar Info Familiar', 'ppl_familiar_info, ppl_situacion_sociofamiliar, pp', 19, '2024-12-01 23:31:40', 'Se insertó una nueva Informacion Familiar para el PPL con ID: 19'),
-(12, 1, 'Agregar Asistencia Espiritual y/o Laboral', 'asistencia_espiritual, laboral', 19, '2024-12-01 23:32:05', 'Se insertó una nueva asistencia_espiritual y laboral para el PPL con ID: 19'),
-(13, 1, 'Agregar Datos Médicos', 'datos_medicos', 19, '2024-12-01 23:32:53', 'Se insertaron los datos médicos para el paciente con ID: 19'),
-(14, 1, 'Agregar Observación', 'observaciones', 19, '2024-12-01 23:33:09', 'Se insertó una nueva observación para el PPL con ID: 19'),
-(15, 1, 'Agregar Clasificacion', 'clasificacion', 19, '2024-12-01 23:33:56', 'Se insertó una nueva clasificacion para el PPL con ID: 19'),
-(16, 1, 'Agregar PPL', 'persona, ppl, situacion legal', 3, '2024-12-04 07:39:55', 'Se agrego un nuevo ppl con ID del PPL: 3, ID de la persona: , \r\n    Apodo: , Nombre: asdasd, Apellido: asdasd'),
-(17, 1, 'Agregar Educación', 'educación', 20, '2024-12-04 07:40:17', 'Se insertó una nueva educación para el PPL con ID: 20'),
-(18, 1, 'Agregar Info Familiar', 'ppl_familiar_info, ppl_situacion_sociofamiliar, pp', 20, '2024-12-04 07:40:33', 'Se insertó una nueva Informacion Familiar para el PPL con ID: 20'),
-(19, 1, 'Agregar Asistencia Espiritual y/o Laboral', 'asistencia_espiritual, laboral', 20, '2024-12-04 07:40:51', 'Se insertó una nueva asistencia_espiritual y laboral para el PPL con ID: 20'),
-(20, 1, 'Agregar Datos Médicos', 'datos_medicos', 20, '2024-12-04 07:41:20', 'Se insertaron los datos médicos para el paciente con ID: 20'),
-(21, 1, 'Agregar Datos Psiquiátricos/Psicológicos', 'psiquiatrico_psicologico', 20, '2024-12-04 07:41:39', 'Se insertaron los datos psiquiátricos/psicológicos para el paciente con ID: 20'),
-(22, 1, 'Agregar Observación', 'observaciones', 20, '2024-12-04 07:41:43', 'Se insertó una nueva observación para el PPL con ID: 20'),
-(23, 1, 'Agregar Clasificacion', 'clasificacion', 20, '2024-12-04 07:41:52', 'Se insertó una nueva clasificacion para el PPL con ID: 20'),
-(24, 1, 'Editar Clasificación', 'clasificacion', 20, '2024-12-04 07:44:37', 'Se actualizó la clasificación para el PPL con ID: 20');
 
 -- --------------------------------------------------------
 
@@ -125923,15 +125893,6 @@ CREATE TABLE `educacion` (
   `estado` varchar(255) NOT NULL DEFAULT 'Activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `educacion`
---
-
-INSERT INTO `educacion` (`id`, `id_ppl`, `sabe_leer_escrib`, `primaria`, `secundaria`, `tiene_educ_formal`, `educ-formal`, `tiene_educ_no_formal`, `educ-no-formal`, `quiere_deporte`, `sec-deporte`, `quiere_act_artistica`, `act-artistica`, `estado`) VALUES
-(3, 18, 1, 'Completa', 'Completa', 1, 'Sssss', 0, '', 0, '', 0, '', 'Activo'),
-(4, 19, 1, 'Completa', 'Completa', 0, '', 0, '', 0, '', 0, '', 'Activo'),
-(5, 20, 1, 'Completa', 'Completa', 1, 'efsdfsdfsdfdf', 0, '', 0, '', 0, '', 'Activo');
-
 -- --------------------------------------------------------
 
 --
@@ -126305,7 +126266,9 @@ CREATE TABLE `persona` (
 --
 
 INSERT INTO `persona` (`id`, `dni`, `apellidos`, `nombres`, `fechanac`, `edad`, `direccion`, `genero`, `estadocivil`, `educacion`, `estado`) VALUES
-(1, '44123890', 'Castro', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL, 'Activo');
+(1, '44123890', 'Castro', 'Lucas Martin', '2004-10-06', 20, 'ssss', 'Masculino', 'Soltero', NULL, 'Activo'),
+(27, '38015716', 'perez', 'juan', '2024-12-05', 0, 'asd', 'Masculino', 'Soltero', NULL, 'Activo'),
+(34, '38015715', 'olmos', 'maximiliano', '2024-12-06', 0, 'd', 'Masculino', 'Soltero', NULL, 'Activo');
 
 -- --------------------------------------------------------
 
@@ -126340,13 +126303,16 @@ CREATE TABLE `ppl_causas` (
 --
 
 INSERT INTO `ppl_causas` (`id_ppl_causa`, `id_ppl`, `id_causa`) VALUES
-(1, 1, 10),
-(2, 1, 11),
 (3, 2, 1),
 (4, 2, 2),
 (5, 2, 3),
 (6, 2, 4),
-(7, 3, 2);
+(7, 3, 2),
+(113, 1, 1),
+(114, 1, 2),
+(115, 1, 3),
+(116, 1, 4),
+(119, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -128530,8 +128496,10 @@ CREATE TABLE `registro_acceso` (
 --
 
 INSERT INTO `registro_acceso` (`id_acceso`, `id_usuario`, `hora_inicio`, `hora_cierre`) VALUES
-(1, 1, '2024-12-01 19:09:17', '2024-12-04 04:49:19'),
-(2, 1, '2024-12-04 04:49:26', NULL);
+(1, 18, '2024-12-05 08:52:08', '2024-12-05 08:52:14'),
+(2, 15, '2024-12-05 08:52:34', '2024-12-05 08:52:41'),
+(3, 18, '2024-12-05 08:52:47', '2024-12-05 08:52:59'),
+(4, 1, '2024-12-05 08:58:34', NULL);
 
 -- --------------------------------------------------------
 
@@ -128633,7 +128601,9 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `id_persona`, `id_rol`, `nombre_usuario`, `contrasena`, `fecha_creacion`, `activo`) VALUES
-(1, 1, 1, 'demadmin', '$2y$10$7zlO/gJEfkGfzOlc9WGchO4tRaI7N/55cX1C5eQq6PHJ3XHxd864S', '2024-09-29 18:15:24', 1);
+(1, 1, 1, 'demadmin', '$2y$10$7zlO/gJEfkGfzOlc9WGchO4tRaI7N/55cX1C5eQq6PHJ3XHxd864S', '2024-09-29 18:15:24', 1),
+(15, 27, 3, 'jupe3225', '$2y$10$FzZqKj8SdsyeqINYis/.xe6Jlz.WD.gz25/fKFLjMSUaIWbQCJObC', '2024-12-05 04:35:59', 1),
+(18, 34, 2, 'maol4645', '$2y$10$DGAKCbc9aGZ55Mg9dVxEju4df.04F5u/VUQyfms9/ZtdsQgbsallO', '2024-12-05 08:04:25', 1);
 
 --
 -- Índices para tablas volcadas
@@ -128895,7 +128865,7 @@ ALTER TABLE `asistencia_espiritual`
 -- AUTO_INCREMENT de la tabla `auditoria`
 --
 ALTER TABLE `auditoria`
-  MODIFY `id_auditoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id_auditoria` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `ciudades`
@@ -128937,7 +128907,7 @@ ALTER TABLE `domicilio`
 -- AUTO_INCREMENT de la tabla `educacion`
 --
 ALTER TABLE `educacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `fechappl`
@@ -128985,7 +128955,7 @@ ALTER TABLE `paises`
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl`
@@ -128997,7 +128967,7 @@ ALTER TABLE `ppl`
 -- AUTO_INCREMENT de la tabla `ppl_causas`
 --
 ALTER TABLE `ppl_causas`
-  MODIFY `id_ppl_causa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_ppl_causa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
 
 --
 -- AUTO_INCREMENT de la tabla `ppl_familiar_info`
@@ -129039,7 +129009,7 @@ ALTER TABLE `ppl_pareja`
 -- AUTO_INCREMENT de la tabla `ppl_situacion_sociofamiliar`
 --
 ALTER TABLE `ppl_situacion_sociofamiliar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `provincias`
@@ -129051,13 +129021,13 @@ ALTER TABLE `provincias`
 -- AUTO_INCREMENT de la tabla `psiquiatrico_psicologico`
 --
 ALTER TABLE `psiquiatrico_psicologico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `registro_acceso`
 --
 ALTER TABLE `registro_acceso`
-  MODIFY `id_acceso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_acceso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -129069,7 +129039,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `situacionlegal`
 --
 ALTER TABLE `situacionlegal`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `tiposdelito`
@@ -129081,7 +129051,7 @@ ALTER TABLE `tiposdelito`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Restricciones para tablas volcadas

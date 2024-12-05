@@ -87,12 +87,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="container mt-3">
     <div class="card rounded-2 border-0">
         <h5 class="card-header bg-dark text-white pb-0">Actualizar Educación</h5>
-        <div class="card-body bg-light p-4">
+        <div class="card-body table-responsive">
         <!-- ------------------- -->
-            <a href="ppl_informe.php?seccion=educacion&id=<?php echo $idppl; ?>">
-                <div class="btn btn-secondary">Cancelar</div>
-            </a>
-            <form method="POST" class="shadow p-4 rounded">
+           
+            <form method="POST" class="">
                 <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
                 <!-- Sección de Educación -->
                 <div class="form-section">
@@ -164,7 +162,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             value="<?php echo htmlspecialchars($educacion['act-artistica'] ?? ''); ?>">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
+                <div class="mt-3" >               
+                    <a href="ppl_informe.php?seccion=educacion&id=<?php echo $idppl; ?>" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary  ml-2">Guardar Cambios</button>
+                </div>
             </form>
         </div>
     </div>

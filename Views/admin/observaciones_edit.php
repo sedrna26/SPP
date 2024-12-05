@@ -58,9 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
         <h5 id="titulo"class="card-header bg-dark text-white ">Editar Observaciones del PPL</h5>
         <div class="card-body ">
             <!-- ------------------- -->
-            <a href="ppl_informe.php?seccion=observaciones&id=<?php echo $idppl; ?>">
-                <div class="btn btn-secondary">Cancelar</div>
-            </a>
+            
             <!-- ----------- -->
             <form action="" method="POST" class=" ">
                 <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
@@ -68,13 +66,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_8'])) {
                 <div class="mb-4">
                     
                     <div class="form-group">
-                        <label for="observacion" class="form-label my-3"><h5>Ingrese la observación correspondiente:</h5></label>
-                        <textarea class="form-control shadow" name="observacion" id="observacion" rows="3" maxlength="255" placeholder="Ingrese la observación"><?php echo htmlspecialchars($observacion); ?></textarea>
+                        <label for="observacion" class="form-label "><h5>Ingrese la observación correspondiente:</h5></label>
+                        <textarea class="form-control border-secondary" name="observacion" id="observacion" rows="3" maxlength="255" placeholder="Ingrese la observación"><?php echo htmlspecialchars($observacion); ?></textarea>
                     </div>
                 </div>
                 <!-- Botón de envío -->
                 <div class="">
-                    <button name="guardar_8" type="submit" class="btn btn-primary">Guardar</button>
+
+                    <a href="ppl_informe.php?seccion=observaciones&id=<?php echo $idppl; ?>" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                    <button name="guardar_8" type="submit" class="btn btn-primary ml-2">Guardar Cambios</button>
                 </div>
             </form>
         </div>
