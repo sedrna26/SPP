@@ -11,7 +11,7 @@ if (isset($_GET['provincia_id']) && $_GET['provincia_id'] != '') {
     $provincia_id = $_GET['provincia_id'];  // Obtener el ID de la provincia
 
     // Realizar la consulta para obtener las ciudades de la provincia
-    $query = "SELECT id, nombre FROM ciudades WHERE id_prov = :provincia_id ORDER BY nombre ASC";
+    $query = "SELECT * FROM ciudades WHERE id_prov = :provincia_id ORDER BY nombre ASC";
     $stmt = $db->prepare($query);
     $stmt->bindParam(':provincia_id', $provincia_id, PDO::PARAM_INT);  // Usamos PDO para prevenir inyecciones SQL
     $stmt->execute();
