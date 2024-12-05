@@ -50,12 +50,16 @@ function obtenerUltimaFoto($id, $db)
 {
     try {
         // Query to get the latest photo using person ID
-        $query = "SELECT ppl.foto, ppl.id as ppl_id, persona.id as persona_id, persona.dni 
-                 FROM ppl 
-                 JOIN persona ON ppl.idpersona = persona.id 
-                 WHERE persona.id = :id 
-                 ORDER BY ppl.id DESC 
-                 LIMIT 1";
+        $query = "SELECT ppl.foto, 
+                    ppl.id AS ppl_id, 
+                    persona.id AS persona_id, 
+                    persona.dni
+                    FROM ppl
+                    JOIN persona ON ppl.idpersona = persona.id
+                    WHERE persona.id = :id
+                    ORDER BY ppl.id DESC
+                    LIMIT 1;
+                    ";
 
         $stmt = $db->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -156,13 +160,13 @@ function mostrarDireccion($persona) {
             <?php endif; ?>
 
             <?php if ($ppl && isset($ppl['id'])): ?>
-                <a class="btn btn-warning me-2 btn-sm" href="ppl_edit.php?id=<?php echo $ppl['id']; ?>">
+                <a class="btn btn-warning me-2 btn-sm" href="ppl_edit.php?id=<?php echo $persona['id']; ?>">
                     <i class="fas fa-edit me-1"></i> Editar PPL
                 </a>
             <?php endif; ?>
 
             <?php if ($situacion_legal && isset($situacion_legal['id_ppl'])): ?>
-                <a class="btn btn-warning btn-sm" href="situacionlegal_edit.php?id=<?php echo $situacion_legal['id_ppl']; ?>">
+                <a class="btn btn-warning btn-sm" href="situacionlegal_edit.php?id=<?php echo $persona['id']; ?>">
                     <i class="fas fa-balance-scale me-1"></i> Editar Situación Legal
                 </a>
             <?php endif; ?>
@@ -291,36 +295,66 @@ function mostrarDireccion($persona) {
                             </div>
 
                             <!-- Additional Legal Information -->
-                            <div class="col-12">
-                                <div class="table-responsive">
-                                    <table class="table table-hover table-striped">
-                                        <tbody>
-                                            <tr>
-                                                <td class="fw-bold">Reingreso por quebrantamiento</td>
-                                                <td><?php echo isset($situacion_legal['reingreso_falta']) ? ($situacion_legal['reingreso_falta'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="fw-bold">Causas en la niñez/adolescencia</td>
-                                                <td><?php echo isset($situacion_legal['causa_nino']) ? ($situacion_legal['causa_nino'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="fw-bold">Cumplió medidas socioeducativas</td>
-                                                <td><?php echo isset($situacion_legal['cumplio_medida']) ? ($situacion_legal['cumplio_medida'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="fw-bold">Tiene defensor oficial</td>
-                                                <td>
-                                                    <?php echo isset($situacion_legal['tiene_defensor']) ? ($situacion_legal['tiene_defensor'] ? 'Sí' : 'No') : 'No hay dato'; ?>
-                                                    <?php if (isset($situacion_legal['tiene_defensor']) && $situacion_legal['tiene_defensor']): ?>
-                                                        <br>Nombre: <?php echo htmlspecialchars($situacion_legal['nombre_defensor'], ENT_QUOTES, 'UTF-8'); ?>
-                                                        <br>Tiene comunicación: <?php echo isset($situacion_legal['tiene_com_defensor']) ? ($situacion_legal['tiene_com_defensor'] ? 'Sí' : 'No') : 'No hay dato'; ?>
-                                                    <?php endif; ?>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                            <!-- Find the section with the existing table -->
+<div class="col-12">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <tbody>
+                <tr>
+                    <td class="fw-bold">Reingreso por quebrantamiento</td>
+                    <td><?php echo isset($situacion_legal['reingreso_falta']) ? ($situacion_legal['reingreso_falta'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Causas en la niñez/adolescencia</td>
+                    <td><?php echo isset($situacion_legal['causa_nino']) ? ($situacion_legal['causa_nino'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Cumplió medidas socioeducativas</td>
+                    <td><?php echo isset($situacion_legal['cumplio_medida']) ? ($situacion_legal['cumplio_medida'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Asistió a rehabilitación</td>
+                    <td><?php echo isset($situacion_legal['asistio_rehabi']) ? ($situacion_legal['asistio_rehabi'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Categoría</td>
+                    <td><?php echo !empty($situacion_legal['categoria']) ? htmlspecialchars($situacion_legal['categoria'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?></td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Motivo de traslado</td>
+                    <td><?php echo !empty($situacion_legal['motivo_t']) ? htmlspecialchars($situacion_legal['motivo_t'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?></td>
+                    
+                </tr>
+                <tr>
+                    <td class="fw-bold">En perjuicio de quien (si es intrafamiliar)</td>
+                    <td><?php 
+                        if (isset($situacion_legal['en_prejucio']) && $situacion_legal['en_prejucio']) {
+                            echo !empty($situacion_legal['en_prejucio']) 
+                                ? htmlspecialchars($situacion_legal['en_prejucio'], ENT_QUOTES, 'UTF-8') 
+                                : 'No especificado';
+                        } else {
+                            echo 'No aplica';
+                        }
+                    ?></td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Causas pendientes</td>
+                    <td><?php echo !empty($situacion_legal['causas_pend']) ? htmlspecialchars($situacion_legal['causas_pend'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?></td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Tiene defensor oficial</td>
+                    <td>
+                        <?php echo isset($situacion_legal['tiene_defensor']) ? ($situacion_legal['tiene_defensor'] ? 'Sí' : 'No') : 'No hay dato'; ?>
+                        <?php if (isset($situacion_legal['tiene_defensor']) && $situacion_legal['tiene_defensor']): ?>
+                            <br>Nombre: <?php echo htmlspecialchars($situacion_legal['nombre_defensor'], ENT_QUOTES, 'UTF-8'); ?>
+                            <br>Tiene comunicación: <?php echo isset($situacion_legal['tiene_com_defensor']) ? ($situacion_legal['tiene_com_defensor'] ? 'Sí' : 'No') : 'No hay dato'; ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
                         </div>
                     </div>
                 </div>

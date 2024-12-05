@@ -859,17 +859,14 @@ try {
                             </div>
                         <?php endforeach; ?>
                     </div>
-                    <button type="submit" name="actualizar_datos_familiares" class="btn btn-primary ml-2">
+                    <button type="submit" name="actualizar_datos_familiares" class="btn btn-primary ml-3" style="float: right;">
                         Actualizar Información Familiar
                     </button>
+                    <a href="ppl_informe.php?seccion=situacion-social&id=<?php echo $idppl; ?>" style="float: right;">
+                        <div class="btn btn-secondary">Cancelar</div>
+                    </a>
                 </div>
-                
-
-
             </div>
-
-            <!-- Botón de Actualización -->
-                
         </form>
         </div>
     </div>

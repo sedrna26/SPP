@@ -75,7 +75,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $error = "";
     try {
-        $sql_check_dni = "SELECT COUNT(*) FROM persona WHERE dni = :dni";
+        //Consulta para saber si el din exite en la BD solo si usuario está activo=1
+        $sql_check_dni = "SELECT COUNT(*)
+                        FROM persona p
+                        JOIN usuarios u ON p.id = u.id_persona
+                        WHERE p.dni = :dni AND u.activo = 1";
         $stmt_check_dni = $db->prepare($sql_check_dni);
         $stmt_check_dni->bindParam(':dni', $dni);
         $stmt_check_dni->execute();
@@ -159,6 +163,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <th>#</th>
                                         <th>Nombres</th>
                                         <th>DNI</th>
+                                        <th>Nombre Usuario</th>
                                         <th>Permiso</th>
                                         <th>Acciones</th>
                                     </thead>
@@ -185,6 +190,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     <th scope="row"><?php echo $usuarios['id_usuario'] ?></th>
                                                     <td><?php echo $usuarios['nombres'] . ' ' . $usuarios['apellidos'] ?></td>
                                                     <td><?php echo $usuarios['dni'] ?></td>
+                                                    <td><?php echo $usuarios['nombre_usuario'] ?></td>
                                                     <td><?php echo $usuarios['nombre_rol'] ?></td> <!-- Mostrando el nombre del rol dinámicamente -->
                                                     <td class="text-center">
                                                         <div class="btn-group">
@@ -230,7 +236,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     </div>
                                     <div class="form-group">
                                         <label for="contrasena">Contraseña:</label>
-                                        <input type="password" class="form-control" id="contrasena" name="contrasena" placeholder="Ingrese contraseña" required>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="contrasena" name="contrasena" placeholder="Se genera automáticamente con los ultimos 4 del DNI" >
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-primary" type="button" id="togglePassword" onclick="togglePassword()">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
 
 
@@ -297,8 +310,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </section>
 
 <script>
+    document.getElementById('dni').addEventListener('input', generarContrasena);
     document.getElementById('nombres').addEventListener('input', generarNombreUsuario);
     document.getElementById('apellidos').addEventListener('input', generarNombreUsuario);
+
+    function generarContrasena() {
+        var dni = document.getElementById('dni').value.trim();
+        if (dni.length >= 4) {
+            var ultimos4 = dni.slice(-4);
+            var contrasena =  ultimos4;
+            document.getElementById('contrasena').value = contrasena;
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+    // Select the password input and toggle button
+    var passwordInput = document.getElementById('contrasena');
+    var toggleButton = document.getElementById('togglePassword');
+
+    // Add event listener to the toggle button
+    if (toggleButton && passwordInput) {
+        toggleButton.addEventListener('click', function() {
+            // Toggle password visibility
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.innerHTML = '<i class="fas fa-eye-slash" style="color: blue;"></i>';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.innerHTML = '<i class="fas fa-eye" style="color: blue;"></i>';
+            }
+        });
+    } else {
+        console.error('Toggle button or password input not found');
+    }
+});
 
     function generarNombreUsuario() {
         var nombres = document.getElementById('nombres').value.trim();
@@ -311,12 +356,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             var numero1 = Math.floor(Math.random() * 100);
             var numero2 = Math.floor(Math.random() * 100);
 
-
             var nombreUsuario = primerNombre + primerApellido + numero1 + numero2;
             document.getElementById('nombre_usuario').value = nombreUsuario;
         }
     }
 
+    function togglePassword() {
+        var passwordInput = document.getElementById('contrasena');
+        var toggleButton = document.getElementById('togglePassword');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleButton.innerHTML = '<i class="fas fa-eye-slash" style="color: blue;"></i>';
+        } else {
+            passwordInput.type = 'password';
+            toggleButton.innerHTML = '<i class="fas fa-eye" style="color: blue;"></i>';
+        }
+    }
     function mostrarCamposAdicionales() {
         var nombres = document.getElementById('nombres').value.trim();
         var apellidos = document.getElementById('apellidos').value.trim();

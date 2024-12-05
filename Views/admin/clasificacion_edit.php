@@ -80,9 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
         <h5 id="titulo"class="card-header bg-dark text-white ">Editar Clasificación del PPL</h5>
         <div class="card-body ">
             <!-- ------------------- -->
-            <a href="ppl_informe.php?seccion=clasificacion&id=<?php echo $idppl; ?>">
-                <div class="btn btn-secondary mb-4">Cancelar</div>
-            </a>
+            
             <!-- ----------- -->
             <form method="POST">
                 <input type="hidden" name="id_ppl" value="<?php echo htmlspecialchars($idppl); ?>">
@@ -121,7 +119,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar_9'])) {
                     </div>
                 </div>
 
-                <button name="guardar_9" type="submit" class="btn btn-primary">Guardar</button>
+
+
+
+                <div class="">
+
+                    <a href="ppl_informe.php?seccion=clasificacion&id=<?php echo $idppl; ?>" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                    <button name="guardar_9" type="submit" class="btn btn-primary ml-2">Guardar Cambios</button>
+                </div>
+
+
+
+
+                
             </form>
         </div>
     </div>

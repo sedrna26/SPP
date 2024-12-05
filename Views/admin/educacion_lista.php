@@ -22,9 +22,13 @@ if ($idppl > 0) {
         <!-- ------------------------ -->
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0">Información Educativa del PPL</h4>
-            <a href="educacion_edit.php?id=<?php echo $idppl; ?>" class='btn btn-warning btn-sm'>
-                <i class="fas fa-edit me-1"></i>Editar
-            </a>
+            <?php
+                if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) { 
+            ?>
+                <a href="educacion_edit.php?id=<?php echo $idppl; ?>" class='btn btn-warning btn-sm'>
+                    <i class="fas fa-edit me-1"></i>Editar
+                </a>
+            <?php }?>
         </div>
         <div class="card-body">
             <div class="row">

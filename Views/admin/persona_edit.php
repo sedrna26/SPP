@@ -115,8 +115,8 @@
             $tabla_afectada = 'persona;domicilio';
             $detalles = "Se editó la persona con ID: $id y la dirección.";
             registrarAuditoria($db, $accion, $tabla_afectada, $id, $detalles);
+            header("Location: ppl_informe.php?id=" . $id);
 
-            header("Location: ppl_informe.php?id=" . urlencode($id) . "&mensaje=" . urlencode("PPL - Persona editada con éxito."));
             exit();
         }
     } catch (PDOException $e) {
@@ -150,46 +150,43 @@
     }
 </script>
 
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Editar Persona</h4>
-        </div>
-        <div class="card-body">
+<div class="container mt-3">
+    <div class="card rounded-2 border-0">
+        <h5 class="card-header bg-dark text-white">Editar Persona</h5>
+        <div class="card-body bg-light">
+        <!-- ------------------- -->
+             
+            <!-- --------------------- -->
             <form action="persona_edit.php?id=<?php echo $persona['id']; ?>" method="POST">
                 <input type="hidden" name="id" value="<?php echo $persona['id']; ?>">
 
-                <div class="row mb-3">
+                <div class="row mb-3">        
                     <div class="col-md-6">
-                        <label for="dni" class="form-label">DNI:</label>
-                        <input type="number" id="dni" name="dni" class="form-control" value="<?php echo htmlspecialchars($persona['dni'], ENT_QUOTES, 'UTF-8'); ?>" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="nombres" class="form-label">Nombres:</label>
+                        <label for="nombres" class="form-label">Nombre/s:</label>
                         <input type="text" id="nombres" name="nombres" class="form-control" value="<?php echo htmlspecialchars($persona['nombres'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="apellidos" class="form-label">Apellido/s:</label>
+                        <input type="text" id="apellidos" name="apellidos" class="form-control" value="<?php echo htmlspecialchars($persona['apellidos'], ENT_QUOTES, 'UTF-8'); ?>" required>
                     </div>
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="apellidos" class="form-label">Apellidos:</label>
-                        <input type="text" id="apellidos" name="apellidos" class="form-control" value="<?php echo htmlspecialchars($persona['apellidos'], ENT_QUOTES, 'UTF-8'); ?>" required>
-                    </div>
+                    <div class="col-md-2">
+                        <label for="dni" class="form-label">DNI:</label>
+                        <input type="number" id="dni" name="dni" class="form-control" value="<?php echo htmlspecialchars($persona['dni'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                    </div>                
 
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento:</label>
                         <input type="date" id="fechaNacimiento" name="fechaNacimiento" class="form-control" value="<?php echo date('Y-m-d', strtotime($persona['fechaNacimiento'])); ?>" required>
                     </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-2">
                         <label for="edad" class="form-label">Edad:</label>
                         <input type="number" id="edad" name="edad" class="form-control" value="<?php echo $persona['edad']; ?>" required>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <label for="genero" class="form-label">Género:</label>
                         <select name="genero" id="genero" class="form-control" required>
                             <option value="Masculino" <?php echo ($persona['genero'] === 'Masculino') ? 'selected' : ''; ?>>Masculino</option>
@@ -197,10 +194,7 @@
                             <option value="Otro" <?php echo ($persona['genero'] === 'Otro') ? 'selected' : ''; ?>>Otro</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-2">
                         <label for="estadocivil" class="form-label">Estado Civil:</label>
                         <select name="estadocivil" id="estadocivil" class="form-control" required>
                             <option value="Soltero" <?php echo ($persona['estadocivil'] === 'Soltero') ? 'selected' : ''; ?>>Soltero</option>
@@ -209,6 +203,8 @@
                         </select>
                     </div>
                 </div>
+
+                
 
                 <div class="row mb-3">
                     <div class="col-md-4">
@@ -256,8 +252,13 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <a href="ppl_informe.php?&id=<?php echo $id; ?>" class="btn btn-secondary">Cancelar</a>
+
+                <button type="submit" class="btn btn-primary ml-2">Guardar Cambios</button>
+
+                
             </form>
         </div>
     </div>
 </div>
+<?php require 'footer.php'; ?>

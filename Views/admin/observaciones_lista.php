@@ -16,9 +16,13 @@ try {
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0">Observaciones</h4>
+            <?php
+                if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) { 
+            ?>
                 <a href='observaciones_edit.php?id=<?php echo $idppl; ?>' class="btn btn-warning btn-sm">
                     <i class="fas fa-edit me-1"></i>Editar
                 </a>
+            <?php }?>
         </div>
         <div class="card-body">
             <?php if (count($observaciones) > 0): ?>
