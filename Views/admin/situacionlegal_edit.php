@@ -3,20 +3,19 @@ require 'navbar.php';
 
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 
-
-
-function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles)
+function registrarAuditoria($db, $id_usuario, $accion, $tabla_afectada, $registro_id, $detalles)
 {
     try {
         $sql = "INSERT INTO auditoria (id_usuario, accion, detalles, tabla_afectada, registro_id, fecha)
                 VALUES (:id_usuario, :accion, :detalles, :tabla_afectada, :registro_id, NOW())";
         $stmt = $db->prepare($sql);
-        $stmt->bindParam(':id_usuario', $_SESSION['id_usuario']);
-        $stmt->bindParam(':accion', $accion);
-        $stmt->bindParam(':detalles', $detalles);
-        $stmt->bindParam(':tabla_afectada', $tabla_afectada);
-        $stmt->bindParam(':registro_id', $registro_id);
-        $stmt->execute();
+        $stmt->execute([
+            ':id_usuario' => $id_usuario,
+            ':accion' => $accion,
+            ':detalles' => $detalles,
+            ':tabla_afectada' => $tabla_afectada,
+            ':registro_id' => $registro_id
+        ]);
     } catch (PDOException $e) {
         error_log("Error en el registro de auditoría: " . $e->getMessage());
     }
@@ -60,13 +59,13 @@ function obtenerSituacionLegal($db, $id)
         sl.asistio_rehabi, sl.tiene_defensor, sl.nombre_defensor, 
         sl.tiene_com_defensor, juzgado.nombre AS nombre_juzgado, 
         juzgado.nombre_juez AS nombre_juez,
-        GROUP_CONCAT(delitos.nombre SEPARATOR '\n') AS nombres_causas,
-        GROUP_CONCAT(delitos.id_delito) AS ids_causas
+        GROUP_CONCAT(DISTINCT delitos.nombre SEPARATOR '\n') AS nombres_causas,
+        GROUP_CONCAT(DISTINCT delitos.id_delito) AS ids_causas
         FROM situacionlegal sl
         LEFT JOIN juzgado ON sl.id_juzgado = juzgado.id
-        LEFT JOIN ppl_causas ON ppl_causas.id_ppl = $id
+        LEFT JOIN ppl_causas ON ppl_causas.id_ppl = :id
         LEFT JOIN delitos ON ppl_causas.id_causa = delitos.id_delito
-        WHERE sl.id_ppl = (SELECT idpersona FROM ppl WHERE idpersona = :id)
+        WHERE sl.id_ppl = :id
         GROUP BY sl.id_ppl");
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
@@ -86,38 +85,44 @@ function obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Función para actualizar la situación legal
 function actualizarSituacionLegal($db, $params)
 {
-    $stmt = $db->prepare("UPDATE situacionlegal SET 
-        fecha_detencion = :fecha_detencion,
-        dependencia = :dependencia,
-        motivo_t = :motivo_t,
-        situacionlegal = :situacionlegal,
-        id_juzgado = :id_juzgado,
-        en_prejucio = :en_prejucio,
-        condena = :condena,
-        categoria = :categoria,
-        reingreso_falta = :reingreso_falta,
-        causas_pend = :causas_pend,
-        causa_nino = :causa_nino,
-        cumplio_medida = :cumplio_medida,
-        asistio_rehabi = :asistio_rehabi,
-        tiene_defensor = :tiene_defensor,
-        nombre_defensor = :nombre_defensor,
-        tiene_com_defensor = :tiene_com_defensor
-        WHERE id_ppl = :id_ppl");
+    $sql = "UPDATE situacionlegal 
+            SET fecha_detencion = :fecha_detencion, dependencia = :dependencia, motivo_t = :motivo_t, 
+                situacionlegal = :situacionlegal, id_juzgado = :id_juzgado, en_prejucio = :en_prejucio, 
+                condena = :condena, categoria = :categoria, causas_pend = :causas_pend, 
+                reingreso_falta = :reingreso_falta, causa_nino = :causa_nino, 
+                cumplio_medida = :cumplio_medida, asistio_rehabi = :asistio_rehabi, 
+                tiene_defensor = :tiene_defensor, nombre_defensor = :nombre_defensor, 
+                tiene_com_defensor = :tiene_com_defensor 
+            WHERE id_ppl = :id_ppl";
+    $stmt = $db->prepare($sql);
     $stmt->execute($params);
 }
 
-function actualizarCausas($db, $id, $causas)
+
+function actualizarCausas($db, $id_ppl, $causas, $id_situacionlegal)
 {
-    if (is_array($causas)) {
-        $stmt_insert = $db->prepare("INSERT INTO ppl_causas (id_ppl, id_causa) VALUES (:id_ppl, :id_causa)");
-        foreach ($causas as $causa_id) {
-            $stmt_insert->bindParam(':id_ppl', $id);
-            $stmt_insert->bindParam(':id_causa', $causa_id);
-            $stmt_insert->execute();
-        }
+    if (empty($causas)) {
+        return;
+    }
+
+   
+    $sql_delete = "DELETE FROM ppl_causas WHERE id_ppl = :id_ppl AND id_situacionlegal = :id_situacionlegal";
+    $stmt = $db->prepare($sql_delete);
+    $stmt->execute([':id_ppl' => $id_ppl, ':id_situacionlegal' => $id_situacionlegal]);
+
+    
+    foreach ($causas as $id_causa) {
+        $sql_insert = "INSERT INTO ppl_causas (id_ppl, id_causa, id_situacionlegal) 
+                         VALUES (:id_ppl, :id_causa, :id_situacionlegal)";
+        $stmt = $db->prepare($sql_insert);
+        $stmt->execute([
+            ':id_ppl' => $id_ppl,
+            ':id_causa' => $id_causa,
+            ':id_situacionlegal' => $id_situacionlegal 
+        ]);
     }
 }
 
@@ -126,7 +131,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $db->beginTransaction();
 
         try {
+          
             $id = $_POST['id'];
+
+          
+            $situacion_legal = obtenerSituacionLegal($db, $id);
+            $id_situacionlegal = $situacion_legal['id'] ?? null;
+
+            if (!$id_situacionlegal) {
+                throw new Exception("No se pudo encontrar la situación legal para este PPL.");
+            }
+
+           
             $params = [
                 ':fecha_detencion' => $_POST['fecha_detencion'],
                 ':dependencia' => $_POST['dependencia'],
@@ -134,66 +150,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':situacionlegal' => $_POST['situacionlegal'],
                 ':id_juzgado' => $_POST['id_juzgado'],
                 ':en_prejucio' => $_POST['en_prejucio'],
-                ':condena' => $_POST['condena'],
+                ':condena' => ($_POST['condena'] === '---' ? null : $_POST['condena']),
                 ':categoria' => $_POST['categoria'],
-                ':reingreso_falta' => $_POST['reingreso_falta'] == '1' ? 1 : 0,
                 ':causas_pend' => $_POST['causas_pend'],
-                ':causa_nino' => $_POST['causa_nino'] == '1' ? 1 : 0,
-                ':cumplio_medida' => $_POST['cumplio_medida'] == '1' ? 1 : 0,
-                ':asistio_rehabi' => $_POST['asistio_rehabi'] == '1' ? 1 : 0,
-                ':tiene_defensor' => $_POST['tiene_defensor'] == '1' ? 1 : 0,
+                ':reingreso_falta' => $_POST['reingreso_falta'],
+                ':causa_nino' => $_POST['causa_nino'],
+                ':cumplio_medida' => $_POST['cumplio_medida'],
+                ':asistio_rehabi' => $_POST['asistio_rehabi'],
+                ':tiene_defensor' => $_POST['tiene_defensor'],
                 ':nombre_defensor' => $_POST['nombre_defensor'],
-                ':tiene_com_defensor' => $_POST['tiene_com_defensor'] == '1' ? 1 : 0,
+                ':tiene_com_defensor' => $_POST['tiene_com_defensor'],
                 ':id_ppl' => $id
             ];
 
             actualizarSituacionLegal($db, $params);
+            actualizarCausas($db, $id, $_POST['causas'], $id_situacionlegal);
 
-            if (isset($_POST['causas']) && is_array($_POST['causas'])) {
-                // Delete existing causes
-                $stmt_delete = $db->prepare("DELETE FROM ppl_causas WHERE id_ppl = :id_ppl");
-                $stmt_delete->bindParam(':id_ppl', $id);
-                $stmt_delete->execute();
-
-                // Insert new causes
-                actualizarCausas($db, $id, $_POST['causas']);
-            }
             $db->commit();
-
-            registrarAuditoria($db, 'Editar PPL - Situacion legal', 'situacionlegal', $id, "Se editó el PPL con ID: $id");
-
-            header("Location: ppl_informe.php?id=$id");
+            header("Location: ppl_informe.php?id=" . $id);
+        
             exit();
         } catch (Exception $e) {
             $db->rollBack();
-            error_log("Error en la actualización: " . $e->getMessage());
-            $error_message = "Error al actualizar los datos. Por favor, intente nuevamente.";
+            echo "Error: " . $e->getMessage();
         }
     }
 }
-
-
 if ($db) {
-    $delitos = $db->query("SELECT d.id_delito, d.nombre, t.id_tipo_delito 
-                           FROM delitos d 
-                           LEFT JOIN tiposdelito t ON d.id_tipo_delito = t.id_tipo_delito")
-        ->fetchAll(PDO::FETCH_ASSOC);
+    try {
 
-    $juzgados = $db->query("SELECT id, nombre FROM juzgado")
-        ->fetchAll(PDO::FETCH_ASSOC);
+        $delitos = $db->query("SELECT d.id_delito, d.nombre, t.id_tipo_delito 
+                               FROM delitos d 
+                               LEFT JOIN tiposdelito t ON d.id_tipo_delito = t.id_tipo_delito")
+            ->fetchAll(PDO::FETCH_ASSOC);
 
-    $persona = obtenerPersona($db, $id);
-    $ppl = obtenerPpl($db, $id);
-    $situacion_legal = obtenerSituacionLegal($db, $id);
-    $id_ppl = $ppl['id'];
-    $id_situacionlegal = $situacion_legal['id'];
-    //var_dump($situacion_legal);
+        $juzgados = $db->query("SELECT id, nombre FROM juzgado")
+            ->fetchAll(PDO::FETCH_ASSOC);
+
+        $persona = obtenerPersona($db, $id);
+        $ppl = obtenerPpl($db, $id);
+        $situacion_legal = obtenerSituacionLegal($db, $id);
+
+        $id_ppl = $ppl['id'] ?? null;
+        $id_situacionlegal = $situacion_legal['id'] ?? null;
+
+
+        $causas = $id_ppl && $id_situacionlegal
+            ? obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal)
+            : [];
+    } catch (Exception $e) {
+
+        $db->rollBack();
+        error_log("Error al actualizar los datos: " . $e->getMessage());
+        echo "Error al actualizar los datos: " . $e->getMessage();
+    }
 } else {
     $error_message = "No se pudo conectar a la base de datos.";
 }
-$causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
-?>
 
+
+?>
 
 <div class="container mt-4">
     <div class="card rounded-2 border-0">
@@ -257,9 +273,11 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                                     $selected_causas = explode(',', $situacion_legal['ids_causas'] ?? '');
                                     foreach ($delitos as $delito) {
                                         $checked = in_array($delito['id_delito'], $selected_causas) ? 'checked' : '';
-                                        echo "<tr class='causa-checkbox'>
-                                            <td><input type='checkbox' id='causa_{$delito['id_delito']}' name='causas[]' 
-                                                     value='{$delito['id_delito']}' {$checked}></td>
+                                        echo "<tr>
+                                            <td>
+                                                <input type='checkbox' id='causa_{$delito['id_delito']}' 
+                                                       name='causas[]' value='{$delito['id_delito']}' {$checked}>
+                                            </td>
                                             <td><label for='causa_{$delito['id_delito']}'>{$delito['nombre']}</label></td>
                                         </tr>";
                                     }
@@ -270,26 +288,6 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                         <p id="selected-causas-text" style="margin-top: 10px;">Selecciona hasta 4 causas.</p>
                     </div>
                 </div>
-                <!-- Scrip para buscar las causas  -->
-                <script>
-                    function filtrarCausas() {
-                        var input = document.getElementById('buscar-causas');
-                        var filtro = input.value.toLowerCase();
-                        var filas = document.querySelectorAll('.causa-checkbox');
-                        filas.forEach(function(fila) {
-                            var celdaCausa = fila.getElementsByTagName('td')[1];
-                            if (celdaCausa) {
-                                var textoCausa = celdaCausa.textContent || celdaCausa.innerText;
-                                if (textoCausa.toLowerCase().indexOf(filtro) > -1) {
-                                    fila.style.display = "";
-                                } else {
-                                    fila.style.display = "none";
-                                }
-                            }
-                        });
-                    }
-                </script>
-
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="en_prejucio">En perjuicio de quien (si la causa es intrafamiliar):</label>
@@ -297,9 +295,9 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                             value="<?php echo htmlspecialchars($situacion_legal['en_prejucio'] ?? 'No hay dato', ENT_QUOTES, 'UTF-8'); ?>">
                     </div>
                     <?php
-                        // Get all juzgados for the form
-                        $stmt_juzgados = $db->query("SELECT id, nombre, nombre_juez FROM juzgado");
-                        $juzgados = $stmt_juzgados->fetchAll(PDO::FETCH_ASSOC);
+                    // Get all juzgados for the form
+                    $stmt_juzgados = $db->query("SELECT id, nombre, nombre_juez FROM juzgado");
+                    $juzgados = $stmt_juzgados->fetchAll(PDO::FETCH_ASSOC);
                     ?>
 
                     <div class="col-md-6">
@@ -307,7 +305,7 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                         <select class="form-select" id="id_juzgado" name="id_juzgado" required>
                             <option value="">-- Seleccione un Juez --</option>
                             <?php foreach ($juzgados as $juzgado): ?>
-                                <option value="<?php echo $juzgado['id']; ?>" 
+                                <option value="<?php echo $juzgado['id']; ?>"
                                     <?php echo (($situacion_legal['id_juzgado'] ?? '') == $juzgado['id'] ? 'selected' : ''); ?>>
                                     <?php echo htmlspecialchars($juzgado['nombre'] . ' - ' . $juzgado['nombre_juez']); ?>
                                 </option>
@@ -326,7 +324,7 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                         <label for="categoria">Categoría:</label>
                         <select class="form-select" id="categoria" name="categoria" required>
                             <option value="Primario" <?php echo ($situacion_legal['categoria'] == 'Primario' ? 'selected' : ''); ?>>Primario</option>
-                            <option value="Reiterante" <?php echo ($situacion_legal['categoria']== 'Reiterante' ? 'selected' : ''); ?>>Reiterante</option>
+                            <option value="Reiterante" <?php echo ($situacion_legal['categoria'] == 'Reiterante' ? 'selected' : ''); ?>>Reiterante</option>
                         </select>
                     </div>
                 </div>
@@ -410,6 +408,25 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
     </div>
 </div>
 <!-- ------------------- -->
+<!-- Scrip para buscar las causas  -->
+<script>
+    function filtrarCausas() {
+        var input = document.getElementById('buscar-causas');
+        var filtro = input.value.toLowerCase();
+        var filas = document.querySelectorAll('.causa-checkbox');
+        filas.forEach(function(fila) {
+            var celdaCausa = fila.getElementsByTagName('td')[1];
+            if (celdaCausa) {
+                var textoCausa = celdaCausa.textContent || celdaCausa.innerText;
+                if (textoCausa.toLowerCase().indexOf(filtro) > -1) {
+                    fila.style.display = "";
+                } else {
+                    fila.style.display = "none";
+                }
+            }
+        });
+    }
+</script>
 <script>
     function toggleDefensorFields() {
         const tieneDefensor = document.getElementById('tiene_defensor');
@@ -438,7 +455,7 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                 alert("Solo puedes seleccionar un máximo de 4 causas.");
                 this.checked = false;
             }
-            if(selectedCheckboxes.length < minCausas){
+            if (selectedCheckboxes.length < minCausas) {
                 alert("Debe seleccionar al menos una causa.");
                 this.checked = true;
             }
