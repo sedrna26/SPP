@@ -64,9 +64,9 @@ function obtenerSituacionLegal($db, $id)
         GROUP_CONCAT(delitos.id_delito) AS ids_causas
         FROM situacionlegal sl
         LEFT JOIN juzgado ON sl.id_juzgado = juzgado.id
-        LEFT JOIN ppl_causas ON ppl_causas.id_ppl = ppl_causas.id_causa
+        LEFT JOIN ppl_causas ON ppl_causas.id_ppl = $id
         LEFT JOIN delitos ON ppl_causas.id_causa = delitos.id_delito
-        WHERE sl.id_ppl = (SELECT id FROM ppl WHERE idpersona = :id)
+        WHERE sl.id_ppl = (SELECT idpersona FROM ppl WHERE idpersona = :id)
         GROUP BY sl.id_ppl");
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
@@ -109,12 +109,12 @@ function actualizarSituacionLegal($db, $params)
     $stmt->execute($params);
 }
 
-function actualizarCausas($db, $ppl_id, $causas)
+function actualizarCausas($db, $id, $causas)
 {
     if (is_array($causas)) {
         $stmt_insert = $db->prepare("INSERT INTO ppl_causas (id_ppl, id_causa) VALUES (:id_ppl, :id_causa)");
         foreach ($causas as $causa_id) {
-            $stmt_insert->bindParam(':id_ppl', $ppl_id);
+            $stmt_insert->bindParam(':id_ppl', $id);
             $stmt_insert->bindParam(':id_causa', $causa_id);
             $stmt_insert->execute();
         }
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $db->beginTransaction();
 
         try {
-            $ppl_id = $_POST['ppl_id'];
+            $id = $_POST['id'];
             $params = [
                 ':fecha_detencion' => $_POST['fecha_detencion'],
                 ':dependencia' => $_POST['dependencia'],
@@ -144,14 +144,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':tiene_defensor' => $_POST['tiene_defensor'] == '1' ? 1 : 0,
                 ':nombre_defensor' => $_POST['nombre_defensor'],
                 ':tiene_com_defensor' => $_POST['tiene_com_defensor'] == '1' ? 1 : 0,
-                ':id_ppl' => $ppl_id
+                ':id_ppl' => $id
             ];
 
             actualizarSituacionLegal($db, $params);
-            actualizarCausas($db, $ppl_id, $_POST['causas']);
+
+            if (isset($_POST['causas']) && is_array($_POST['causas'])) {
+                // Delete existing causes
+                $stmt_delete = $db->prepare("DELETE FROM ppl_causas WHERE id_ppl = :id_ppl");
+                $stmt_delete->bindParam(':id_ppl', $id);
+                $stmt_delete->execute();
+
+                // Insert new causes
+                actualizarCausas($db, $id, $_POST['causas']);
+            }
             $db->commit();
 
-            registrarAuditoria($db, 'Editar PPL - Situacion legal', 'situacionlegal', $ppl_id, "Se editó el PPL con ID: $ppl_id");
+            registrarAuditoria($db, 'Editar PPL - Situacion legal', 'situacionlegal', $id, "Se editó el PPL con ID: $id");
 
             header("Location: ppl_informe.php?id=$id");
             exit();
@@ -162,6 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
 
 if ($db) {
     $delitos = $db->query("SELECT d.id_delito, d.nombre, t.id_tipo_delito 
@@ -177,6 +187,7 @@ if ($db) {
     $situacion_legal = obtenerSituacionLegal($db, $id);
     $id_ppl = $ppl['id'];
     $id_situacionlegal = $situacion_legal['id'];
+    //var_dump($situacion_legal);
 } else {
     $error_message = "No se pudo conectar a la base de datos.";
 }
@@ -234,7 +245,7 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
 
                         <label for="causas">Causas:</label>
                         <div id="causas-container" style="max-height: 300px; overflow-y: auto;">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-sm">
                                 <thead>
                                     <tr>
                                         <th>Seleccionar</th>
@@ -243,16 +254,16 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $causas = $conexion->query("SELECT d.id_delito, d.nombre, t.id_tipo_delito FROM delitos d LEFT JOIN tiposdelito t ON d.id_tipo_delito = t.id_tipo_delito;");
-
-                                    while ($fila = $causas->fetch_assoc()) {
+                                    $selected_causas = explode(',', $situacion_legal['ids_causas'] ?? '');
+                                    foreach ($delitos as $delito) {
+                                        $checked = in_array($delito['id_delito'], $selected_causas) ? 'checked' : '';
                                         echo "<tr class='causa-checkbox'>
-                                        <td><input type='checkbox' id='causa_{$fila['id_delito']}' name='causas[]' value='{$fila['id_delito']}'></td>
-                                        <td><label for='causa_{$fila['id_delito']}'>{$fila['nombre']}</label></td>
+                                            <td><input type='checkbox' id='causa_{$delito['id_delito']}' name='causas[]' 
+                                                     value='{$delito['id_delito']}' {$checked}></td>
+                                            <td><label for='causa_{$delito['id_delito']}'>{$delito['nombre']}</label></td>
                                         </tr>";
                                     }
                                     ?>
-                 
                                 </tbody>
                             </table>
                         </div>
@@ -285,15 +296,20 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                         <input type="text" class="form-control" id="en_prejucio" name="en_prejucio"
                             value="<?php echo htmlspecialchars($situacion_legal['en_prejucio'] ?? 'No hay dato', ENT_QUOTES, 'UTF-8'); ?>">
                     </div>
+                    <?php
+                        // Get all juzgados for the form
+                        $stmt_juzgados = $db->query("SELECT id, nombre, nombre_juez FROM juzgado");
+                        $juzgados = $stmt_juzgados->fetchAll(PDO::FETCH_ASSOC);
+                    ?>
 
                     <div class="col-md-6">
                         <label for="id_juzgado">Juzgado:</label>
                         <select class="form-select" id="id_juzgado" name="id_juzgado" required>
                             <option value="">-- Seleccione un Juez --</option>
                             <?php foreach ($juzgados as $juzgado): ?>
-                                <option value="<?php echo $juzgado['id']; ?>"
+                                <option value="<?php echo $juzgado['id']; ?>" 
                                     <?php echo (($situacion_legal['id_juzgado'] ?? '') == $juzgado['id'] ? 'selected' : ''); ?>>
-                                    <?php echo htmlspecialchars($juzgado['nombre'] ?? '' . ' - ' . $juzgado['nombre_juez']); ?>
+                                    <?php echo htmlspecialchars($juzgado['nombre'] . ' - ' . $juzgado['nombre_juez']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -309,8 +325,8 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                     <div class="col-md-6">
                         <label for="categoria">Categoría:</label>
                         <select class="form-select" id="categoria" name="categoria" required>
-                            <option value="Primario" <?php echo ($situacion_legal['categoria'] ?? '' == 'Primario' ? 'selected' : ''); ?>>Primario</option>
-                            <option value="Reiterante" <?php echo ($situacion_legal['categoria'] ?? '' == 'Reiterante' ? 'selected' : ''); ?>>Reiterante</option>
+                            <option value="Primario" <?php echo ($situacion_legal['categoria'] == 'Primario' ? 'selected' : ''); ?>>Primario</option>
+                            <option value="Reiterante" <?php echo ($situacion_legal['categoria']== 'Reiterante' ? 'selected' : ''); ?>>Reiterante</option>
                         </select>
                     </div>
                 </div>
@@ -324,8 +340,8 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                     <div class="col-md-6">
                         <label for="reingreso_falta">Reingreso en caso de quebrantamiento de beneficio y/o libertad:</label>
                         <select class="form-select" id="reingreso_falta" name="reingreso_falta" required>
-                            <option value="1" <?php echo ($situacion_legal['reingreso_falta'] ?? '' == '1' ? 'selected' : ''); ?>>Sí</option>
-                            <option value="0" <?php echo ($situacion_legal['reingreso_falta'] ?? '' == '0' ? 'selected' : ''); ?>>No</option>
+                            <option value="1" <?php echo ($situacion_legal['reingreso_falta'] == '1' ? 'selected' : ''); ?>>Sí</option>
+                            <option value="0" <?php echo ($situacion_legal['reingreso_falta'] == '0' ? 'selected' : ''); ?>>No</option>
                         </select>
                     </div>
                 </div>
@@ -334,7 +350,7 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                     <div class="col-md-6">
                         <label for="causa_nino">¿Causas judicializadas durante la niñez o adolescencia?:</label>
                         <select class="form-select" id="causa_nino" name="causa_nino" required>
-                            <option value="1" <?php echo ($situacion_legal['causa_nino'] ?? '' == 1 ? 'selected' : ''); ?>>Sí</option>
+                            <option value="1" <?php echo ($situacion_legal['causa_nino'] == 1 ? 'selected' : ''); ?>>Sí</option>
                             <option value="0" <?php echo ($situacion_legal['causa_nino'] ?? '' == 0 ? 'selected' : ''); ?>>No</option>
                         </select>
                     </div>
@@ -342,8 +358,8 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                     <div class="col-md-6">
                         <label for="cumplio_medida">¿Cumplió medidas socioeducativas?:</label>
                         <select class="form-select" id="cumplio_medida" name="cumplio_medida" required>
-                            <option value="1" <?php echo ($situacion_legal['cumplio_medida'] ?? '' == 1 ? 'selected' : ''); ?>>Sí</option>
-                            <option value="0" <?php echo ($situacion_legal['cumplio_medida'] ?? ''  == 0 ? 'selected' : ''); ?>>No</option>
+                            <option value="1" <?php echo ($situacion_legal['cumplio_medida'] == 1 ? 'selected' : ''); ?>>Sí</option>
+                            <option value="0" <?php echo ($situacion_legal['cumplio_medida'] == 0 ? 'selected' : ''); ?>>No</option>
                         </select>
                     </div>
                 </div>
@@ -352,16 +368,16 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                     <div class="col-md-6">
                         <label for="asistio_rehabi">Institucionalizaciones en centros de rehabilitación por conflictos con la ley:</label>
                         <select class="form-select" id="asistio_rehabi" name="asistio_rehabi" required>
-                            <option value="1" <?php echo ($situacion_legal['asistio_rehabi'] ?? '' == 1 ? 'selected' : ''); ?>>Sí</option>
-                            <option value="0" <?php echo ($situacion_legal['asistio_rehabi'] ?? ''  == 0 ? 'selected' : ''); ?>>No</option>
+                            <option value="1" <?php echo ($situacion_legal['asistio_rehabi'] == 1 ? 'selected' : ''); ?>>Sí</option>
+                            <option value="0" <?php echo ($situacion_legal['asistio_rehabi'] == 0 ? 'selected' : ''); ?>>No</option>
                         </select>
                     </div>
 
                     <div class="col-md-6">
                         <label for="tiene_defensor">¿Cuenta con un defensor oficial?:</label>
                         <select class="form-select" id="tiene_defensor" name="tiene_defensor" required onchange="toggleDefensorFields()">
-                            <option value="1" <?php echo ($situacion_legal['tiene_defensor'] ?? '' == 1 ? 'selected' : ''); ?>>Sí</option>
-                            <option value="0" <?php echo ($situacion_legal['tiene_defensor'] ?? '' == 0 ? 'selected' : ''); ?>>No</option>
+                            <option value="1" <?php echo ($situacion_legal['tiene_defensor'] == 1 ? 'selected' : ''); ?>>Sí</option>
+                            <option value="0" <?php echo ($situacion_legal['tiene_defensor'] == 0 ? 'selected' : ''); ?>>No</option>
                         </select>
                     </div>
                 </div>
@@ -378,7 +394,7 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
                         <div class="col-md-6">
                             <label for="tiene_com_defensor">¿Tiene comunicación con él?:</label>
                             <select class="form-select" id="tiene_com_defensor" name="tiene_com_defensor" required>
-                                <option value="1" <?php echo ($situacion_legal['tiene_com_defensor'] ?? '' == 1 ? 'selected' : ''); ?>>Sí</option>
+                                <option value="1" <?php echo ($situacion_legal['tiene_com_defensor'] == 1 ? 'selected' : ''); ?>>Sí</option>
                                 <option value="0" <?php echo ($situacion_legal['tiene_com_defensor'] ?? '' == 0 ? 'selected' : ''); ?>>No</option>
                             </select>
                         </div>
@@ -417,9 +433,14 @@ $causas = obtenerCausasSituacionLegal($db, $id_ppl, $id_situacionlegal);
         checkbox.addEventListener('change', function() {
             const selectedCheckboxes = document.querySelectorAll('.causa-checkbox input[type="checkbox"]:checked');
             const maxCausas = 4;
+            const minCausas = 1;
             if (selectedCheckboxes.length > maxCausas) {
                 alert("Solo puedes seleccionar un máximo de 4 causas.");
                 this.checked = false;
+            }
+            if(selectedCheckboxes.length < minCausas){
+                alert("Debe seleccionar al menos una causa.");
+                this.checked = true;
             }
         });
     });

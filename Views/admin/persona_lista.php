@@ -241,22 +241,25 @@ function mostrarDireccion($persona)
     <?php endif; ?>
 
     <!-- Profile Header -->
-    <div class="row bg-primary text-white p-4 rounded">
-        <div class="col-md-3 text-center">
+    <div class="row bg-primary text-white p-3 rounded">
+        <div class="col-12 col-md-3 text-center">
             <?php if (!isset($id)): ?>
                 <p>Error: DNI no definido</p>
             <?php else:
                 $rutaFoto = obtenerUltimaFoto($id, $db); ?>
+                
                 <img src="<?php echo htmlspecialchars($rutaFoto, ENT_QUOTES, 'UTF-8'); ?>"
                     alt="<?php echo ($rutaFoto !== '../../img_ppl/default.jpg') ? 'Foto de la persona' : 'Foto no disponible'; ?>"
-                    class="" style="width: 200px; height: 200px; object-fit: cover;">
+                    class="img-fluid rounded-3 shadow-sm"
+                    style="max-width: 100%; height: auto;">
             <?php endif; ?>
         </div>
-        <div class="col-md-9">
+        <div class="col-12 col-md-9">
             <h2><?php echo htmlspecialchars($persona['nombres'] . ' ' . $persona['apellidos'], ENT_QUOTES, 'UTF-8'); ?></h2>
             <p class="lead mb-0">DNI: <?php echo htmlspecialchars($persona['dni'], ENT_QUOTES, 'UTF-8'); ?></p>
         </div>
     </div>
+
 
     <div class="row mt-4">
         <!-- Datos Personales -->
