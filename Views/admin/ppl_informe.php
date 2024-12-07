@@ -1,9 +1,25 @@
 <?php require 'navbar.php'; ?>
 <?php $idppl = isset($_GET['id']) ? $_GET['id'] : '';?>
+<!-- --------------------- -->
+<?php
+    $query = "SELECT dni FROM persona WHERE id = :id";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':id', $idppl, PDO::PARAM_INT);
+    $stmt->execute();
+    $obtendni = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+    if ($obtendni) {
+        foreach ($obtendni as $row) {
+            
+        }
+    } 
+?>
 <section class="container mt-3">
     <div class="card rounded-2 border-0">
-        <div class="card-header bg-dark text-white pb-0">
-            <h5 class="d-inline-block">Informe de Evaluación Integral Interdiciplinario (IEII)</h5>
+        <div class="card-header bg-dark text-white pb-0 d-flex justify-content-between pb-2 ">
+            <h5 class="d-inline-block ">Informe de Evaluación Integral Interdiciplinario (IEII)</h5>
+            <a href="prontuario_index.php?dni=<?php echo $row['dni']; ?>" data-toggle="modal" data-backdrop="false" class="btn btn-info btn-sm" type="button" title="ver">
+                <i class="fa-solid fa-eye" style="color: #000000;"></i> Prontuario PPL
+            </a>
         </div>
         <div class="card-body">
             <div class="container">

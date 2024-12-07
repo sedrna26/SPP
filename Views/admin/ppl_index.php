@@ -56,7 +56,7 @@ function obtenerFechasPpl($db, $idPpl)
                     <?php
                     if ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 2) {
                     ?>
-                        <a class="btn btn-primary float-right mb-2" href="persona_crea.php">Nueva Persona</a>
+                        <a class="btn btn-primary float-right mb-2" href="persona_crea.php">Nuevo PPL</a>
                     <?php
                     }
                     ?>
