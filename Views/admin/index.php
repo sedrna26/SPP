@@ -81,9 +81,25 @@
                 <h2>Área Admisión</h2>
             </div>
             <div class="content">
-                <button class="btn">Nueva Admisión</button>
-                <button class="btn">Listado PPL</button>
-                <button class="btn">Administrador</button>
+                <?php
+                if (isset($_SESSION['id_rol']) && $_SESSION['id_rol'] === 1 || isset($_SESSION['id_rol']) && $_SESSION['id_rol'] === 2) {
+                ?>
+                    <button class="btn" onclick="window.location.href='persona_crea.php'">Nueva Admisión</button>
+                <?php
+                }
+                ?>
+                <a href="ppl_index.php">
+                    <button type="button" class="btn">Listado PPL</button>
+                </a>
+                <?php
+                if (isset($_SESSION['id_rol']) && $_SESSION['id_rol'] === 1) {
+                ?>
+                    <button class="btn" onclick="window.location.href='admin_index.php'">Administrador</button>
+                <?php
+                }
+                ?>
+
+
             </div>
         </div>
     </div>
