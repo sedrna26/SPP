@@ -1,55 +1,119 @@
 <?php
-
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = (int)$_GET['id'];
 } else {
     die("ID inválido.");
 }
 
-try {
-    $stmt_persona = $db->prepare("SELECT persona.id, persona.dni, persona.nombres, persona.apellidos, DATE_FORMAT(persona.fechanac, '%d-%m-%Y') AS fechaNacimiento, persona.edad, persona.genero, persona.estadocivil, d.id AS id_direccion, p.nombre AS pais, pr.nombre AS provincia, c.nombre AS ciudad, d.localidad, d.direccion, CONCAT(d.localidad, ', ', d.direccion, ', ', c.nombre, ', ', pr.nombre, ', ', p.nombre) AS direccion_completa FROM persona LEFT JOIN domicilio d ON persona.id = d.id_persona LEFT JOIN paises p ON d.id_pais = p.id LEFT JOIN provincias pr ON d.id_provincia = pr.id LEFT JOIN ciudades c ON d.id_ciudad = c.id WHERE persona.id = :id LIMIT 0, 25;
-    ");
-    $stmt_persona->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt_persona->execute();
-    $persona = $stmt_persona->fetch(PDO::FETCH_ASSOC);
+function obtenerSituacionLegal($id_ppl, $db)
+{
+    try {
 
-    $stmt_ppl = $db->prepare("SELECT id, apodo, profesion, trabaja, foto, huella
-        FROM ppl
-        WHERE idpersona = :id
-    ");
-    $stmt_ppl->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt_ppl->execute();
-    $ppl = $stmt_ppl->fetch(PDO::FETCH_ASSOC);
-
-    $stmt_situacion = $db->prepare("SELECT situacionlegal.id_ppl, situacionlegal.fecha_detencion, situacionlegal.dependencia, situacionlegal.motivo_t, 
-               situacionlegal.situacionlegal, situacionlegal.causas, situacionlegal.id_juzgado, situacionlegal.en_prejucio, 
-               situacionlegal.condena, situacionlegal.categoria, situacionlegal.reingreso_falta, situacionlegal.causas_pend, 
-               situacionlegal.cumplio_medida, situacionlegal.asistio_rehabi, situacionlegal.causa_nino, 
-               situacionlegal.tiene_defensor, situacionlegal.nombre_defensor, situacionlegal.tiene_com_defensor,
-               juzgado.nombre AS nombre_juzgado, 
-               juzgado.nombre_juez AS nombre_juez,
-               GROUP_CONCAT(delitos.nombre SEPARATOR '\n') AS nombres_causas
+        $query = "SELECT 
+            situacionlegal.id_ppl, 
+            situacionlegal.fecha_detencion, 
+            situacionlegal.dependencia, 
+            situacionlegal.motivo_t, 
+            situacionlegal.situacionlegal, 
+            situacionlegal.id_juzgado, 
+            situacionlegal.en_prejucio, 
+            situacionlegal.condena, 
+            situacionlegal.categoria, 
+            situacionlegal.reingreso_falta, 
+            situacionlegal.causas_pend, 
+            situacionlegal.cumplio_medida, 
+            situacionlegal.asistio_rehabi, 
+            situacionlegal.causa_nino, 
+            situacionlegal.tiene_defensor, 
+            situacionlegal.nombre_defensor, 
+            situacionlegal.tiene_com_defensor,
+            juzgado.nombre AS nombre_juzgado, 
+            juzgado.nombre_juez AS nombre_juez,
+            GROUP_CONCAT(delitos.nombre SEPARATOR '\n') AS nombres_causas
         FROM situacionlegal
         LEFT JOIN juzgado ON situacionlegal.id_juzgado = juzgado.id
         LEFT JOIN ppl_causas ON situacionlegal.id_ppl = ppl_causas.id_ppl
         LEFT JOIN delitos ON ppl_causas.id_causa = delitos.id_delito
-        WHERE situacionlegal.id_ppl = (SELECT id FROM ppl WHERE idpersona = :id)
-        GROUP BY situacionlegal.id_ppl
-    ");
-    $stmt_situacion->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt_situacion->execute();
-    $situacion_legal = $stmt_situacion->fetch(PDO::FETCH_ASSOC);
+        WHERE situacionlegal.id_ppl = :id_ppl
+        GROUP BY situacionlegal.id_ppl";
 
-    if (!$situacion_legal && $ppl && $persona) {
-        echo "No se encontraron datos para este ID.";
+      
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':id_ppl', $id_ppl, PDO::PARAM_INT);
+        $stmt->execute();
+
+        
+        $situacionLegal = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $situacionLegal; 
+    } catch (PDOException $e) {
+        
+        return null;
     }
+}
+$situacion_legal = obtenerSituacionLegal($id, $db);  
+
+try {
+    
+    $stmt_persona = $db->prepare("SELECT persona.id, persona.dni, persona.nombres, persona.apellidos, 
+        DATE_FORMAT(persona.fechanac, '%d-%m-%Y') AS fechaNacimiento, persona.edad, persona.genero, 
+        persona.estadocivil, d.id AS id_direccion, p.nombre AS pais, pr.nombre AS provincia, c.nombre AS ciudad, 
+        d.localidad, d.direccion, 
+        CONCAT(d.localidad, ', ', d.direccion, ', ', c.nombre, ', ', pr.nombre, ', ', p.nombre) AS direccion_completa 
+        FROM persona 
+        LEFT JOIN domicilio d ON persona.id = d.id_persona 
+        LEFT JOIN paises p ON d.id_pais = p.id 
+        LEFT JOIN provincias pr ON d.id_provincia = pr.id 
+        LEFT JOIN ciudades c ON d.id_ciudad = c.id 
+        WHERE persona.id = :id LIMIT 0, 25;");
+    $stmt_persona->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt_persona->execute();
+    $persona = $stmt_persona->fetch(PDO::FETCH_ASSOC);
+
+   
+    $stmt_ppl = $db->prepare("SELECT id, apodo, profesion, trabaja, foto, huella
+        FROM ppl
+        WHERE idpersona = :id");
+    $stmt_ppl->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt_ppl->execute();
+    $ppl = $stmt_ppl->fetch(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "Error en la consulta: " . $e->getMessage();
 }
+
+function mostrarCausas($id, $db)
+{
+    try {
+       
+        $query = "SELECT delitos.nombre 
+                  FROM ppl_causas
+                  JOIN delitos ON ppl_causas.id_causa = delitos.id_delito
+                  WHERE ppl_causas.id_ppl = :id_ppl";
+
+      
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':id_ppl', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $causas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if ($causas) {
+            echo "<ul>";
+            foreach ($causas as $causa) {
+                echo "<li>" . htmlspecialchars($causa['nombre'], ENT_QUOTES, 'UTF-8') . "</li>";
+            }
+            echo "</ul>";
+        } else {
+            echo "<p class='text-muted'>No hay causas registradas.</p>";
+        }
+    } catch (PDOException $e) {
+        echo "Error al obtener las causas: " . $e->getMessage();
+    }
+}
+
 function obtenerUltimaFoto($id, $db)
 {
     try {
-        // Query to get the latest photo using person ID
+       
         $query = "SELECT ppl.foto, 
                     ppl.id AS ppl_id, 
                     persona.id AS persona_id, 
@@ -58,8 +122,7 @@ function obtenerUltimaFoto($id, $db)
                     JOIN persona ON ppl.idpersona = persona.id
                     WHERE persona.id = :id
                     ORDER BY ppl.id DESC
-                    LIMIT 1;
-                    ";
+                    LIMIT 1;";
 
         $stmt = $db->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -83,17 +146,18 @@ function obtenerUltimaFoto($id, $db)
     }
 }
 
-function mostrarDireccion($persona) {
+function mostrarDireccion($persona)
+{
     // Arreglo para almacenar la dirección
     $direccionCompleta = [];
-    
+
     // Verificar y agregar cada campo si tiene datos
     if (!empty($persona['pais'])) $direccionCompleta[] = "<strong>País:</strong> " . htmlspecialchars($persona['pais'], ENT_QUOTES, 'UTF-8');
     if (!empty($persona['provincia'])) $direccionCompleta[] = "<strong>Provincia:</strong> " . htmlspecialchars($persona['provincia'], ENT_QUOTES, 'UTF-8');
     if (!empty($persona['ciudad'])) $direccionCompleta[] = "<strong>Ciudad:</strong> " . htmlspecialchars($persona['ciudad'], ENT_QUOTES, 'UTF-8');
     if (!empty($persona['localidad'])) $direccionCompleta[] = "<strong>Localidad:</strong> " . htmlspecialchars($persona['localidad'], ENT_QUOTES, 'UTF-8');
     if (!empty($persona['direccion'])) $direccionCompleta[] = "<strong>Dirección:</strong> " . htmlspecialchars($persona['direccion'], ENT_QUOTES, 'UTF-8');
-    
+
     // Si hay alguna dirección, mostrarla
     if (!empty($direccionCompleta)) {
         echo "<p>" . implode('<br>', $direccionCompleta) . "</p>";
@@ -101,7 +165,10 @@ function mostrarDireccion($persona) {
         echo "<p class='text-muted'>No hay dato</p>";
     }
 }
+
 ?>
+
+
 <style>
     .form-group {
         margin-bottom:
@@ -253,7 +320,6 @@ function mostrarDireccion($persona) {
                 </div>
             </div>
         </div>
-
         <!-- Situación Legal -->
         <?php if ($situacion_legal): ?>
             <div class="col-12 mb-4">
@@ -277,8 +343,12 @@ function mostrarDireccion($persona) {
                             </div>
                             <div class="col-12">
                                 <p class="mb-1 fw-bold">Causa/s</p>
-                                <p><?php echo !empty($situacion_legal['nombres_causas']) ? nl2br(htmlspecialchars($situacion_legal['nombres_causas'], ENT_QUOTES, 'UTF-8')) : 'No hay dato'; ?></p>
+                                <?php
+                              
+                                mostrarCausas($id, $db);
+                                ?>
                             </div>
+
                             <div class="col-md-6">
                                 <p class="mb-1 fw-bold">Juzgado y Juez</p>
                                 <p><?php
@@ -294,71 +364,71 @@ function mostrarDireccion($persona) {
                                 <p><?php echo !empty($situacion_legal['condena']) ? htmlspecialchars($situacion_legal['condena'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?></p>
                             </div>
 
-                            <!-- Additional Legal Information -->
-                            <!-- Find the section with the existing table -->
-<div class="col-12">
-    <div class="table-responsive">
-        <table class="table table-hover table-striped">
-            <tbody>
-                <tr>
-                    <td class="fw-bold">Reingreso por quebrantamiento</td>
-                    <td><?php echo isset($situacion_legal['reingreso_falta']) ? ($situacion_legal['reingreso_falta'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">Causas en la niñez/adolescencia</td>
-                    <td><?php echo isset($situacion_legal['causa_nino']) ? ($situacion_legal['causa_nino'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">Cumplió medidas socioeducativas</td>
-                    <td><?php echo isset($situacion_legal['cumplio_medida']) ? ($situacion_legal['cumplio_medida'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">Asistió a rehabilitación</td>
-                    <td><?php echo isset($situacion_legal['asistio_rehabi']) ? ($situacion_legal['asistio_rehabi'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">Categoría</td>
-                    <td><?php echo !empty($situacion_legal['categoria']) ? htmlspecialchars($situacion_legal['categoria'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?></td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">Motivo de traslado</td>
-                    <td><?php echo !empty($situacion_legal['motivo_t']) ? htmlspecialchars($situacion_legal['motivo_t'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?></td>
-                    
-                </tr>
-                <tr>
-                    <td class="fw-bold">En perjuicio de quien (si es intrafamiliar)</td>
-                    <td><?php 
-                        if (isset($situacion_legal['en_prejucio']) && $situacion_legal['en_prejucio']) {
-                            echo !empty($situacion_legal['en_prejucio']) 
-                                ? htmlspecialchars($situacion_legal['en_prejucio'], ENT_QUOTES, 'UTF-8') 
-                                : 'No especificado';
-                        } else {
-                            echo 'No aplica';
-                        }
-                    ?></td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">Causas pendientes</td>
-                    <td><?php echo !empty($situacion_legal['causas_pend']) ? htmlspecialchars($situacion_legal['causas_pend'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?></td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">Tiene defensor oficial</td>
-                    <td>
-                        <?php echo isset($situacion_legal['tiene_defensor']) ? ($situacion_legal['tiene_defensor'] ? 'Sí' : 'No') : 'No hay dato'; ?>
-                        <?php if (isset($situacion_legal['tiene_defensor']) && $situacion_legal['tiene_defensor']): ?>
-                            <br>Nombre: <?php echo htmlspecialchars($situacion_legal['nombre_defensor'], ENT_QUOTES, 'UTF-8'); ?>
-                            <br>Tiene comunicación: <?php echo isset($situacion_legal['tiene_com_defensor']) ? ($situacion_legal['tiene_com_defensor'] ? 'Sí' : 'No') : 'No hay dato'; ?>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+                            <!-- Información adicional -->
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-striped">
+                                        <tbody>
+                                            <tr>
+                                                <td class="fw-bold">Reingreso por quebrantamiento</td>
+                                                <td><?php echo isset($situacion_legal['reingreso_falta']) ? ($situacion_legal['reingreso_falta'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Causas en la niñez/adolescencia</td>
+                                                <td><?php echo isset($situacion_legal['causa_nino']) ? ($situacion_legal['causa_nino'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Cumplió medidas socioeducativas</td>
+                                                <td><?php echo isset($situacion_legal['cumplio_medida']) ? ($situacion_legal['cumplio_medida'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Asistió a rehabilitación</td>
+                                                <td><?php echo isset($situacion_legal['asistio_rehabi']) ? ($situacion_legal['asistio_rehabi'] ? 'Sí' : 'No') : 'No hay dato'; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Categoría</td>
+                                                <td><?php echo !empty($situacion_legal['categoria']) ? htmlspecialchars($situacion_legal['categoria'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Motivo de traslado</td>
+                                                <td><?php echo !empty($situacion_legal['motivo_t']) ? htmlspecialchars($situacion_legal['motivo_t'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">En perjuicio de quien (si es intrafamiliar)</td>
+                                                <td><?php
+                                                    if (isset($situacion_legal['en_prejucio']) && $situacion_legal['en_prejucio']) {
+                                                        echo !empty($situacion_legal['en_prejucio'])
+                                                            ? htmlspecialchars($situacion_legal['en_prejucio'], ENT_QUOTES, 'UTF-8')
+                                                            : 'No especificado';
+                                                    } else {
+                                                        echo 'No aplica';
+                                                    }
+                                                    ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Causas pendientes</td>
+                                                <td><?php echo !empty($situacion_legal['causas_pend']) ? htmlspecialchars($situacion_legal['causas_pend'], ENT_QUOTES, 'UTF-8') : 'No hay dato'; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Tiene defensor oficial</td>
+                                                <td>
+                                                    <?php echo isset($situacion_legal['tiene_defensor']) ? ($situacion_legal['tiene_defensor'] ? 'Sí' : 'No') : 'No hay dato'; ?>
+                                                    <?php if (isset($situacion_legal['tiene_defensor']) && $situacion_legal['tiene_defensor']): ?>
+                                                        <br>Nombre: <?php echo htmlspecialchars($situacion_legal['nombre_defensor'], ENT_QUOTES, 'UTF-8'); ?>
+                                                        <br>Tiene comunicación: <?php echo isset($situacion_legal['tiene_com_defensor']) ? ($situacion_legal['tiene_com_defensor'] ? 'Sí' : 'No') : 'No hay dato'; ?>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         <?php endif; ?>
+
+
     </div>
 </div>

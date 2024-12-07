@@ -67,15 +67,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $estadocivil = $_POST['estadocivil'];
     $id_rol = $_POST['permiso'];
     $hashed_password = password_hash($contrasena, PASSWORD_BCRYPT);
-
-    // Calcular la edad a partir de la fecha de nacimiento
     $fecha_nacimiento = new DateTime($fechanac);
     $hoy = new DateTime();
     $edad = $hoy->diff($fecha_nacimiento)->y;
 
     $error = "";
     try {
-        //Consulta para saber si el din exite en la BD solo si usuario está activo=1
+        
         $sql_check_dni = "SELECT COUNT(*)
                         FROM persona p
                         JOIN usuarios u ON p.id = u.id_persona
@@ -127,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $db->commit();
 
-            $accion = 'Inserción';
+            $accion = 'Agregar Usuario ';
             $tabla_afectada = 'usuarios';
             $descripcion = "Nuevo usuario creado con el ID de persona: $id_persona, ID de usuario: $id_usuario, Nombre de usuario: $nombre_usuario, Rol: $rol";
 
