@@ -111,13 +111,13 @@ if ($_POST) {
                 </div>
                 <div class="col">
                     <p class="py-0 my-0"><b>Correccional</b></p>
-                    <p class="py-0 my-0">maol4645</p>
+                    <p class="py-0 my-0">luca6473</p>
                     <p class="py-0 my-0"><b>Clave</b></p>
                     <p class="py-0 my-0">123</p>
                 </div>
                 <div class="col">
                     <p class="py-0 my-0"><b>Sanidad</b></p>
-                    <p class="py-0 my-0">jupe3225</p>
+                    <p class="py-0 my-0">dero404</p>
                     <p class="py-0 my-0"><b>Clave</b></p>
                     <p class="py-0 my-0">123</p>
                 </div>

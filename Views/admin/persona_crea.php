@@ -1,6 +1,7 @@
 <?php require 'navbar.php'; ?>
 <?php
-function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles){
+function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detalles)
+{
     try {
         $sql = "INSERT INTO auditoria (id_usuario, accion, detalles, tabla_afectada, registro_id, fecha) 
                 VALUES (:id_usuario, :accion, :detalles, :tabla_afectada, :registro_id, NOW())";
@@ -15,44 +16,115 @@ function registrarAuditoria($db, $accion, $tabla_afectada, $registro_id, $detall
         echo "Error en el registro de auditoría: " . $e->getMessage();
     }
 }
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $upload_dir = '../../img_ppl';
-    if (!file_exists($upload_dir)) {
-        mkdir($upload_dir, 0777, true);
+
+function insertarPersona($db, $datosPersona)
+{
+    $sql = "INSERT INTO persona (dni, apellidos, nombres, fechanac, edad, genero, estadocivil) 
+            VALUES (:dni, :apellidos, :nombres, :fechanac, :edad, :genero, :estadocivil)";
+    $stmt = $db->prepare($sql);
+    $stmt->execute($datosPersona);
+    return $db->lastInsertId();
+}
+
+function insertarPPL($db, $datosPPL)
+{
+    $sql = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto) 
+            VALUES (:idpersona, :apodo, :trabaja, :profesion, :huella, :foto)";
+    $stmt = $db->prepare($sql);
+    $stmt->execute($datosPPL);
+    return $db->lastInsertId();
+}
+
+
+function insertarPPLCausa($db, $id_ppl, $id_causa, $id_situacionlegal)
+{
+    $sql = "INSERT INTO ppl_causas (id_ppl, id_causa, id_situacionlegal) 
+            VALUES (:id_ppl, :id_causa, :id_situacionlegal)";
+    $stmt = $db->prepare($sql);
+    $stmt->execute([':id_ppl' => $id_ppl, ':id_causa' => $id_causa, ':id_situacionlegal' => $id_situacionlegal]);
+}
+
+function insertarSituacionLegal($db, $datosSituacion)
+{
+    $estado = isset($datosSituacion['estado']) ? $datosSituacion['estado'] : 'Activo';
+
+    $sql = "INSERT INTO situacionlegal (id_ppl,
+                fecha_detencion, 
+                dependencia, 
+                motivo_t, 
+                id_juzgado, 
+                situacionlegal, 
+                en_prejucio, 
+                condena, 
+                categoria, 
+                reingreso_falta, 
+                causas_pend, 
+                cumplio_medida, 
+                causa_nino, 
+                asistio_rehabi, 
+                tiene_defensor, 
+                nombre_defensor, 
+                tiene_com_defensor,
+                estado
+            ) 
+            VALUES (
+                :id_ppl,
+                :fecha_detencion, 
+                :dependencia, 
+                :motivo_t, 
+                :id_juzgado, 
+                :situacionlegal, 
+                :en_prejucio, 
+                :condena, 
+                :categoria, 
+                :reingreso_falta, 
+                :causas_pend, 
+                :cumplio_medida, 
+                :causa_nino, 
+                :asistio_rehabi, 
+                :tiene_defensor, 
+                :nombre_defensor, 
+                :tiene_com_defensor,
+                :estado
+            )";
+    $stmt = $db->prepare($sql);
+    $datosSituacion['estado'] = $estado;  
+    $stmt->execute($datosSituacion);
+    return $db->lastInsertId();
+}
+
+function insertarPPLCausas($db, $id_persona, $causas)
+{
+   
+    foreach ($causas as $id_causa) {
+        $sql = "INSERT INTO ppl_causas (id_ppl, id_causa) VALUES (:id_ppl, :id_causa)";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([':id_ppl' => $id_persona, ':id_causa' => $id_causa]);
     }
-    // Datos de la tabla persona
-    $dni = $_POST['dni'];
-    $nombres = $_POST['nombres'];
-    $apellidos = $_POST['apellidos'];
-    $fechanac = $_POST['fechanac'];
-    $edad = $_POST['edad'];
-    $genero = $_POST['genero'];
-    $estadocivil = $_POST['estadocivil'];
-    $direccionp = $_POST['direccionp']; // Puede ser 'new' o un ID existente
+}
+
+
+function insertarFechaPPL($db, $id_persona, $inicio_condena, $fin_condena)
+{
+    $sql = "INSERT INTO fechappl (idppl, inicio_condena, fin_condena) 
+            VALUES (:idppl, :inicio_condena, :fin_condena)";
+    $stmt = $db->prepare($sql);
+    $stmt->execute([':idppl' => $id_persona, ':inicio_condena' => $inicio_condena, ':fin_condena' => $fin_condena]);
+}
+
+function agregarDireccion($db, $id_persona, $direccionp)
+{
     $idubicacionValue = $direccionp;
-    $direccion_completa = ""; // Aquí almacenaremos la dirección completa si es nueva
-    $sql_persona = "INSERT INTO persona (dni, apellidos, nombres, fechanac, edad, genero, estadocivil) 
-                 VALUES (:dni, :apellidos, :nombres, :fechanac, :edad, :genero, :estadocivil)";
-    $stmt = $db->prepare($sql_persona);
-    $stmt->bindParam(':dni', $dni);
-    $stmt->bindParam(':apellidos', $apellidos);
-    $stmt->bindParam(':nombres', $nombres);
-    $stmt->bindParam(':fechanac', $fechanac);
-    $stmt->bindParam(':edad', $edad);
-    $stmt->bindParam(':genero', $genero);
-    $stmt->bindParam(':estadocivil', $estadocivil);
-    $stmt->execute();
-    $id_persona = $db->lastInsertId();
+
     if ($direccionp === 'new') {
-        // Obtener los datos de la nueva ubicación
         $pais = $_POST['pais'];
         $provincia = $_POST['provincia'];
         $ciudad = $_POST['ciudad'];
         $localidad = $_POST['localidad'];
         $direccion = $_POST['direccion'];
-        
+
         $sql_ubicacion = "INSERT INTO domicilio (id_pais, id_persona, id_provincia, id_ciudad, localidad, direccion) 
-                       VALUES (:pais, :id_persona, :provincia, :ciudad, :localidad, :direccion)";
+                          VALUES (:pais, :id_persona, :provincia, :ciudad, :localidad, :direccion)";
         $stmt = $db->prepare($sql_ubicacion);
         $stmt->bindParam(':pais', $pais);
         $stmt->bindParam(':provincia', $provincia);
@@ -61,189 +133,134 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(':direccion', $direccion);
         $stmt->bindParam(':id_persona', $id_persona);
         $stmt->execute();
-        $idubicacionValue = $db->lastInsertId(); // Obtiene el ID de la nueva ubicación
-    } else {
-        $idubicacionValue = $direccionp; // Usamos la dirección existente seleccionada
+
+        $idubicacionValue = $db->lastInsertId();
     }
-    
-    // Actualizamos la tabla persona guardando el ID del domicilio
+
     $sql_actualiza_direccion = "UPDATE persona SET direccion = :id_domicilio WHERE id = :id_persona";
     $stmt = $db->prepare($sql_actualiza_direccion);
-    $stmt->bindParam(':id_domicilio', $idubicacionValue); // Guardamos el ID del domicilio
+    $stmt->bindParam(':id_domicilio', $idubicacionValue);
     $stmt->bindParam(':id_persona', $id_persona);
     $stmt->execute();
+}
 
-    $apodo = $_POST['apodo'] ?? '';
-    $trabaja = ($_POST['trabaja'] === 'Si') ? 1 : 0;
-    $profesion = $_POST['profesion'] ?? '';
-    $foto = $_FILES['foto']['name'];
-    $fotoTmp = $_FILES['foto']['tmp_name'];
-
-    // Replace the current photo handling section with:
-    $foto = null;
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        $foto_temp = $_FILES['foto']['tmp_name'];
-        
-        // Get the original file extension
-        $original_ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
-        
-        // Generate a short, unique filename
-        $foto_nombre = substr(hash('md5', uniqid('', true)), 0, 10) . '.' . $original_ext;
-        $foto_path = $upload_dir . '/' . $foto_nombre;
-        
-        // Move the uploaded file
-        if (move_uploaded_file($foto_temp, $foto_path)) {
-            $foto = $foto_nombre; // Save only the filename in the database
-        } else {
-            echo "Error al mover el archivo.";
-            exit;
-        }
-    }
-
-// Update the SQL query to use the new $foto variable
-$sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto) 
-            VALUES (:id_persona, :apodo, :trabaja, :profesion, :huella, :foto)";
-    $stmt = $db->prepare($sql_ppl);
-    $stmt->bindParam(':id_persona', $id_persona); // Usamos el idpersona generado
-    $stmt->bindParam(':apodo', $apodo);
-    $stmt->bindParam(':trabaja', $trabaja);
-    $stmt->bindParam(':profesion', $profesion);
-    $stmt->bindParam(':huella', $huella, PDO::PARAM_LOB);
-    $stmt->bindParam(':foto', $foto);
-    $stmt->execute();
-    $id_ppl = $db->lastInsertId();
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
-        $pdo = new PDO("mysql:host=localhost;dbname=spp;charset=utf8mb4", "root", "");
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        die("Error en la conexión: " . $e->getMessage());
-    }
+        $db->beginTransaction();
+        $datosPersona = [
+            ':dni' => $_POST['dni'],
+            ':apellidos' => $_POST['apellidos'],
+            ':nombres' => $_POST['nombres'],
+            ':fechanac' => $_POST['fechanac'],
+            ':edad' => $_POST['edad'],
+            ':genero' => $_POST['genero'],
+            ':estadocivil' => $_POST['estadocivil'],
+        ];
+        $id_persona = insertarPersona($db, $datosPersona);
 
-    // Variables para la inserción en situacionlegal
-    $data = [];
-    $data['id_ppl'] = $id_ppl;
-    $data['fecha_detencion'] = $_POST['fecha_detencion'] ?? '';
-    $data['dependencia'] = $_POST['dependencia'] ?? '';
-    $data['motivo_t'] = $_POST['motivo_t'] ?? '';
-    $data['situacionlegal'] = $_POST['situacionlegal'] ?? ''; // Verificar que se envía desde el formulario
-    $data['id_juzgado'] = $_POST['id_juzgado'] ?? '';
-    $data['en_prejucio'] = $_POST['en_prejucio'] ?? '';
-    $data['condena'] = $_POST['condena'] ?? '';
-    $data['categoria'] = $_POST['categoria'] ?? 'primario';
-    $data['reingreso_falta'] = ($_POST['reingreso_falta'] ?? 'no') === 'si' ? 1 : 0;
-    $data['causas_pend'] = $_POST['causas_pend'] ?? '';
-    $data['cumplio_medida'] = ($_POST['cumplio_medida'] ?? 'no') === 'si' ? 1 : 0;
-    $data['asistio_rehabi'] = ($_POST['asistio_rehabi'] ?? 'no') === 'si' ? 1 : 0;
-    $data['tiene_defensor'] = ($_POST['tiene_defensor'] ?? 'no') === 'si' ? 1 : 0;
-    $data['causa_nino'] = ($_POST['causa_nino'] ?? 'no') === 'si' ? 1 : 0;
-    $data['nombre_defensor'] = $_POST['nombre_defensor'] ?? '';
-    $data['tiene_com_defensor'] = ($_POST['tiene_com_defensor'] ?? 'no') === 'si' ? 1 : 0;
-    $causaIds = [];
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        try {
-            if (isset($_POST['causas']) && is_array($_POST['causas'])) {
-                foreach ($_POST['causas'] as $causaId) {
-                    $stmtCausa = $pdo->prepare("INSERT INTO ppl_causas (id_ppl, id_causa) VALUES (:id_ppl, :id_causa)");
-                    $stmtCausa->bindParam(':id_ppl', $id_ppl);
-                    $stmtCausa->bindParam(':id_causa', $causaId);
-                    $stmtCausa->execute();
-                    $causaIds[] = $pdo->lastInsertId();
-                }
-            }
-            if (isset($_POST['delito']) && !empty($_POST['delito'])) {
-                $delito = $_POST['delito'];
-                $tipodelito = $_POST['tipodelito'];
-                $stmtDelito = $pdo->prepare("INSERT INTO delitos (nombre, id_tipo_delito) VALUES (:delito, :tipodelito)");
-                $stmtDelito->bindParam(':delito', $delito);
-                $stmtDelito->bindParam(':tipodelito', $tipodelito);
-                $stmtDelito->execute();
-                $nuevoDelitoId = $pdo->lastInsertId();
-                $causaIds[] = $nuevoDelitoId;
-            }
-            $causasString = implode(',', $causaIds);
+        $direccionp = $_POST['direccionp'];
+        agregarDireccion($db, $id_persona, $direccionp);
 
-            if ($_POST['id_juzgado'] === 'new') {
-                if (isset($_POST['nombre']) && !empty($_POST['nombre']) && isset($_POST['nombrejuez']) && !empty($_POST['nombrejuez'])) {
-                    $nombre = $_POST['nombre'];
-                    $nombre_juez = $_POST['nombrejuez'];
-                    $stmtJuzgado = $pdo->prepare("INSERT INTO juzgado (nombre, nombre_juez) VALUES (:nombre, :nombre_juez)");
-                    $stmtJuzgado->bindParam(':nombre', $nombre);
-                    $stmtJuzgado->bindParam(':nombre_juez', $nombre_juez);
-                    $stmtJuzgado->execute();
-                    $id_juzgado = $pdo->lastInsertId();
-                } else {
-                    die("Debe proporcionar el nombre del juzgado y el nombre del juez.");
-                }
-            } else {
-                $id_juzgado = $_POST['id_juzgado'];
-            }
-            $stmt = $pdo->prepare("INSERT INTO situacionlegal 
-            (id_ppl, fecha_detencion, dependencia, motivo_t, situacionlegal, id_juzgado, en_prejucio, condena, categoria, reingreso_falta, causas_pend, cumplio_medida, causa_nino, asistio_rehabi, tiene_defensor, nombre_defensor, tiene_com_defensor, causas) 
-            VALUES (:id_ppl, :fecha_detencion, :dependencia, :motivo_t, :situacionlegal, :id_juzgado, :en_prejucio, :condena, :categoria, :reingreso_falta, :causas_pend, :cumplio_medida, :causa_nino, :asistio_rehabi, :tiene_defensor, :nombre_defensor, :tiene_com_defensor, :causas)");
+        $datosPPL = [
+            ':idpersona' => $id_persona,  
+            ':apodo' => $_POST['apodo'] ?? '',
+            ':trabaja' => ($_POST['trabaja'] === 'Si') ? 1 : 0,
+            ':profesion' => $_POST['profesion'] ?? '',
+            ':huella' => null, 
+            ':foto' => null,
+        ];
+        $id_ppl = insertarPPL($db, $datosPPL);
 
-            foreach ($data as $key => $value) {
-                $stmt->bindValue(':' . $key, $value);
+   
+        $datosSituacion = [
+            ':id_ppl' => $id_persona,
+            ':fecha_detencion' => $_POST['fecha_detencion'],
+            ':dependencia' => $_POST['dependencia'],
+            ':motivo_t' => $_POST['motivo_t'],
+            ':id_juzgado' => $_POST['id_juzgado'],
+            ':situacionlegal' => $_POST['situacionlegal'],
+            ':en_prejucio' => $_POST['en_prejucio'],
+            ':condena' => $_POST['condena'],
+            ':categoria' => $_POST['categoria'],
+            ':reingreso_falta' => ($_POST['reingreso_falta'] ?? 'no') === 'si' ? 1 : 0,  
+            ':causas_pend' => ($_POST['causas_pend'] ?? 'no') === 'si' ? 1 : 0,  
+            ':cumplio_medida' => ($_POST['cumplio_medida'] ?? 'no') === 'si' ? 1 : 0,  
+            ':causa_nino' => ($_POST['causa_nino'] ?? 'no') === 'si' ? 1 : 0,  
+            ':asistio_rehabi' => ($_POST['asistio_rehabi'] ?? 'no') === 'si' ? 1 : 0,  
+            ':tiene_defensor' => ($_POST['tiene_defensor'] ?? 'no') === 'si' ? 1 : 0,  
+            ':nombre_defensor' => $_POST['nombre_defensor'],
+            ':tiene_com_defensor' => ($_POST['tiene_com_defensor'] ?? 'no') === 'si' ? 1 : 0,  
+          
+        ];
+        $id_situacionlegal = insertarSituacionLegal($db, $datosSituacion);
+
+        
+        if (isset($_POST['causas']) && is_array($_POST['causas'])) {
+          
+            foreach ($_POST['causas'] as $id_causa) {
+                
+                insertarPPLCausa($db, $id_persona, $id_causa, $id_situacionlegal);
             }
-            $stmt->bindValue(':causas', $causasString);
-            $stmt->execute();
-        } catch (PDOException $e) {
-            echo "Error en la inserción: " . $e->getMessage();
+        } else {
+            echo "No se seleccionaron causas.";
         }
-        // ------------------------
-        $inicio_condena = $_POST['inicio_condena']; 
-        $sql_inicio_condena = "INSERT INTO fechappl (idppl, inicio_condena) VALUES (?, ?)"; 
-        $stmt = $db->prepare($sql_inicio_condena); 
-        $stmt->bindParam(1, $id_ppl); 
-        $stmt->bindParam(2, $inicio_condena); 
-        if ($stmt->execute()) 
-        { echo "Fecha de inicio de condena guardada exitosamente"; }else 
-        { echo "Error al guardar la fecha: " . implode(" ", $stmt->errorInfo()); }
-    }
-    $accion = 'Agregar PPL';
-    $tabla_afectada = 'persona, ppl, situacion legal';
-    $detalles = "Se agrego un nuevo ppl con ID del PPL: $id_ppl, ID de la persona: $idpersona, 
-    Apodo: $apodo, Nombre: $nombres, Apellido: $apellidos";
-    registrarAuditoria($db, $accion, $tabla_afectada, $id_ppl, $detalles);
+    
+        insertarFechaPPL($db, $id_persona, $_POST['inicio_condena'], $_POST['fin_condena']);
 
-    header("Location: ppl_index.php?mensaje=" . urlencode("PPL creado con éxito."));
-    exit();
+        registrarAuditoria($db, 'Agregar PPL', 'situacionlegal', $id_persona, 'Situación legal y Datos  de PPL creado' . $id_persona);
+
+        $db->commit();
+
+        header("Location: ppl_index.php?mensaje=" . urlencode("PPL creado con éxito."));
+        exit();
+    } catch (Exception $e) {
+        $db->rollBack();
+        echo "Error: " . $e->getMessage();
+    }
 }
 ?>
+
 <style>
+    input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-color: white;
+        border: 2px solid #007bff;
+        border-radius: 4px;
+        cursor: pointer;
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    input[type="radio"]:checked {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    input[type="radio"]:checked::after {
+        content: '✔';
+        font-size: 14px;
+        color: white;
+        font-family: Arial, sans-serif;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-weight: bold;
+    }
+
     .is-invalid {
         border: 10px solid red;
     }
 </style>
-<script>
-    function loadCiudades() {
-        var provinciaId = document.getElementById('provincia').value;
-        if (provinciaId) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "getCiudades.php?provincia_id=" + provinciaId, true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    document.getElementById('ciudad').innerHTML = xhr.responseText;
-                }
-            };
-            xhr.send();
-        } else {
-            document.getElementById('ciudad').innerHTML = "<option value=''>-- Seleccione una Ciudad --</option>";
-        }
-    }
-    function loadProvincias() {
-        var paisId = document.getElementById('pais').value;
-        if (paisId) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "getProvincias.php?pais_id=" + paisId, true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    document.getElementById('provincia').innerHTML = xhr.responseText;
-                }
-            };
-            xhr.send();
-        }
-    }
-</script>
 <!-- --------------------------- -->
 <section class="container mt-3">
     <div class="card rounded-2 border-0">
@@ -253,15 +270,15 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
         </div>
         <div class="card-body table-responsive">
             <form id="personaForm" action="" method="POST" enctype="multipart/form-data">
-                <h4 class="d-inline">Datos de la Persona</h4> 
+                <h4 class="d-inline">Datos de la Persona</h4>
                 <div class=" mt-4 d-inline">
-                    <h4 class="text-danger fst-italic d-inline">*</h4>                    
+                    <h4 class="text-danger fst-italic d-inline">*</h4>
                     <h6 class="text-danger small fst-italic d-inline">Campo requerido</h6>
                 </div>
-                
+
                 <input type="hidden" name="id_persona" value="<?php echo $id_persona; ?>">
                 <div class="row mt-4">
-                    <div class="col">                    
+                    <div class="col">
                         <div class="form-group">
                             <label for="dni">DNI:</label>
                             <input type="number" class="form-control" id="dni" name="dni" required>
@@ -335,7 +352,7 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                         <div class="col-md-4">
                             <label for="ciudad" class="form-label">Ciudad</label>
                             <select class="form-select" id="ciudad" name="ciudad">
-                                <option value="">-- Seleccione una Ciudad --</option> 
+                                <option value="">-- Seleccione una Ciudad --</option>
                             </select>
                         </div>
                         <div class="col-md-5">
@@ -359,7 +376,7 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                     <div class="col">
                         <div class="form-group">
                             <label for="edad">Edad:</label>
-                            <input type="number" class="form-control" id="edad" name="edad"  required>
+                            <input type="number" class="form-control" id="edad" name="edad" required>
                         </div>
                     </div>
                     <div class="col">
@@ -381,13 +398,13 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                                 <option value="Divorciado">Divorciado</option>
                                 <option value="Viudo">Viudo</option>
                             </select>
-                        </div>                        
+                        </div>
                     </div>
                 </div>
                 <!-- Sección PPL -->
                 <div>
                     <h4 class="mt-4">Datos de PPL</h4>
-                    <div class="row" >
+                    <div class="row">
                         <div class="col">
                             <div class="mb-3">
                                 <label for="profesion" class="form-label">Profesión</label>
@@ -403,12 +420,12 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                                 </select>
                             </div>
                         </div>
-                    </div>  
+                    </div>
                     <!-- --------------------- -->
                     <div class="mb-3">
                         <label for="foto" class="form-label">Foto</label>
-                        <input type="file" class="form-control" id="foto" name="foto" 
-                            accept=".jpg,.jpeg,.png,.svg,.ico,.tga,.dds,.ai,image/jpeg,image/png,image/svg+xml,image/x-icon,image/tga,image/x-dds,application/postscript" 
+                        <input type="file" class="form-control" id="foto" name="foto"
+                            accept=".jpg,.jpeg,.png,.svg,.ico,.tga,.dds,.ai,image/jpeg,image/png,image/svg+xml,image/x-icon,image/tga,image/x-dds,application/postscript"
                             onchange="previewImage(event)">
                         <!-- <br>
                         <img id="Foto" class="form-control" style="max-width: 150px; height: 100px;" alt="Foto de PERSONA"> -->
@@ -436,14 +453,14 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                             </div>
                         </div>
                         <script>
-                                const fecha = new Date();
-                                const offset = fecha.getTimezoneOffset();
-                                fecha.setMinutes(fecha.getMinutes() - offset);
-                                const hoy = fecha.toISOString().split('T')[0];
-                                document.getElementById('fecha_detencion').value = hoy;
-                                document.getElementById('inicio_condena').value = hoy;                            
-                        </script>                        
-                    </div>   
+                            const fecha = new Date();
+                            const offset = fecha.getTimezoneOffset();
+                            fecha.setMinutes(fecha.getMinutes() - offset);
+                            const hoy = fecha.toISOString().split('T')[0];
+                            document.getElementById('fecha_detencion').value = hoy;
+                            document.getElementById('inicio_condena').value = hoy;
+                        </script>
+                    </div>
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
@@ -466,11 +483,11 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                                 </select>
                             </div>
                         </div>
-                    </div> 
+                    </div>
                     <!-- -------------------------------- -->
                     <div class="form-group">
-                    <label for="buscar-causas">Buscar Causas:</label>
-                    <input type="text" id="buscar-causas" class="form-control" placeholder="Escribe para buscar..." onkeyup="filtrarCausas()">
+                        <label for="buscar-causas">Buscar Causas:</label>
+                        <input type="text" id="buscar-causas" class="form-control" placeholder="Escribe para buscar..." onkeyup="filtrarCausas()">
                         <label for="causas">Causas:</label>
                         <div id="causas-container" style="max-height: 300px; overflow-y: auto;">
                             <table class="table table-bordered">
@@ -497,31 +514,13 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                                         </tr>";
                                         $i++;
                                     }
+                                    
                                     ?>
                                 </tbody>
                             </table>
                         </div>
                         <p id="selected-causas-text" style="margin-top: 10px;">Selecciona hasta 4 causas.</p>
                     </div>
-                    <!-- Scrip para buscar las causas  -->
-                    <script>
-                        function filtrarCausas() {
-                            var input = document.getElementById('buscar-causas');
-                            var filtro = input.value.toLowerCase();
-                            var filas = document.querySelectorAll('.causa-checkbox');                            
-                            filas.forEach(function(fila) {
-                                var celdaCausa = fila.getElementsByTagName('td')[1];
-                                if (celdaCausa) {
-                                    var textoCausa = celdaCausa.textContent || celdaCausa.innerText;
-                                    if (textoCausa.toLowerCase().indexOf(filtro) > -1) {
-                                        fila.style.display = "";
-                                    } else {
-                                        fila.style.display = "none";
-                                    }
-                                }
-                            });
-                        }                    
-                    </script>
                     <button type="button" class="btn btn-primary" onclick="toggleNewDelitoSection()">Añadir nueva causa</button>
                     <br>
                     <!-- Sección para agregar nuevo delito -->
@@ -585,14 +584,14 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                             </div>
                         </div>
                     </div>
-                    <!-- ------------------------------ --> 
+                    <!-- ------------------------------ -->
                     <div class="row">
                         <div class="col-md-5">
                             <div class="form-group">
                                 <label for="condena">Condena:</label>
                                 <input type="text" class="form-control" id="condena" name="condena" required>
                             </div>
-                        </div>                        
+                        </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="categoria">Categoria:</label>
@@ -601,7 +600,7 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                                     <option value="reiterante">Reiterante</option>
                                 </select>
                             </div>
-                        </div>                        
+                        </div>
                         <div class="col-md-5">
                             <div class="form-group">
                                 <label for="causas_pend">Causas pendientes de resolución:</label>
@@ -609,39 +608,7 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                             </div>
                         </div>
                     </div>
-                    <!-- -------------Estilo para los Radios--------- -->
-                    <style>
-                        input[type="radio"] {
-                            width: 20px;
-                            height: 20px;
-                            -webkit-appearance: none;
-                            -moz-appearance: none;
-                            appearance: none;
-                            background-color: white;
-                            border: 2px solid #007bff;
-                            border-radius: 4px;
-                            cursor: pointer;
-                            position: relative;
-                            display: inline-block;
-                            vertical-align: middle;
-                        }
-                        input[type="radio"]:checked {
-                            background-color: #007bff;
-                            border-color: #007bff;
-                        }
-                        input[type="radio"]:checked::after {
-                            content: '✔';
-                            font-size: 14px;
-                            color: white;
-                            font-family: Arial, sans-serif;
-                            position: absolute;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
-                            font-weight: bold;
-                        }
-                    </style>
-                    <!-- -------------------->
+
                     <div class="form-group">
                         <label>Reingreso en caso de quebrantamiento de beneficio y/o libertad:
                             <input type="radio" name="reingreso_falta" value="si" required checked> Sí
@@ -692,44 +659,7 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
                             </div>
                         </div>
                     </div>
-                    <style>
-                    .hidden {
-                        display: none;
-                    }
-                    </style>
-                    <!-- -------------Scrip para que aparezca el defensor-------- -->
-                    <script>
-                        function toggleDefensorFields() {
-                        const tieneDefensorRadios = document.getElementsByName('tiene_defensor');
-                        const nombreDefensorDiv = document.getElementById('nombreDefensorDiv');
-                        const tieneComDefensorDiv = document.getElementById('tieneComDefensorDiv');
-                        tieneDefensorRadios.forEach(radio => {
-                            radio.addEventListener('change', function() {
-                                if (this.value === 'si') {
-                                    nombreDefensorDiv.classList.remove('hidden');
-                                    tieneComDefensorDiv.classList.remove('hidden');
-                                    document.getElementById('nombre_defensor').required = true;
-                                    document.getElementById('tiene_com_defensor').required = true;
-                                } else {
-                                    nombreDefensorDiv.classList.add('hidden');
-                                    tieneComDefensorDiv.classList.add('hidden');
-                                    document.getElementById('nombre_defensor').required = false;
-                                    document.getElementById('tiene_com_defensor').required = false;
-                                }
-                            });
-                        });
-                    }
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const tieneDefensorSi = document.querySelector('input[name="tiene_defensor"][value="si"]');
-                        if (tieneDefensorSi.checked) {
-                            document.getElementById('nombreDefensorDiv').classList.remove('hidden');
-                            document.getElementById('tieneComDefensorDiv').classList.remove('hidden');
-                        }
-                        toggleDefensorFields();
-                    });
-                    </script>
                 </div>
-                <!-- ------------------------- -->
         </div>
         <div class="d-flex justify-content-center">
             <button type="submit" class="btn btn-primary mb-3">Guardar </button>
@@ -740,4 +670,94 @@ $sql_ppl = "INSERT INTO ppl (idpersona, apodo, trabaja, profesion, huella, foto)
     </div>
     </div>
 </section>
+<script>
+    function updateSelectedCausas() {
+        let selectedCausas = [];
+        let checkboxes = document.querySelectorAll("input[name='causas[]']:checked");
+        checkboxes.forEach(function(checkbox) {
+            selectedCausas.push(checkbox.value);
+        });
+        document.getElementById('causas').value = selectedCausas.join(',');
+    }
+</script>
+<script>
+    function loadCiudades() {
+        var provinciaId = document.getElementById('provincia').value;
+        if (provinciaId) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "getCiudades.php?provincia_id=" + provinciaId, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    document.getElementById('ciudad').innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        } else {
+            document.getElementById('ciudad').innerHTML = "<option value=''>-- Seleccione una Ciudad --</option>";
+        }
+    }
+
+    function loadProvincias() {
+        var paisId = document.getElementById('pais').value;
+        if (paisId) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "getProvincias.php?pais_id=" + paisId, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    document.getElementById('provincia').innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+    }
+</script>
+<script>
+    function toggleDefensorFields() {
+        const tieneDefensorRadios = document.getElementsByName('tiene_defensor');
+        const nombreDefensorDiv = document.getElementById('nombreDefensorDiv');
+        const tieneComDefensorDiv = document.getElementById('tieneComDefensorDiv');
+        tieneDefensorRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'si') {
+                    nombreDefensorDiv.classList.remove('hidden');
+                    tieneComDefensorDiv.classList.remove('hidden');
+                    document.getElementById('nombre_defensor').required = true;
+                    document.getElementById('tiene_com_defensor').required = true;
+                } else {
+                    nombreDefensorDiv.classList.add('hidden');
+                    tieneComDefensorDiv.classList.add('hidden');
+                    document.getElementById('nombre_defensor').required = false;
+                    document.getElementById('tiene_com_defensor').required = false;
+                }
+            });
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const tieneDefensorSi = document.querySelector('input[name="tiene_defensor"][value="si"]');
+        if (tieneDefensorSi.checked) {
+            document.getElementById('nombreDefensorDiv').classList.remove('hidden');
+            document.getElementById('tieneComDefensorDiv').classList.remove('hidden');
+        }
+        toggleDefensorFields();
+    });
+</script>
+<script>
+    function filtrarCausas() {
+        
+        var input = document.getElementById('buscar-causas');
+        var filtro = input.value.toLowerCase();
+        var filas = document.querySelectorAll('.causa-checkbox');
+        filas.forEach(function(fila) {
+            var celdaCausa = fila.getElementsByTagName('td')[1];
+            if (celdaCausa) {
+                var textoCausa = celdaCausa.textContent || celdaCausa.innerText;
+                if (textoCausa.toLowerCase().indexOf(filtro) > -1) {
+                    fila.style.display = "";
+                } else {
+                    fila.style.display = "none";
+                }
+            }
+        });
+    }
+</script>
 <?php require 'footer.php'; ?>
