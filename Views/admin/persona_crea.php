@@ -160,6 +160,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $direccionp = $_POST['direccionp'];
         agregarDireccion($db, $id_persona, $direccionp);
+        //Seccion para crear la carpeta img_ppl
+        $upload_dir = '../../img_ppl';
+        if (!file_exists($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+
+        // Traigo la foto del POST
+        $foto = $_FILES['foto']['name'];
+        $fotoTmp = $_FILES['foto']['tmp_name'];
+        $foto = null;
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $foto_temp = $_FILES['foto']['tmp_name'];
+            $original_ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));        
+            // genera un nombre mas corto y unico
+            $foto_nombre = substr(hash('md5', uniqid('', true)), 0, 10) . '.' . $original_ext;
+            $foto_path = $upload_dir . '/' . $foto_nombre;
+            if (move_uploaded_file($foto_temp, $foto_path)) {
+                $foto = $foto_nombre; // Save only the filename in the database
+            } else {
+                echo "Error al mover el archivo.";
+                exit;
+            }
+        }
 
         $datosPPL = [
             ':idpersona' => $id_persona,  
@@ -167,10 +190,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':trabaja' => ($_POST['trabaja'] === 'Si') ? 1 : 0,
             ':profesion' => $_POST['profesion'] ?? '',
             ':huella' => null, 
-            ':foto' => null,
+            ':foto' => $foto,
         ];
         $id_ppl = insertarPPL($db, $datosPPL);
-
    
         $datosSituacion = [
             ':id_ppl' => $id_persona,
@@ -478,8 +500,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="form-group">
                                 <label for="situacionlegal">Situación Legal:</label>
                                 <select class="form-select" id="situacionlegal" name="situacionlegal" required>
-                                    <option value="penado">Penado</option>
-                                    <option value="procesado">Procesado</option>
+                                    <option value="Penado">Penado</option>
+                                    <option value="Procesado">Procesado</option>
                                 </select>
                             </div>
                         </div>
@@ -490,7 +512,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="text" id="buscar-causas" class="form-control" placeholder="Escribe para buscar..." onkeyup="filtrarCausas()">
                         <label for="causas">Causas:</label>
                         <div id="causas-container" style="max-height: 300px; overflow-y: auto;">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-sm">
                                 <thead>
                                     <tr>
                                         <th>Seleccionar</th>
@@ -596,8 +618,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="form-group">
                                 <label for="categoria">Categoria:</label>
                                 <select class="form-select" id="categoria" name="categoria" required>
-                                    <option value="primario">Primario</option>
-                                    <option value="reiterante">Reiterante</option>
+                                    <option value="Primario">Primario</option>
+                                    <option value="Reiterante">Reiterante</option>
                                 </select>
                             </div>
                         </div>
@@ -662,7 +684,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
         </div>
         <div class="d-flex justify-content-center">
-            <button type="submit" class="btn btn-primary mb-3">Guardar </button>
+            <button type="submit" class="btn btn-primary mb-3">Guardar Nuevo PPL</button>
         </div>
     </div>
     </form>
@@ -759,5 +781,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         });
     }
+</script>
+<script>
+    const checkboxes = document.querySelectorAll('.causa-checkbox input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const selectedCheckboxes = document.querySelectorAll('.causa-checkbox input[type="checkbox"]:checked');
+            const maxCausas = 4;
+            const minCausas = 1;
+            if (selectedCheckboxes.length > maxCausas) {
+                alert("Solo puedes seleccionar un máximo de 4 causas.");
+                this.checked = false;
+            }
+            if(selectedCheckboxes.length < minCausas){
+                alert("Debe seleccionar al menos una causa.");
+                this.checked = true;
+            }
+        });
+    });
 </script>
 <?php require 'footer.php'; ?>

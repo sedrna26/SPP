@@ -1,5 +1,4 @@
 <?php require 'navbar.php'; ?>
-
 <?php
 if (!function_exists('finfo_open')) {
     die('fileinfo extension is not available');
@@ -28,8 +27,6 @@ if (isset($_GET['dni']) && ctype_digit($_GET['dni'])) {
 } else {
     echo "DNI no válido.";
 }
-
-// Rest of the personal data queries
 try {
     $stmt_persona = $db->prepare("SELECT 
                                   persona.id,
@@ -57,7 +54,6 @@ try {
     $stmt_persona->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt_persona->execute();
     $persona = $stmt_persona->fetch(PDO::FETCH_ASSOC);
-
     // Modified PPL query to get latest record
     $stmt_ppl = $db->prepare("SELECT id, apodo, profesion, trabaja, foto, huella
         FROM ppl
@@ -69,11 +65,7 @@ try {
     $ppl = $stmt_ppl->fetch(PDO::FETCH_ASSOC);
 
     // Modified situacion legal query to get latest record
-    $stmt_situacion = $db->prepare("SELECT situacionlegal.id_ppl, situacionlegal.fecha_detencion, situacionlegal.dependencia, situacionlegal.motivo_t, 
-               situacionlegal.situacionlegal, situacionlegal.causas, situacionlegal.id_juzgado, situacionlegal.en_prejucio, 
-               situacionlegal.condena, situacionlegal.categoria, situacionlegal.reingreso_falta, situacionlegal.causas_pend, 
-               situacionlegal.cumplio_medida, situacionlegal.asistio_rehabi, situacionlegal.causa_nino, 
-               situacionlegal.tiene_defensor, situacionlegal.nombre_defensor, situacionlegal.tiene_com_defensor,
+    $stmt_situacion = $db->prepare("SELECT situacionlegal.*,
                juzgado.nombre AS nombre_juzgado, 
                juzgado.nombre_juez AS nombre_juez,
                GROUP_CONCAT(delitos.nombre SEPARATOR '\n') AS nombres_causas
@@ -139,8 +131,6 @@ function obtenerUltimaFoto($dni, $db) {
         return $rutaBase . $fotoDefault;
     }
 }
-
-
 ?>
 <!-- ------------------------ -->
 <style>
@@ -156,130 +146,159 @@ function obtenerUltimaFoto($dni, $db) {
     }   
 </style>
 <!-- ------------------------------------ -->
+
+<!-- Mostrar el valor de $ultima_fecha aquí -->
+
+
+
 <?php $dni = isset($_GET['dni']) ? $_GET['dni'] : '';?>
-<section class="container mt-3">
-    <div class="card rounded-2 border-0">
-        <div class="card-header bg-dark text-white pb-0">
-        <h5 class="section-title mb-3 ">Datos Personales Actuales</h5>
-            <!-- <h5 class="d-inline-block ">
-                <?php
-                echo !empty($persona['nombres']) && !empty($persona['apellidos']) ?
-                    htmlspecialchars($persona['nombres'] . ' ' . $persona['apellidos'], ENT_QUOTES, 'UTF-8') :
-                    'No hay dato';
-                ?>
-            </h5> -->
+<div class="container-fluid pt-3">
+    <!-- Main Card -->
+    <div class="card shadow-sm border-0 rounded-0">
+        <div class="card-header bg-dark text-white ">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="my-0 py-0">Ultimo Ingreso : <span id="fechaDisplay"></span></h5>
+            </div>
         </div>
-        <div class="card-body  table-responsive">
-            <div class="content mb-4">
-                <div class="row mt-2">
-                    <div class="col-md-7">
-                        <p>
-                            <label class="h6 ">Apellidos y Nombres:</label>
-                            <span class="form-control-static" id="nombres-apellidos">
-                                <?php
-                                echo !empty($persona['nombres']) && !empty($persona['apellidos']) ?
-                                    htmlspecialchars($persona['nombres'] . ' ' . $persona['apellidos'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato'; ?>
-                            </span>
-                            <label class="h6 ml-5">D.N.I.:</label>
-                            <span>
-                                <?php
-                                echo !empty($persona['dni']) ?
-                                    htmlspecialchars($persona['dni'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato'; ?>
-                            </span>
-                        </p>
-                        <p>
-                            <label class="h6 ">Fecha de nacimiento:</label>
-                            <span>
-                                <?php
-                                if (!empty($persona['fechaNacimiento'])) {
-                                    echo date('d-m-Y', strtotime($persona['fechaNacimiento']));
-                                } else {
-                                    echo 'No hay dato';
-                                }
-                                ?>
-                            </span>
-                            <label class="h6 ml-5">Edad:</label>
-                            <span>
-                                <?php
-                                echo !empty($persona['edad']) ?
-                                    htmlspecialchars($persona['edad'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';
-                                ?>
-                            </span>
-                            <!-- <label class="h6 ml-5">Apodo:</label>
-                            <span>
-                                <?php
-                                echo !empty($ppl['apodo']) ?
-                                    htmlspecialchars($ppl['apodo'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';
-                                ?>
-                            </span> -->
-                        </p>
-                        <p>
-                            <label class="h6 ">País:</label>
-                            <span>
-                                <?php
-                                echo !empty($persona['pais']) ?
-                                    htmlspecialchars($persona['pais'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato'; ?>
-                            </span>
-                            <label class="h6 ml-5">Provincia:</label>
-                            <span>
-                                <?php
-                                echo !empty($persona['provincia']) ?
-                                    htmlspecialchars($persona['provincia'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';?>
-                            </span>
-                            <label class="h6 ml-5">Ciudad:</label>
-                            <span>
-                                <?php
-                                echo !empty($persona['ciudad']) ?
-                                    htmlspecialchars($persona['ciudad'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato';
-                                ?>
-                            </span>
-                        </p>
-                        <p>
-                            <label class="h6 ">Departamento / Localidad:</label>
-                            <span>
-                                <?php
-                                echo !empty($persona['localidad']) ?
-                                    htmlspecialchars($persona['localidad'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato'; ?>
-                            </span>
-                        </p>
-                        <p>
-                            <label class="h6 ">Domicilio:</label>
-                            <span>
-                                <?php
-                                echo !empty($persona['direccion']) ?
-                                    htmlspecialchars($persona['direccion'], ENT_QUOTES, 'UTF-8') :
-                                    'No hay dato'; ?>
-                            </span>
-                        </p>                        
-                    </div>
-                    <div class="col-md-4 text-center mb-4">
-                        <div class="foto">
-                            <?php
-                            if (!isset($dni)) {
-                                echo "<p>Error: DNI no definido</p>";
-                            } else {
-                                $rutaFoto = obtenerUltimaFoto($dni, $db);
-                            ?>
-                                <img src="<?php echo htmlspecialchars($rutaFoto, ENT_QUOTES, 'UTF-8'); ?>" 
-                                    alt="<?php echo ($rutaFoto !== '../../img_ppl/default.jpg') ? 'Foto de la persona' : 'Foto no disponible'; ?>" 
-                                    style="max-width: 250px; max-height: 250px; object-fit: cover;">
-                            <?php
-                            }
-                            ?>
+        
+        <div class="card-body py-2 my-0">
+            <div class="row g-2 ">
+                <!-- Personal Information Column -->
+                <div class="col-md-8 ">
+                    <div class="row g-2">
+                        <!-- Full Name -->
+                        <div class="col-md-6 ">
+                            <div class="card bg-light">
+                                <div class="card-body py-0 my-0">
+                                    <h6 class="text-muted mb-1">Apellidos y Nombres</h6>
+                                    <p class="h5 mb-1">
+                                        <?php echo !empty($persona['nombres']) && !empty($persona['apellidos']) ?
+                                            htmlspecialchars($persona['nombres'] . ' ' . $persona['apellidos'], ENT_QUOTES, 'UTF-8') :
+                                            '<span class="text-muted">No hay dato</span>'; ?>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 ">
+                            <div class="card bg-light">
+                                <div class="card-body py-0 my-0">
+                                    <h6 class="text-muted mb-1">DNI</h6>
+                                    <p class="h5 mb-1">
+                                    <?php echo htmlspecialchars($dni, ENT_QUOTES, 'UTF-8'); ?>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Birth Info -->
+                        <div class="col-md-6 ">
+                            <div class="card bg-light">
+                                <div class="card-body py-0 my-0">
+                                    <h6 class="text-muted mb-1">Fecha de Nacimiento</h6>
+                                    <p class="mb-1"><?php echo !empty($persona['fechaNacimiento']) ? 
+                                        date('d-m-Y', strtotime($persona['fechaNacimiento'])) : 
+                                        '<span class="text-muted">No hay dato</span>'; ?></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Age -->
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body py-0 my-0">
+                                    <h6 class="text-muted mb-1">Edad</h6>
+                                    <p class="mb-1"><?php echo !empty($persona['edad']) ? 
+                                        htmlspecialchars($persona['edad'], ENT_QUOTES, 'UTF-8') : 
+                                        '<span class="text-muted">No hay dato</span>'; ?></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Location Information -->
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body py-0 my-0">
+                                    <h6 class="text-muted mb-2">Ubicación</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-4">
+                                            <small class="text-muted d-block py-0 my-0">País</small>
+                                            <span class="py-0 my-0"><?php echo !empty($persona['pais']) ? 
+                                                htmlspecialchars($persona['pais'], ENT_QUOTES, 'UTF-8') : 
+                                                '<span class="text-muted">No hay dato</span>'; ?></span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <small class="text-muted d-block py-0 my-0">Provincia</small>
+                                            <span class="py-0 my-0"><?php echo !empty($persona['provincia']) ? 
+                                                htmlspecialchars($persona['provincia'], ENT_QUOTES, 'UTF-8') : 
+                                                '<span class="text-muted">No hay dato</span>'; ?></span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <small class="text-muted d-block py-0 my-0">Ciudad</small>
+                                            <span class="py-0 my-0"><?php echo !empty($persona['ciudad']) ? 
+                                                htmlspecialchars($persona['ciudad'], ENT_QUOTES, 'UTF-8') : 
+                                                '<span class="text-muted">No hay dato</span>'; ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body py-0 my-0">
+                                    <h6 class="text-muted mb-1">Localidad</h6>
+                                    <p class="mb-1"><?php echo !empty($persona['localidad']) ? 
+                                        htmlspecialchars($persona['localidad'], ENT_QUOTES, 'UTF-8') : 
+                                        '<span class="text-muted">No hay dato</span>'; ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body py-0 my-0">
+                                    <h6 class="text-muted mb-1">Dirección Completa</h6>
+                                    <p class="mb-1"><?php echo !empty($persona['direccion']) ? 
+                                        htmlspecialchars($persona['direccion'], ENT_QUOTES, 'UTF-8') : 
+                                        '<span class="text-muted">No hay dato</span>'; ?></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Photo Column -->
+                <div class="col-md-4 py-0 my-0">
+                    <div class="card h-100">
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <div class="position-relative">
+                                <?php
+                                if (!isset($dni)) {
+                                    echo '<div class="alert alert-danger">Error: DNI no definido</div>';
+                                } else {
+                                    $rutaFoto = obtenerUltimaFoto($dni, $db);
+                                ?>
+                                    <img src="<?php echo htmlspecialchars($rutaFoto, ENT_QUOTES, 'UTF-8'); ?>" 
+                                         class="img-fluid rounded-3 shadow-sm"
+                                         alt="<?php echo ($rutaFoto !== '../../img_ppl/default.jpg') ? 'Foto de la persona' : 'Foto no disponible'; ?>" 
+                                         style="max-width: 400px; max-height: 400px; object-fit: cover;">
+                                <?php
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- ------------------------- -->
-            <table id="example" class="table table-bordered table-striped table-hover table-sm" style="width:100%">
-                <thead class="thead-dark">
+        </div>
+    </div>
+
+    <!-- History Table Card -->
+    <div class="card shadow-sm border-0 py-0 my-0 rounded-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="example" class="table table-hover table-striped">
+                    <thead class="table-dark">
                     <tr>
                         <th>#</th>
                         <th>Nombre y Apellido</th>
@@ -318,9 +337,9 @@ function obtenerUltimaFoto($dni, $db) {
                         LEFT JOIN 
                             provincias AS pro ON dom.id_provincia = pro.id
                         LEFT JOIN
-                            situacionlegal AS sl ON ppl.id = sl.id_ppl
+                            situacionlegal AS sl ON ppl.idpersona = sl.id_ppl
                         LEFT JOIN
-                            fechappl AS fppl ON ppl.id = fppl.idppl
+                            fechappl AS fppl ON ppl.idpersona = fppl.idppl
                         WHERE 
                             per.dni = :dni
                         ORDER BY 
@@ -349,6 +368,11 @@ function obtenerUltimaFoto($dni, $db) {
                             </td>
                             <td><?php echo htmlspecialchars($ppl['fecha_detencion'], ENT_QUOTES, 'UTF-8'); ?></td>
                             <td><?php echo htmlspecialchars($ppl['inicio_condena'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <?php                             
+                                if (!isset($ultima_fecha)){
+                                    $ultima_fecha= $ppl['inicio_condena'];
+                                }
+                            ?>
                             <td><?php echo htmlspecialchars($ppl['fin_condena'], ENT_QUOTES, 'UTF-8'); ?></td>
                             <td>
                                 <a class="btn btn-info" href='ppl_informe.php?id=<?php echo $ppl['id']; ?>'>Informe(IEII)</a>
@@ -365,6 +389,13 @@ function obtenerUltimaFoto($dni, $db) {
         </div>
     </div>
     </div>
-</section>
+</div>
+<script>
+    var ultimaFecha = "<?php echo htmlspecialchars($ultima_fecha, ENT_QUOTES, 'UTF-8'); ?>";
+    document.getElementById("fechaDisplay").textContent = ultimaFecha;
+    document.getElementById("reflectDateButton").addEventListener("click", function() {
+        document.getElementById("reflectedDate").textContent = ultimaFecha;
+    });
+</script>
 
 <?php require 'footer.php'; ?>
