@@ -93,7 +93,7 @@ $marcas = $resultado_marcas->fetch_all(MYSQLI_ASSOC);
     <div class="row">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header bg-dark text-white">
+                <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">Marcas Corporales - PPL #<?php echo $idppl; ?></h5>
                 </div>
                 <div class="card-body text-center">
@@ -116,7 +116,7 @@ $marcas = $resultado_marcas->fetch_all(MYSQLI_ASSOC);
         
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header bg-dark text-white">
+                <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">Cicatrices Registradas</h5>
                 </div>
                 <div class="card-body marks-list" id="marks-list">
