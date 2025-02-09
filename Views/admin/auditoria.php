@@ -81,4 +81,4 @@ $auditoria = $statement->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 </section>
-<? require 'footer.php'; ?>
+<?php require 'footer.php'; ?>

@@ -124,3 +124,4 @@ function obtenerFechasPpl($db, $idPpl)
         </div>
     </div>
 </section>
+<?php require 'footer.php'; ?>
